@@ -1,0 +1,25 @@
+ <script>
+        <!-- typeof()对于基本数据类型没问题，遇到引用数据类型就不管了 -->
+        console.log(typeof(666))
+        console.log(typeof([1,2,3]))
+        </script><!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+    </head>
+    <body>
+        <div class="father">
+            <div class="son"></div>
+        </div>
+       
+    </body>
+    <script>
+        function fn(a){
+            return function(){
+                console.log(a)
+            }
+        }
+        var fo=fn('abcd')
+        fo()
+       </script>
+</html>

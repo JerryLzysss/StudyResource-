@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+    </head>
+    <body>
+       
+       
+    </body>
+    <script>
+        function Person()
+        {
+            this.say=function()
+            {
+                console.log('sing')
+            }
+        }
+        let p1=new Person();
+        let p2=new Person();
+        p1.say()
+        p2.say()
+        Person.prototype.look=function()
+        {
+            console.log('look')
+        }
+        p2.look()
+        console.log(p1.__proto__===Person.prototype)
+       </script>
+</html>
