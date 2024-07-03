@@ -1,0 +1,14 @@
+#bundle(){
+    
+   primary:blue;
+   secondary:100px;
+   .h(){
+        thirds:100px;
+   }
+}
+.mapper{
+    height:#bundle.h()[thirds];
+    width:#bundle[secondary];
+   background-color:#bundle[primary]
+   
+}

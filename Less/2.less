@@ -1,0 +1,19 @@
+@width : 10px;
+@height :@width+10px;
+@bg:red;
+.background{
+    width:@width;
+    height:@height;
+    background-color:@bg;
+    position:absolute;
+}
+.left1{
+    .background();
+    left:200px;
+
+}
+.left2{
+    .background();
+    left:400px;
+    
+}
