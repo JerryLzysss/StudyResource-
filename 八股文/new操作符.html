@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+    </head>
+    <body>
+       
+       
+    </body>
+    <script>
+     function newFun(Fun,...args)
+     {
+        /* 先创建一个空对象 */
+        let newObj={}
+        /* 通过原型链进行连接 */
+        newObj.__proto__=Fun.prototype
+        /* 构造函数的this绑定到新的空对象 */
+        const result=Fun.apply(newObj,args)
+        /* 返回六类线，如果是值类型返回对象，如果是引用类型则返回引用类型 */
+        return result instanceof Object?result:newObj
+     }
+     function Person(name)
+     {
+        this.name=name
+     }
+     Person.prototype.say=function()
+     {
+        console.log('123456')
+     }
+     const p1=newFun(Person,'张三')
+     p1.say()
+       </script>
+</html>
