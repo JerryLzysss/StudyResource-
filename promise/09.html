@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+    <script>
+        let p=new Promise((resolve,reject)=>{
+            resolve('ok');
+        })
+        /* 执行then方法 */
+        let result=p.then(value=>{
+            /* 返回失败 */
+            /* throw 'error' */
+            /* 对于非promise对象结果值为return的值,且返回成功 */
+            /* return 123 */
+           /*  对于promise对象返回的结构就是其promise的值 */
+           return new Promise(resolve=>{
+            resolve(123)
+           },reject=>{})
+        },reason=>{
+            console.warn(reason)
+        })
+     console.log(result);
+    </script>
+</body>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>test</title>
+    </head>
+    <body>
+        <script src="./自定义Promise.js"></script>
+           <script>
+            const p=new Promise((resolve,reject)=>{
+                setTimeout(()=>{
+                    
+                    
+                    reject(2)
+                    
+                },100)
+             
+            }).then(
+                value=>{
+                    console.log('onResolved',value)
+                },
+                reason=>{
+                    console.log('onRejected',reason)
+                    throw 'error'
+                    
+                }
+            ).then(
+                value=>{
+                    console.log('onResolved2',value)
+                },
+                reason=>{
+                    console.log('onRejected2',reason)
+                 
+                }
+            ).catch(reason=>{
+                console.log('onRejected3()',reason)
+            })
+            const p1=Promise.resolve(2)
+            const p2=Promise.resolve(Promise.resolve(3))
+            const p4=Promise.reject(4)
+            const p3=Promise.resolve(Promise.reject(4))
+            const p5=Promise.rejectDelay(8,3000)
+            const p6=Promise.resolveDelay(5,5000)
+         /*    p1.then(value=>{console.log(value)})
+            p2.then(value=>{console.log(value)})
+            p3.catch(reason=>{console.log(reason)})  */
+           /*   const pAll=Promise.all([p1,p2])
+                const pRace=Promise.race([p4,7,p2,p1])
+                pRace.then(
+                    value=>{
+                        console.log('value',value)
+                    },
+                    reason=>{
+                        console.log('reason',reason)
+                    }
+                )
+            pAll.then(
+                value=>{
+                    console.log(value)
+                },
+                reason=>{
+                    console.log(reason)
+                }
+            )  */
+            p5.then(value=>{console.log('value '+value)},reason=>{
+                console.log('reason '+reason)
+            })
+            p6.then(value=>{console.log('value '+value)},reason=>{
+                console.log('reason '+reason)
+            })
+        </script>
+    </body>
+</html>

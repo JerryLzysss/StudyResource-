@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+<div class="container">
+    <h2 class="page-header">Promise</h2>
+    <button class="btn btn-primary" id="btn">抽奖</button>
+</div>
+<script>
+    function rand(m,n)
+    {
+        return Math.ceil(Math.random()*(n-m+1))+m-1;
+    }
+    const btn=document.querySelector('#btn');
+    btn.addEventListener('click',function(){
+        /* setTimeout(()=>{
+            let n=rand(1,100);
+            if(n<=30)
+            {
+                alert("ok");
+            }
+            else
+            {
+                alert("error");
+            }
+        },1000) */
+        /* promise形式实现 */
+        const p=new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+            let n=rand(1,100);
+            if(n<=30)
+            {
+                resolve(n);
+                /* 将p的对象设置为成功 */
+            }
+            else
+            {
+                reject(n);
+                /* 将p的对象设置为失败 */
+            }
+        },1000) 
+        })
+        /* 调用Then方法 */
+        p.then((value)=>{
+            alert("ok"+value);
+        },(reason)=>{
+            alert("no"+reason);
+        })
+    });
+</script>
+</body>
+</html>

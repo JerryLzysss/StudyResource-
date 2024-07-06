@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>test</title>
+    </head>
+    <body>
+      
+           <script>
+/* async函数用来返回一个AsyncFunction对象的异步函数
+    async函数的返回值为一个Promise对象
+    promise对象的结果由aasync函数执行的返回值决定
+
+    await函数右侧的表达式一般为promise对象，但是也可以是其他的值
+    如果表达式是promise对象，await发安徽的是promise成功的值
+    如果表达式是其他值，则直接返回await
+
+    await必须写在async函数，但是async函数可以没有await
+    如果await的promise失败抛出异常需要通过try,catch来捕获
+*/
+           async function fn1(){
+            Promise.resolve(3)
+           }
+           const result=fn1()
+           console.log(result)
+           result.then(value=>{
+            console.log('ok')
+           },reason=>{
+            console.log('error')
+           })
+           function fn4(){
+            return 7
+           }
+           async function fn3(){
+            const value=await fn4()/* await右侧表达式为promise,得到的结果就是promise成功的value */
+            console.log(value)/* await右侧表达式不是promise,得到的结果就是它本身 */
+           }
+           fn3()
+        </script>
+    </body>
+</html>

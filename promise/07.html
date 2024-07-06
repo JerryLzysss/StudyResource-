@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+    
+    <script>
+        let p=new Promise((resolve,reject)=>{
+            console.log("1111")
+            reject('error');
+        })
+        console.log("2222")
+        p.catch(reason=>{
+            console.log(reason)
+        })
+        let p2=Promise.resolve(521);
+        let p3=Promise.resolve(p2);
+        console.log(p3);
+        let p4=Promise.reject(new Promise((resolve,reject)=>{
+            resolve('ok');
+        }))
+        p4.catch(reason=>{
+            console.log("gg");
+        })
+        let p5=Promise.all([p2,p3,p4])
+        console.log(p5);
+        console.log(p4);
+
+        let p6=new Promise((resolve,reject)=>{
+            resolve(111)
+        })
+        p6.then(value=>{
+            console.log("1")
+        })
+        p6.then(value=>{
+            console.log("2")
+        })
+    </script>
+</body>

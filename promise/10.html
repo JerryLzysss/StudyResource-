@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+    <script>
+   
+        let p=new Promise((resolve,reject)=>{
+            reject('err')
+        })
+        p.then(value=>{
+            console.log(value)
+            return value+111;
+        },).then(value=>{
+            console.log(value)
+            
+        }).catch(reason=>{
+            console.warn(reason)
+        })
+
+        let p2=new Promise((resolve,reject)=>{
+            reject('err')
+        })
+        p.then(value=>{
+            /* pending状态 */
+            return new Promise(()=>{})
+        },).then(value=>{
+            console.log(value)
+            
+        }).catch(reason=>{
+            console.warn(reason)
+        })
+
+    
+    </script>
+</body>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+    <script>
+        /* 封装sendajax发送请求
+        参数 url
+        返回结果是promise对象 */
+        function sendAjax(url){
+            return new Promise((resolve,reject)=>{
+                const xhr=new XMLHttpRequest();
+                xhr.open("GET",url);
+                xhr.send();
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState===4){
+                        if(xhr.status>=200&&xhr.status<300)
+                        {
+                            resolve(xhr.response);
+                        }
+                        else
+                        {
+                            reject(xhr.status);
+                        }
+                    }
+                }
+            })
+        }
+        sendAjax('www.baidu.com').then(value=>{
+            console.log(value)
+        },reason=>{
+            console.warn(reason)
+        })
+    </script>
+</body>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+    <script>
+        let p=new Promise((resolve,reject)=>{
+            /* 当执行器是异步任务先执行then，后执行Promise */
+          /*   setTimeout(()=>{
+                
+                resolve('ok');
+            },1000) */
+            /* 当执行器是同步任务先执行Promise,在执行then */
+            /* resolve('ok'); */
+            
+        })
+        p.then(value=>{console.log(value);},reason=>{})
+    </script>
+</body>

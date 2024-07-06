@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+    </head>
+    <body>
+        <div class="container">
+            <h2 class="page-header">ajax</h2>
+            <button class="btn btn-primary" id="btn">点击发送ajax</button>
+        </div>
+    </body>
+    <script>
+        const btn=document.querySelector('#btn');
+        btn.addEventListener('click',function()
+        {
+            const p=new Promise((resolve,reject)=>{
+
+            
+            /* 1.创建对象 */
+            const xhr=new XMLHttpRequest();
+            xhr.open('GET','https://www.cnblogs.com/');
+            xhr.send();
+            xhr.onreadystatechange=function()
+            {
+                if(xhr.readyState===4)
+                {
+                    if(xhr.status>=200&&xhr.status<300){
+                        console.log(xhr.response);
+                        resolve();
+                    }
+                    else
+                    {
+                        console.log(xhr.status);
+                        reject();
+                    }
+                }
+            }
+            })
+        })
+    </script>
+</html>
