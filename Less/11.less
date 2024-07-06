@@ -1,0 +1,17 @@
+.background{
+    position:absolute;
+    top:100px;
+    left:100px;
+    width:100px;
+    height:100px;
+    background-color:red;
+   
+}
+.left1{
+    &:extend(.background);
+    background-color:green;
+}
+.left2:extend(.left1 all)
+{
+    background-color:blue;
+}

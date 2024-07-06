@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+    </head>
+    <body>
+       
+       
+    </body>
+    <script>
+        /* 1.原型链继承 */
+      /*   function Parent()
+        {
+            this.isShow=true
+            this.info={
+                name:'1',
+                age:1,
+            }
+        }
+        Parent.prototype.getInfo=function()
+        {
+            console.log(this.info);
+            console.log(this.isShow);
+        }
+        function Child(){};
+        
+        Child.prototype=new Parent()
+        
+        let child1=new Child();
+        child1.info.gender='男';
+        let child2=new Child();
+        child2.isShow=false
+        console.log(child1.info.gender) */
+     /* 优点:写法方便简洁，容易理解 */
+    /* 缺点:对象案例共享所有继承的属性和方法，无法向父类构造函数传参 */   
+
+       /* 2.借用构造函数继承
+       使用apply()或者call()方法将父对象的构造函数绑定在子对象上 */
+/*        function Parent(gedner){
+        this.info={
+            name:'yyy',
+            age:18,
+            gender:gender
+        }
+       }
+       function Child(gender){
+        parent.call(this,gender)
+       }
+       let child1=new Child('男')
+       child1.info.nickname='xxxx';
+       console.log(child1.info)
+       let child2=new Child('女')
+       console.log(child2.info) */
+       /* 优点:解决原型链实现继承的不能传参的问题和父类的原型共享问题
+       缺点:借用构造函数的缺点是方法都在构造函数中定义，因此无法实现函数复用。
+       在父原型中定义的方法，对子类型而言是不可见的，所有类型都智能使用构造函数模式 */
+      
+      /* 3.组合继承
+      将原型链和构造函数组合到一块，使用原型链既实现了对原型属性和方法的继承，
+      又通过借用构造函数来实现对实例属性的继承，这样即通过在原型上定义方法实现了函数复用，
+      又能够保证每个实例都有自己的属性。
+      function Person(gender){
+        console.log('执行次数')；
+        this.info={
+            name:'yyy',
+            age:19,
+            gender:gender
+        }
+      } 
+        Person.prototype.gettInfo=function(){
+            console.log(this.info.name,this.info.age)
+        }
+        function Child(gender){
+            Person.call(this,gender)
+        }
+        /* 优点解决了原型链和构造函数的缺点
+        缺点:无论什么情况都会调用两次父类构造函数，一次是创建子类原型，另一次是在子类构造函数内部 */
+     
+        /* 4.ES6、Class实现继承
+        Class通过extends关键字实现继承，其实质是先创造出父类的this对象
+        然后用子类的构造函数修改this
+        子类的构造方法中必须调用super方法，且只有在调用了super(之后才能使用this),
+        因为子类的this对象是继承父类的this对象，然后对齐进行加工
+        而super方法表示的是父类的构造函数，用来新建父类的this对象 
+        
+        Class Animal{
+            constructor(kind){
+                this.kind=kind;
+            }
+            getKind(){
+                return this.kind
+            }
+        }
+        class Cat extends Animal{
+            constructor(name){
+                子类方法必须先调用父类方法
+                super('cat');
+                this.name=name;
+            }
+            getCatInfo(){
+                console.log(this.name+':'+super.getKind())
+            }
+        }
+        const cat1=new Cat('buding');
+        优点:语法简单易懂，操作方便。
+        缺点:不是所有浏览器都支持class关键字
+        */
+      </script>
+</html>

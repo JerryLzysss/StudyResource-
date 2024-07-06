@@ -1,0 +1,31 @@
+@width : 100px;
+@height :@width+100px;
+@bg:red;
+@bg2:green;
+@bg3:blue;
+@left:400px;
+@left2:100px;
+.margins{
+    position: absolute;
+    width:@width;
+    height:@height;
+    background-color:@bg;
+    .paddings{
+        position: absolute;
+        background-color:@bg2;
+        left:@width;
+        width:@width;
+        height:@height;
+        .contents{
+            position: absolute;
+            background-color:@bg3;
+            left:@left2;
+            width:@width;
+            height:@height; 
+        }
+        
+    }
+    &:hover{
+        background-color:@bg3
+    }
+}
