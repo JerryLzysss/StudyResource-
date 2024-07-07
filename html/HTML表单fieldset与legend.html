@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--input type
+    name：数据名称
+value:默认输入值
+maxlength:最大长度
+radio:单选框
+checkbox:复选框
+hidden:隐藏框
+-->
+<html>
+<head>
+    <title>TEST</title>
+  <body>
+    <fieldset>
+        <legend>主要信息</legend>
+        <!--fieldset为表单控件分组
+            legend标签是分组的标题-->
+    </fieldset>
+    <form action="https://search.jd.com/search">
+        账户:<input type="text" name="account"value="zhansgan"maxlength="10"><br>
+        密码:<input type="password" name="pwd" value="123" maxlength="10"><br>
+        <button>确认</button>
+        性别:
+        <INPUT TYPE="RADIO" name="gender" value="male">男
+        <input type="radio" name="gender" value="female" checked>女<br>
+        爱好:
+        <INPUT TYPE="checkbox" name="hobby" value="smoke">吸烟
+            <input type="checkbox" name="hobby" value="drink" checked>喝酒<br>
+        <!--<label> 标签的 for 属性应该等于相关元素的 id 元素，以便将它们捆绑起来。
+            通过label标签的for属性与指定表单元素的id绑定来实现关联表单
+        1. 在html中，<label>标签通常和<input>标签一起使用，<label>标签为input元素定义标注（标记）
+        2.   格式： <label for="关联控件的id" form="所属表单id列表">文本内容</label>
+            <label>
+            <button>确认</button>
+        </label>
+        <input type="hidden" name="from" value="toutiao">
+        <button type="submit">确认</button>
+        <button type="reset">重置</button>
+        <button type="check" disabled>检测用户是否被注册</button>
+        <!--禁止用户使用该表单内容
+            input textarea button select option都可以设置-->
+    </form>
+    <textarea name="other" cols="23" rows="3"></textarea></br>
+    <select name="place">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+    </select>
+    <!--
+        文本域 textarea name="msg" rows="22" cols="3">文本域</textarea>
+        row->默认行数
+        cols->默认列数
+        不能编写type属性
+        select name="from"
+        option value
+        name指定数据名称
+        selected表示默认选中
+        如果没有value属性，提交属性就为option中间的文字
+        
+    -->
+</body>
+    <style>
+    
+    </style>
+
+
+</head>
+
+
+</html>
