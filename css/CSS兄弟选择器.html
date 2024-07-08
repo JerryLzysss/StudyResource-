@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--
+     兄弟选择器:
+     ul~li
+     {
+        选中指定UL中的LI兄弟
+     }
+     ul+li
+     {
+        选中UL中相邻的LI兄弟
+     }
+    
+    -->
+    <head>
+      
+<body>
+   <ul>
+    <li class="ok">4</li>
+    <li class="ok">1</li>
+    <li class="better">2</li>
+    <li class="good">3</li>
+    </ul>
+    <hr>
+</ul>
+    <ol>
+        <li class="ok">4</li>
+        <li>5</li>
+        <li>6</li>
+    </ol>
+</body>
+    <style>
+     
+    li~li
+    {
+        color:red;
+    }
+    li+li+li
+    {
+        color:green;
+    }
+
+    </style>
+
+
+</head>
+
+
+</html>

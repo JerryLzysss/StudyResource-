@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--
+     伪类选择器:
+    link未被访问
+    visited访问
+    hover悬停
+    active激活（按下不松开）
+    focus 获取焦点
+    -->
+    <head>
+      
+<body>
+<div>
+    <p>0213</p>
+    <span>-132131</span>
+    <p>1321321</p>
+    <p>2321321</p>
+    <p>33213</p>
+    <p>442131</p>
+    <input type="text" placeholder="请输入你的名字">
+</div>
+</body>
+    <style>
+       div::first-letter/*选中的第一个字母*/
+       {
+        color:green;
+        font-size:80px;
+       }
+       div::first-line/*选中的第一行*/
+       {
+        color:red;
+        font-size:50px;
+       }
+       div::selection/*div中被鼠标选择的文字*/
+       {
+        background-color:yellowgreen;
+        
+       }
+       p::before
+       {
+        content:"o";/*元素最前的位置*/
+       }
+       p::after/*元素最后的位置*/
+       {
+        content:"k";
+       }
+       input::placeholder{
+        color:skyblue;
+        /*选中input元素中的提示文字*/
+       }
+        
+
+
+    </style>
+
+
+</head>
+
+
+</html>

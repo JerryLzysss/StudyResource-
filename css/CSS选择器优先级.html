@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--行内>ID>类>元素>通配
+        ID选择器权重1000
+      类与属性权重100
+    元素权重10
+  根据权重大小计算优先级-->
+    <head>
+      
+<body>
+<div>
+    <p id="sss" class="ok">02123</p>
+    <span>-132131</span>
+    <p id="vvv" class="ok">1321321</p>
+    <p>2321321</p>
+    <p>33213</p>
+    <p>442131</p>
+    <input type="text" placeholder="请输入你的名字">
+</div>
+</body>
+    <style>
+        *
+        {
+            color:green;
+        }
+      p
+      {
+        color:blue;
+      }
+      .ok{
+        color:red;
+      }
+      #sss{
+        color:purple;
+      }
+
+        
+
+
+    </style>
+
+
+</head>
+
+
+</html>

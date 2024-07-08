@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--
+     后代选择器:
+     选中指定元素符合要求的后代元素
+     险些组现在写后代
+     ul li
+     {
+        选中ul中所有的li
+     }
+     ul li a
+     {
+        选中ul中所有li中的a
+     }
+    .subject li
+    {
+        选中类名为subject元素的所有li
+    }
+    
+    -->
+    <head>
+      
+<body>
+   <ul>
+    <li class="ok">1</li>
+    <li class="better">2</li>
+    <li class="good">3</li>
+    </ul>
+    <hr>
+</ul>
+    <ol>
+        <li class="ok">4</li>
+        <li>5</li>
+        <li>6</li>
+    </ol>
+</body>
+    <style>
+     
+    
+ul li{
+    font-size:30px;
+}
+ul .ok
+{
+    color:red;
+}
+ol .ok{
+    color:green;
+}
+ul li.good
+{
+    color:blue;
+}
+    </style>
+
+
+</head>
+
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--盒子模型组成:
+margin:外边距
+border:边框
+padding:内边距
+Content:内容
+margin
+border
+padding
+content
+盒子大小:content+左右padding+左右border
+
+默认宽度：不设置width的宽度
+总宽度=content-margin
+内容区宽度=content-margin-border-padding
+
+-->
+    <head>
+      
+<body>
+    <div class="outer">21345
+    <div class="inner1">3213</div>
+    <div class="inner2">32134</div>
+    </div>   
+</body>
+    <style>
+        /*oveflow:
+        visible显示，
+        hidden隐藏，
+        scroll显示滚动，不论内容是否溢出
+        auto自动，内容不溢出不显示
+        显示滚动
+        overflow-x上水平溢出处理
+        overflow-y垂直方向溢出处理*/
+        /*visibility:hidden隐藏，默认显示
+        占用原位置
+        display:none隐藏元素
+        不占用位置 */
+        .outer{
+            width:400px;
+            font-size:100px;
+            background-color: grey;
+            overflow:hidden;
+        }
+        .inner1{
+            
+            width:100px;
+            height:100px;
+            background-color: orange;
+            margin-top:50px;
+        }
+        .inner2{
+            width:100px;
+            height:100px;
+            background-color:green;
+            margin-bottom:50px;
+        }
+       /*子元素优先继承父元素的一些属性
+       有涉及字体属性
+       元素默认元素>继承元素
+       对行内元素，行内块元素
+       可以使用text-align,line-height,text-indent进行对齐
+       
+       */
+    </style>
+
+
+</head>
+
+
+</html>

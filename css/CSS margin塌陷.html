@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--盒子模型组成:
+margin:外边距
+border:边框
+padding:内边距
+Content:内容
+margin
+border
+padding
+content
+盒子大小:content+左右padding+左右border
+
+默认宽度：不设置width的宽度
+总宽度=content-margin
+内容区宽度=content-margin-border-padding
+
+-->
+    <head>
+      
+<body>
+    <div class="outer">
+    <div class="inner1"></div>
+    <div class="inner2"></div>
+    </div>   
+</body>
+    <style>
+        /*margin塌陷*/
+        /*第一个子元素margin会作用父元素
+          最后一个子元素下margin会作用父元素*/
+          /*如何解决margin塌陷
+          1.设置父元素padding为0
+          2.设置宽度不为0的border
+          3.设置css样式:overflow:hidden*/
+        .outer{
+            width:400px;
+           
+            background-color: grey;
+            overflow:hidden;
+        }
+        .inner1{
+            width:100px;
+            height:100px;
+            background-color: orange;
+            margin-top:50px;
+        }
+        .inner2{
+            width:100px;
+            height:100px;
+            background-color:green;
+            margin-bottom:50px;
+        }
+        /*margin合并:上面兄弟的下边距会和下面兄弟的上边距合并取最大值，
+        解决margin塌陷只给设置一个上下外边距即可 */
+    </style>
+
+
+</head>
+
+
+</html>

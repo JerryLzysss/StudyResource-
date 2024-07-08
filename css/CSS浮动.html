@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!--浮动是用来实现文字环绕图片效果-->    
+<body>
+    <div class="outer">
+        <div class="box box1">盒子1</div>
+        <div class="box box2">盒子2</div>
+        <div class="box box3">盒子3</div>
+    </div>
+</body>
+   <style>
+    .outer{
+        width:800px;
+        height:400px;
+        background-color:grey;
+    }
+    .box{
+        font-size:20px;
+    }
+    .box1{
+        background-color:skyblue;
+    }
+    .box2{
+        background-color:orange;
+        float:left;
+        margin:20px;
+    }
+    .box3{
+        background-color: green;
+        height:200px;
+    }
+    /*脱离文档流
+    浮动后默认宽与高被内容撑开
+    不会独占一行可以共用元素
+    不会margin合并，也不会margin塌陷
+    不会像行内块一样被当做文本处理
+    */
+    </style>
+
+
+</head>
+
+
+</html>

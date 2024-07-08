@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--
+        交集选择器:选中同时符合多个条件的元素
+        选中类名为beauty的p元素
+        p.beauty
+        {
+            color:blue
+        }
+        选中类名包含rich和beauty元素
+        .rich.beauty
+        {
+            color:green
+        }
+        标签名必须写在前面
+        不可能出现两个元素选择器
+        交集选择器:选中多个包含的元素
+        .good,.bad,...
+
+    -->
+    <head>
+      
+<body>
+    <p class="good good2">good</p>
+    <p class="good">now</p>
+    <p id="bad">ok1</p>
+    <p>ok2</p>
+</body>
+    <style>
+     
+    
+*{
+    color:red;
+}
+h1
+{
+    color:green
+}
+.good.good2
+{
+    color:green;
+ font-size:30px;
+}
+.good,#bad
+{
+    color:blue;
+}
+
+    </style>
+
+
+</head>
+
+
+</html>

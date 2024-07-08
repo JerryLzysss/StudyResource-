@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+   
+<body>
+    <div class="outer">
+        <div class="box box0">盒子0</div>
+        <div class="box box1">盒子1</div>
+        <div class="box box2">盒子2</div>
+        <div class="box box3">盒子3</div>
+        <div class="box box4">盒子4</div>
+    </div>
+</body>
+   <style>
+    .outer{
+        width:500px;
+        background-color:skyblue;
+        border:1px;
+        border-style:solid;
+        border-color:black;
+        position:relative;
+        padding:20px;
+    }
+    .box{
+        width:200px;
+        height:200px;
+
+    }
+    .box1{
+        background-color:#888;
+    }
+    .box2{
+        background-color:orange;
+        position:absolute;
+        left:20px;
+        top:220px;
+      
+     
+    }
+    .box3{
+        background-color:green;
+        
+    }
+  /* 固定定位:position:fixed
+  可以使用left,right,top,bottom
+  参考点在视口
+
+脱离文档流会影响后面兄弟元素与父元素
+浮动和绝对定位不能同时设置
+任何元素设置了固定定位后会变成固定定位元素
+  定位显示层级比普通元素高，与其他定位层级一样
+  后写入的覆盖先前写入的
+  left和right冲突，top和bottom不能一起设置
+  */
+  </style>
+
+
+</head>
+
+
+</html>

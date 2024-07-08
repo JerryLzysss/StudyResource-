@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+   
+<body>
+    <div class="outer">
+        <div class="box box0">盒子0</div>
+        <div class="box box1">盒子1</div>
+        <div class="box box2">盒子2</div>
+        <div class="box box3">盒子3</div>
+        <div class="box box4">盒子4</div>
+    </div>
+</body>
+   <style>
+    .outer{
+        width:500px;
+        background-color:skyblue;
+        border:1px;
+        border-style:solid;
+        border-color:black;
+    }
+    .box{
+        width:200px;
+        height:200px;
+
+    }
+    .box1{
+        background-color:#888;
+    }
+    .box2{
+        background-color:orange;
+        position:relative;
+        left:50px;
+        right:50px;
+        margin-left:50px;
+       /*  float:left; */
+    }
+    .box3{
+        background-color:green;
+        position:relative;
+        top:-50px;
+    }
+  /* 相对定位的特点:position:relative
+  可以使用left,right,top,bottom
+  参考点在自己原来的位置
+  不会脱离文档流，不影响其他元素
+  定位显示层级比普通元素高，与其他定位层级一样
+  后写入的覆盖先前写入的
+  left和right冲突，top和bottom不能一起设置
+  允许使用浮动和margin调整位置但不建议 */
+  </style>
+
+
+</head>
+
+
+</html>

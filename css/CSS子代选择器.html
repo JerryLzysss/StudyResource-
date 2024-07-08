@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--
+     子代选择器:
+     .ul>.ok
+     {
+        选中UL类中OK类
+     }
+     ul>.ok
+     {
+        选中UL中OK类
+     }
+    
+    -->
+    <head>
+      
+<body>
+   <ul>
+    <li class="ok">1</li>
+    <li class="better">2</li>
+    <li class="good">3</li>
+    </ul>
+    <hr>
+</ul>
+    <ol>
+        <li class="ok">4</li>
+        <li>5</li>
+        <li>6</li>
+    </ol>
+</body>
+    <style>
+     
+    
+ul>li>.better
+{
+    color:red;
+}
+ol>.ok
+{
+    color:green;
+}
+    </style>
+
+
+</head>
+
+
+</html>

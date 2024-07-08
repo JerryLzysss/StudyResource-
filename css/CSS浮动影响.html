@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!--浮动是用来实现文字环绕图片效果-->    
+<body>
+    <div class="outer">
+        <div class="box box0">盒子0</div>
+        <div class="box box1">盒子1</div>
+        <div class="box box2">盒子2</div>
+        <div class="box box3">盒子3</div>
+        <div class="box box4">盒子4</div>
+    </div>
+</body>
+   <style>
+    .outer{
+        width:500px;
+        background-color:gray;
+        border:1px;
+        border-style:solid;
+        border-color:black;
+    }
+    .box{
+        width:100px;
+        height:100px;
+        background-color:skyblue;
+        border:1px;
+        border-style:solid;
+        border-color:black;
+        margin:10px;
+    }
+    .box1,.box2,.box3{
+        float:left;
+    }
+   /*后面兄弟会占据浮动元素之前的位置，在浮动元素下面，而对前面兄弟无已更新*/
+   /*不能撑起父元素的高度，会导致父元素高度塌陷，而宽度则会束缚浮动元素*/
+  /*解决浮动:
+  1.给父元素设定高度
+  2.给父元素也设置浮动
+  3.给父元素设置overflow:hidden
+  4.给父所有浮动元素最后面添加一个块级元素设置clear:both
+  5.给浮动元素的父元素设置伪元素
+  ｛
+  .parent:after{
+    content:"";
+    display:block;
+    clear:both;
+    
+    ｝*/
+  </style>
+
+
+</head>
+
+
+</html>

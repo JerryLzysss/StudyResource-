@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!--
+     伪类选择器:
+    link未被访问
+    visited访问
+    hover悬停
+    active激活（按下不松开）
+    focus 获取焦点
+    -->
+    <head>
+      
+<body>
+<div>
+    <p>0</p>
+    <span>-1</span>
+    <p>1</p>
+    <p>2</p>
+    <p>3</p>
+    <p>4</p>
+</div>
+</body>
+    <style>
+         div>p:first-child{
+            color:green;
+        }
+        p:first-child{
+            color:red;
+        }
+        div>p:last-child
+        {
+            color:blue;
+        }
+        div>p:nth-child(2n)/*按照兄弟计算*/
+        {
+            color:grey;
+        }
+        div>p:nth-of-type(2n)/*按照同类型计算*/
+        {
+            color:pink;
+        }
+        /*div>p:nth-last-child(3)/*倒数第N个元素*/
+        /*div>p:nth-last-of-type(2)倒数第N个儿子的P元素*/
+        /*span:only-child唯一儿子的SPAN元素*/
+        /*span:only-of-type没有同类型的兄弟SPAN元素*/
+        /*:root根元素/
+        /*:empty空元素/
+        /*div>p:not(.fail){选中div儿子中的P元素但是类名不为fail}*/
+        /*input:checked{}选中复选或单选框
+        /*input:disabled{}选中不可用的
+        /*input:enabled{}选中可用的
+        /*div:target{}对选中的目标
+        /*div:lang{}对语言设定
+        
+        */
+
+
+    </style>
+
+
+</head>
+
+
+</html>
