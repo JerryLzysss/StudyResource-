@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <style>
+            #result{
+                width:200px;
+                height:100px;
+                border:solid;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="btn01">发送请求</button>
+        <div id="result"></div>
+    </body>
+    <script>
+        const btn=document.getElementById("btn01");
+        const result=document.getElementById("result");
+        btn.onclick=function()
+        {
+            
+            /*1.创建对象*/
+            const xhr=new XMLHttpRequest();
+            /* 转换类型 */
+            xhr.responseType='json';
+            /*2.初始化，设置请求方法和url*/
+            xhr.open('GET','http://127.0.0.1:8000/json-server');
+            /* 设置请求头
+            参数1. 头名字
+            参数2. 头值*/
+           // xhr.setRequestHeader('content-Type','application/x-www.form-urlencoded');
+            /*3.发送*/
+            xhr.send();
+            /*4.事件绑定，处理服务端返回结果*/
+      xhr.onreadystatechange=function()
+      {
+        //状态01234
+    console.log(xhr.status);
+        if(xhr.readyState===4)
+        {
+            if(xhr.status>=200&&xhr.status<300)
+            {
+               
+                console.log(xhr.statusText);
+                console.log(xhr.getAllResponseHeaders);
+                console.log(xhr.response);
+                /* json转换 */
+               /*  let data=JSON.parse(xhr.response);
+                result.innerHTML=data.name; */
+                result.innerHTML=xhr.response.name;
+;            }
+        }
+      }      
+      
+        }
+    </script>
+</html>

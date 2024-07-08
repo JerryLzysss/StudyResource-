@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <style>
+            #result{
+                width:200px;
+                height:100px;
+                border:solid;
+            }
+        </style>
+        <script src="./node_modules/axios/dist/axios.js"></script>
+    </head>
+    <body>
+        <button id="btn01">发送GET请求</button>
+        <button id="btn02">发送POST请求</button>
+        <div id="result"></div>
+    </body>
+    <script>
+      const btn01=document.getElementById("btn01");
+      const btn02=document.getElementById("btn02");
+      axios.defaults.baseURL="http://127.0.0.1:8000";
+      btn01.onclick=function()
+      {
+        axios.get('/axios-server',{
+            params:{
+                id:100
+            },
+            headers:{
+                name:"gg"
+            }
+
+        }).then(value=>{
+            console.log(value);
+        })
+      }
+      btn02.onclick=function()
+      {
+        axios.post('/axios-server',{
+            params:{
+                id:100
+            },
+            headers:{
+                name:"gg"
+            }
+
+        })
+      }
+    </script>
+</html>
