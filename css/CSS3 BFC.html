@@ -29,10 +29,80 @@
     <head>
    
 <body>
-    
+    <!-- 第一种情况 -->
+     <div class="container1">
+            <div class="box1"></div>
+     </div>
+     <!-- 第二种情况 -->
+     <div style="overflow: hidden;">
+     <div class="container2">       
+     </div>
+     <div  style="overflow: hidden;">
+     <div class="box2"></div>
+      </div>
+      <!-- 第三种情况 -->
+       <div class="container3">
+            <div class="box3"></div>
+       </div>
 </body>
  <style>
-
+      /* Margin塌陷
+      1.父元素与子元素之间且父元素没有边框，
+      给子元素添加margin-top属性时，
+      此时只是想让子元素的边框距离父元素边框有一段距离，
+      而却出现了父元素的顶端距离body这个边框出现了位移，
+      这就是margin-top塌陷的现象。
+       */
+      .container1{
+            height:300px;
+            width:300px;
+            background-color:blue;
+            
+          /*解决方法:增加oveflow:hidden;  
+           overflow: hidden; */
+      }
+      .box1{
+           
+            background-color:red;
+            height:100px;
+            width:100px;
+            margin-top:50px;
+           
+      }
+      /* 2、避免外边距margin重叠（margin合并）
+      问题：两个兄弟块元素，一个设置下外边距100px，一个设置上外边距100px，此时它们不应该是相距200px才对嘛？为什么只相距了100px？
+      原因兄弟之间的元素，垂直方向的margin-bottom和margin-top会合并为单个边距，其大小为单个边距的最大值，如果值一样则值仅为其中一个。这就是外边距重叠现象.*/
+      /* 解决方法,通过放置到两个容器然后设置overflow:hidden */
+      .container2{
+            height:100px;
+            width:100px;
+            background-color:green;
+            margin-bottom:50px;
+           
+           
+           
+      }
+      .box2{
+       
+           background-color:yellow;
+           height:100px;
+           width:100px;
+           margin-top:50px;
+     }
+     /* 3.清除浮动/解决元素被浮动元素覆盖
+     原因：这是因为给子元素添加了浮动，使它脱离了文档流；
+     解决方案：通过overflow:hidden触发BFC； */
+     .container3{
+            border:1px solid;
+            overflow:hidden;
+     }
+     .box3{
+      background:red;
+      height:100px;
+      width:100px;
+      float:left;
+     }
+     
 
  </style>
   

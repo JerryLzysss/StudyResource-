@@ -43,7 +43,470 @@
     <head>
    
 <body>
-    
+<!-- 
+1. 伸缩盒模型介绍
+伸缩盒模型由伸缩容器和伸缩项目组成。
+将元素的display设置为flex，元素就变成了一个伸缩容器，其子元素自动变为伸缩项目（不包括孙子元素）。
+无论原来是什么元素，变成伸缩项目后，都会变成块元素。
+<html>
+  <style>
+    .outer {
+      /* 设置为伸缩容器，其子元素自动变成伸缩项目，不包括孙子元素 */
+      display: flex;
+    }
+    .inner {
+      /* 变成伸缩项目后，可以设置宽高 */
+		  width: 500px;
+      height: 100px;
+      background-color: red;
+      text-align: center;
+      line-height: 100px;
+	  }
+  </style>
+
+  <div class="outer">
+    <span class="inner">我是一个行内元素</span>
+  </div>
+</html> -->
+
+<!-- 2. 伸缩盒模型的主轴方向
+伸缩盒模型的主轴，默认是横向的、从左到右，伸缩项目沿着主轴排列。
+伸缩盒模型的侧轴，垂直于主轴。
+通过flex-direction可以设置主轴的方向：
+row：主轴横向、从左到右（默认值）
+row-reverse：主轴横向、从右到左
+column：主轴纵向、从上到下
+column-reverse：主轴纵向、从下到上
+<html>
+  <style>
+    .outer1,.outer2,.outer3,.outer4 {
+      border: 1px black solid;
+      margin: 10px;
+    }
+    .outer1 {
+      display: flex;
+    }
+    .outer2 {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+    .outer3 {
+      display: flex;
+      flex-direction: column;
+    }
+    .outer4 {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      line-height: 100px;
+    }
+    .inner1 {
+      background-color: red;
+	  }
+    .inner2 {
+      background-color: green;
+	  }
+    .inner3 {
+      background-color: blue;
+	  }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box">row</div>
+    <div class="inner2 box">row</div>
+    <div class="inner3 box">row</div>
+  </div>
+  <div class="outer2">
+    <div class="inner1 box">row-reverse</div>
+    <div class="inner2 box">row-reverse</div>
+    <div class="inner3 box">row-reverse</div>
+  </div>
+  <div class="outer3">
+    <div class="inner1 box">column</div>
+    <div class="inner2 box">column</div>
+    <div class="inner3 box">column</div>
+  </div>
+  <div class="outer4">
+    <div class="inner1 box">column-reverse</div>
+    <div class="inner2 box">column-reverse</div>
+    <div class="inner3 box">column-reverse</div>
+  </div>
+</html> -->
+<!-- 
+3. 伸缩盒模型的主轴换行
+伸缩项目沿着主轴排列，默认是不换行的。通过flex-wrap可以设置：
+nowrap：不换行（默认值）
+wrap：换行
+wrap-reverse：反向换行
+<html>
+  <style>
+    .outer1,.outer2,.outer3,.outer4 {
+      width: 200px;
+      border: 1px black solid;
+      margin: 10px;
+    }
+    .outer1 {
+      display: flex;
+    }
+    .outer2 {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .outer3 {
+      display: flex;
+      flex-wrap: wrap-reverse;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      line-height: 100px;
+    }
+    .inner1 {
+      background-color: red;
+	  }
+    .inner2 {
+      background-color: green;
+	  }
+    .inner3 {
+      background-color: blue;
+	  }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box">nowrap</div>
+    <div class="inner2 box">nowrap</div>
+    <div class="inner3 box">nowrap</div>
+  </div>
+  <div class="outer2">
+    <div class="inner1 box">wrap</div>
+    <div class="inner2 box">wrap</div>
+    <div class="inner3 box">wrap</div>
+  </div>
+  <div class="outer3">
+    <div class="inner1 box">wrap-reverse</div>
+    <div class="inner2 box">wrap-reverse</div>
+    <div class="inner3 box">wrap-reverse</div>
+  </div>
+</html> -->
+
+
+<!-- 4. 主轴上的对齐方式
+伸缩项目沿着主轴排列，在主轴上的对齐方式可以通过justify-content设置：
+flex-start：主轴起点对齐（默认值）
+flex-end：主轴尾部对齐
+center：主轴上居中对齐
+space-between：主轴上均匀分布，两端对齐
+space-around：主轴上均匀分布，两端距离是中间的一半
+space-evenly：主轴上均匀分布，两端距离和中间的一样
+<html>
+  <style>
+    .outer1,.outer2,.outer3,.outer4,.outer5,.outer6 {
+      border: 1px black solid;
+      margin: 10px;
+      display: flex;
+    }
+    .outer1 {
+      justify-content: flex-start;
+    }
+    .outer2 {
+      justify-content: center;
+    }
+    .outer3 {
+      justify-content: flex-end;
+    }
+    .outer4 {
+      justify-content: space-between;
+    }
+    .outer5 {
+      justify-content: space-around;
+    }
+    .outer6 {
+      justify-content: space-evenly;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      line-height: 100px;
+    }
+    .inner1 {
+      background-color: red;
+	  }
+    .inner2 {
+      background-color: green;
+	  }
+    .inner3 {
+      background-color: blue;
+	  }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box">flex-start;</div>
+    <div class="inner2 box">flex-start;</div>
+    <div class="inner3 box">flex-start;</div>
+  </div>
+  <div class="outer2">
+    <div class="inner1 box">center</div>
+    <div class="inner2 box">center</div>
+    <div class="inner3 box">center</div>
+  </div>
+  <div class="outer3">
+    <div class="inner1 box">flex-end</div>
+    <div class="inner2 box">flex-end</div>
+    <div class="inner3 box">flex-end</div>
+  </div>
+  <div class="outer4">
+    <div class="inner1 box">space-between</div>
+    <div class="inner2 box">space-between</div>
+    <div class="inner3 box">space-between</div>
+  </div>
+  <div class="outer5">
+    <div class="inner1 box">space-around</div>
+    <div class="inner2 box">space-around</div>
+    <div class="inner3 box">space-around</div>
+  </div>
+  <div class="outer6">
+    <div class="inner1 box">space-evenly</div>
+    <div class="inner2 box">space-evenly</div>
+    <div class="inner3 box">space-evenly</div>
+  </div>
+</html> -->
+
+<!-- 
+5. 侧轴上对齐方式
+5.1 一行的侧轴上对齐方式
+如果伸缩项目只有一行，在侧轴上的对齐方式可以通过align-items设置：
+flex-start：侧轴起点对齐
+flex-end：侧轴尾部对齐
+center：侧轴上居中对齐
+baseline：侧轴上文本基线对齐
+stretch：侧轴上拉伸到整个父容器（默认值）（ps：如果侧轴是纵向的，伸缩项目不能设置height；如果侧轴是横向，伸缩项目不能设置witch。否则无效）
+<html>
+  <style>
+    .outer1,.outer2,.outer3,.outer4,.outer5 {
+      border: 1px black solid;
+      margin: 10px;
+      display: flex;
+      height: 200px;
+    }
+    .outer1 {
+      align-items: flex-start;
+    }
+    .outer2 {
+      align-items: center;
+    }
+    .outer3 {
+      align-items: flex-end;
+    }
+    .outer4 {
+      align-items: baseline;
+    }
+    .outer5 {
+      align-items: stretch;
+    }
+    .box {
+      width: 100px;
+    }
+    .inner1 {
+      height: 50px;
+      background-color: red;
+	  }
+    .inner2 {
+      height: 100px;
+      background-color: green;
+	  }
+    .inner3 {
+      height: 150px;
+      background-color: blue;
+	  }
+	
+    .inner4 {
+      background-color: red;
+    }
+    .inner5 {
+      background-color: green;
+    }
+    .inner6{
+      background-color: blue;
+    }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box"></div>
+    <div class="inner2 box"></div>
+    <div class="inner3 box"></div>
+  </div>
+  <div class="outer2">
+    <div class="inner1 box"></div>
+    <div class="inner2 box"></div>
+    <div class="inner3 box"></div>
+  </div>
+  <div class="outer3">
+    <div class="inner1 box"></div>
+    <div class="inner2 box"></div>
+    <div class="inner3 box"></div>
+  </div>
+  <div class="outer4">
+    <div class="inner1 box"></div>
+    <div class="inner2 box"></div>
+    <div class="inner3 box"></div>
+  </div>
+  <div class="outer5">
+    <div class="inner4 box"></div>
+    <div class="inner5 box"></div>
+    <div class="inner6 box"></div>
+  </div>
+</html> -->
+
+<!-- 
+5.2 多行的侧轴上对齐方式
+如果伸缩项目有多行，在侧轴上的对齐方式可以通过align-content设置：
+
+flex-start：侧轴起点对齐
+flex-end：侧轴尾部对齐
+center：侧轴上居中对齐
+space-between：侧轴上均匀分布，两端对齐
+space-around：侧轴上均匀分布，两端距离是中间的一半
+space-evenly：侧轴上均匀分布，两端距离和中间的一致
+stretch：侧轴上平分整个父容器默认值）（ps：如果侧轴是纵向的，伸缩项目不能设置height；如果侧轴是横向，伸缩项目不能设置witch。否则无效）
+6. 伸缩项目的伸缩性
+6.1 伸缩项目在主轴上的基准长度
+flex-basis：设置伸缩项目在主轴上的基准长度。若主轴是横向的，那么伸缩项目的 width 失效；若主轴是纵向的，那么伸缩项目的 height 失效。
+
+浏览器根据这个属性计算主轴上是否有多余的空间，默认值是 auto，即等于伸缩项目的width 或height。
+
+6.2 伸缩项目的放大
+flex-grow：设置伸缩项目的放大比例，根据比例瓜分主轴上剩余的空间。
+
+瓜分的计算方式：
+
+例如 1：所有的伸缩项目的 flex-grow 都相同，那么所有的伸缩项目平分主轴上剩余的空间。
+例如 2：一共 3 个伸缩项目，flex-grow 分别为 1、2、3，那么瓜分主轴上剩余的空间比例为 1/6、1/3、1/2。
+<html>
+  <style>
+    .outer1 {
+      border: 1px black solid;
+      margin: 10px;
+      display: flex;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+    }
+    .inner1 {
+      flex-grow: 1;
+      background-color: red;
+	  }
+    .inner2 {
+      flex-grow: 2;
+      background-color: green;
+	  }
+    .inner3 {
+      flex-grow: 3;
+      background-color: blue;
+	  }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box"></div>
+    <div class="inner2 box"></div>
+    <div class="inner3 box"></div>
+  </div>
+</html> -->
+<!-- 
+6.3 伸缩项目的缩小
+flex-shrink：设置伸缩项目的缩小比例，如果主轴上空间不够。
+缩小的计算公式：
+例如：一共 3 个伸缩项目，每个伸缩项目的 flex-basis 是 100px、100px、200px，每个伸缩项目的 flex-shrink 是 1、2、1
+第一个伸缩项目缩小的比例：100 * 1 / （100 * 1 + 100 * 2 + 200 * 1）
+第二个伸缩项目缩小的比例：100 * 2 / （100 * 1 + 100 * 2 + 200 * 1）
+第三个伸缩项目缩小的比例：200 * 1 / （100 * 1 + 100 * 2 + 200 * 1）
+
+<html>
+  <style>
+    .outer1 {
+      width: 300px;
+      border: 1px black solid;
+      margin: 10px;
+      display: flex;
+    }
+    .box {
+      height: 100px;
+    }
+    .inner1 {
+      width: 100px;
+      flex-shrink: 1;
+      background-color: red;
+	  }
+    .inner2 {
+      width: 100px;
+      flex-shrink: 2;
+      background-color: green;
+	  }
+    .inner3 {
+      width: 200px;
+      flex-shrink: 1;
+      background-color: blue;
+	  }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box"></div>
+    <div class="inner2 box"></div>
+    <div class="inner3 box"></div>
+  </div>
+</html> -->
+<!-- 
+
+7. flex 复合属性
+flex 可以设置 flex-grow、flex-shrink、flex-basis，有严格顺序。默认值为 flex: 0 1 auto
+
+flex: 1 1 auto 可简写为 flex: auto
+flex: 1 1 0 可简写为 flex: 1
+flex: 0 0 auto 可简写为 flex: none
+flex: 0 1 auto 可简写为 flex: 0 auto
+8. 伸缩项目排序
+伸缩项目的顺序，可以通过order 设置，数值越小，顺序越前，默认为 0。如果order 的值相同，按照伸缩项目的先后排序，在前面的排前面。
+
+<html>
+  <style>
+    .outer1 {
+      border: 1px black solid;
+      margin: 10px;
+      display: flex;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      line-height: 100px;
+    }
+    .inner1 {
+      order: 3;
+      background-color: red;
+	  }
+    .inner2 {
+      order: 1;
+      background-color: green;
+	  }
+    .inner3 {
+      order: 2;
+      background-color: blue;
+	  }
+  </style>
+
+  <div class="outer1">
+    <div class="inner1 box">3</div>
+    <div class="inner2 box">1</div>
+    <div class="inner3 box">2</div>
+  </div>
+</html> -->
+
 </body>
  <style>
 

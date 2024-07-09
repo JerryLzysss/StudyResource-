@@ -1,0 +1,29 @@
+{
+  "posts": [
+    {
+      "id": "dd9d",
+      "title": "json-server:)",
+      "author": "ok"
+    },
+    {
+      "id": "5ef9",
+      "title": "json-server:)",
+      "author": "ok"
+    },
+    {
+      "id": "2182",
+      "title": "json-server:)",
+      "author": "ok"
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "body": "json-server --watch db.json",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
