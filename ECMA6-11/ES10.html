@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+        /* 字符串方法拓展 */
+     const arr=Object.fromEntries([
+        ['name','1'],
+        ['age','2，3，4，5']
+    ]);
+     const arr2=Object.entries({
+        name:'1',
+        age:'2'
+     });
+     console.log(arr);
+     console.log(arr2);
+     /* 字符串拓展 */
+     let str=' qwqwqwq ';
+     console.log(str.trimStart());
+     console.log(str.trimEnd());
+/* flat多维转低维
+flatMap */
+     const arrs=[1,2,3,[5,6],[8,9,10]];
+     
+     const result=arrs.flatMap(item=>[item*10]);
+     console.log(result);
+     let s=Symbol('qaq');
+     /* 查看symbol属性 */
+     console.log(s.description);
+    </script>
+</html>

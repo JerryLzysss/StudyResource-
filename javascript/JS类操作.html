@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+  <h1 class="b1" id="box">0</h1>
+  <button id="btn01">qaq</button>
+</body>
+ <style>
+   .b1{
+    width:300px;
+    height:300px;
+    background-color: red;
+   }
+   .b2{
+    width:500px;
+    height:500px;
+    background-color: green;
+   }
+
+ </style>
+<script>
+   /* 类操作
+   
+    对于一个类逐个传送更改是相当费时费力的
+    而修改CLASS属性来间接修改样式
+    即实现一次修改可同时修改多个样式*/
+    function addClass(obj,cn){
+    if(!hasClass(obj,cn)){
+        obj.className+=" "+cn;
+    }
+}
+    function hasClass(obj,cn){
+     var reg=new RegExp("\\b"+cn+"\\b");
+     return reg.test(obj.className);
+}
+    function removeClass(obj,cn){
+    var reg=new RegExp("\\b"+cn+"\\b");
+    obj.className=obj.className.replace(reg,"");
+}
+function toggleClass(obj,cn){
+    if(hasClass(obj,cn)){
+        removeClass(obj,cn);
+    }else{
+        addClass(obj,cn);
+    }
+}
+   var box=document.getElementById("box");
+    var btn01=document.getElementById("btn01");
+    btn01.onclick=function()
+    {
+        removeClass(box,"b1");
+    }
+    </script>
+</head>
+
+
+</html>

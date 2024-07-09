@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+  <h1 id="count">0</h1>
+</body>
+ <style>
+   
+
+ </style>
+<script>
+   /*  var count=document.getElementById("count");
+    for(var i=0;i<10;i++)
+    {
+        count.innerHTML=i;
+    } JS执行太快无法看出变化过程*/
+    /*setInterval()可以将一个函数每隔一端时间执行一次
+    参数1.回调函数
+    参数2.调用间隔时间*/
+    var num=0;
+    var count=document.getElementById("count");
+    var timer=setInterval(function()
+    {
+      
+        count.innerHTML=num++;
+       
+    },1000);
+    /*关闭对应标识器*/
+    clearInterval(timer);
+
+    /* 延时调用，不马上执行二是隔一段时间以后再执行setTimeOut
+    不同于定时调用其只会执行一次 */
+    var timer2=setTimeOut(function()
+    {
+        alert("Stop");
+    },5000);
+    clearTimeout(timer);
+</script>
+</head>
+
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+ 
+    <ul id="ul">
+        父亲节点TEST
+        <li id="1">1</li>
+    </ul>
+    <div id="btnList">
+        <div><button id="btn01">创建一个节点1</div>
+        <div><button id="btn02">将节点2插入到节点1之前</div>
+        <div><button id="btn03">替换节点1为节点3</div>
+        <div><button id="btn04">删除节点1</div>
+        <div><button id="btn05">对节点1加上4</div>
+
+    </div>
+</body>
+ <style>
+
+
+ </style>
+<script>
+    var btn01=document.getElementById("btn01");
+    btn01.onclick=function()
+    {
+        /*
+        document.createElement();
+        可以用于创建一个元素节点
+        需要一个标签名作为参数
+        根据该签名创建元素节点
+        返回对象
+        */
+        var li=document.createElement("li");
+        /*
+            document.createTextNode()
+            可以用来创建文本节点的对象
+            需要一个文本内容作为参数，将会根据该内容创建文本节点，并返回该节点
+
+        
+        */
+       var text=document.createTextNode("1");
+
+       /*
+        appendChild()
+        向一个父节点添加一个新节点
+
+       */
+      li.append(text);
+      var uls=document.getElementById("ul");
+      uls.append(li);
+    }
+    
+    var btn02=document.getElementById("btn02");
+    btn02.onclick=function()
+    {
+       
+        var li2=document.createElement("li");
+       
+       var text2=document.createTextNode("2");
+        li2.append(text2);
+       /*
+       insertBefore()
+       可以在指定子节点前插入新的子节点
+        第一个参数为新的节点
+        第二个参数为插入的节点
+       */
+        var dad=document.getElementById("ul");
+      var uls2=document.getElementById("1");
+      dad.insertBefore(li2,uls2);
+    }     
+
+    var btn03=document.getElementById("btn03");
+    btn03.onclick=function()
+    {
+       /*replaceChild()
+       父节点.replaceChild(新节点，旧节点）
+       节点替换*/
+        var li3=document.createElement("li");
+        var text3=document.createTextNode("3");
+        li3.append(text3);
+        var dad=document.getElementById("ul");
+        var old=document.getElementById("1");
+        dad.replaceChild(li3,old);
+    }     
+
+
+    var btn04=document.getElementById("btn04");
+    btn04.onclick=function()
+    {
+       /*removeChild()
+       可以删除一个子节点
+       父节点.replaceChild(节点)*/
+ 
+       var dad=document.getElementById("ul");
+        var old=document.getElementById("1");
+        dad.removeChild(old);
+    }     
+
+    var btn05=document.getElementById("btn05");
+    btn05.onclick=function()
+    {
+      var add=document.getElementById("1");
+      add.innerHTML+="4";
+    }     
+</script>
+</head>
+
+
+</html>

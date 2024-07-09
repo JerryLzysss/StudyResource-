@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+   /*函数function
+   也是一种对象
+   可以封装代码
+   使用typeof检测时会返回function*/
+   var fun=new Function(console.log("Function"));
+  function Q()
+  {
+    console.log("Q");
+  }
+  function add(a,b)
+  {
+    console.log(a+b);
+  }
+  Q();
+  
+  add(2,3);
+  add("a","b");
+  add(1,"q");
+  add(1);
+  var result=add(2,5);
+  console.log(result);
+  /*立刻执行函数*/
+  (function(a,b){
+    console.log("匿名函数");
+    console.log(a+b);
+  })(2,5);
+
+  var obj5={
+    name:"ook",
+    num:30,
+    age:15,
+    sendName:function()
+    {
+        console.log(obj5.name);
+    },
+    cal:function()
+    {
+        for(var i in obj5)/*遍历方法*/
+        {
+            console.log(i);
+        }
+    }
+   }
+  obj5.cal();
+</script>
+</head>
+
+
+</html>

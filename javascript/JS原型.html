@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+/*JS原型prototype
+我们创建的每个函数解析器回向函数中添加一个属性prototype
+这个属性对应着一个对象，这个对象就是原型对象
+
+当函数以构造函数的形式调用时，创建的对象有一个隐函数型指向该
+构造函数的原型对象，通过_proto_访问
+
+原型对象相当于公共区域，所有同一类的实例都能访问
+
+当访问对象一个属性或方法首先在对象自身寻找，否则会去原型对象寻找
+
+*/
+function Myclass()
+{
+
+};
+/*原型中增加a*/
+Myclass.prototype.a=123;
+Myclass.prototype.hello=function(){
+    alert(a);
+};
+var mc=new Myclass();
+var mc2=new Myclass();
+mc.a="1";
+mc.b="2";/*
+console.log(mc==mc2);
+console.log(mc.hello==mc2.hello);
+console.log(mc2._proto_==Myclass.prototype);
+*/
+Myclass.prototype.name="name";
+var mc3=new Myclass();
+/*使用in检查是否含有但是原型有也会返回TRUE*/
+console.log("name" in mc3);
+//可以使用hasOwnProperty来检查对象是否含有该属性
+console.log(mc3.hasOwnProperty("name"));
+console.log(mc.__proto__.hasOwnProperty("name"));
+console.log(mc.__proto__.__proto__);
+/*原型对象也有原型
+其搜索会一步步往回寻找
+Object对象的原型没有原型
+如果在OBject没找到则返回undefined*/
+</script>
+</head>
+
+
+</html>

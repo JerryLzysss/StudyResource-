@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+   /*全局作用域
+   使用var关键字的变量会优先被声明
+   但是如果不适用var则不会被提前声明
+    function函数会被提前声明
+    使用函数表达式则不会被提前声明
+   */
+  fun();
+  a=15;
+  function fun()
+  {
+    console.log("fun");
+  };
+  var fun2=function()
+  {
+    console.log("fun2");
+  };
+  fun2();
+  function fun3()
+  {
+    console.log(a);
+    //var a=20;
+    a=20;
+    console.log(a);
+  }
+
+  fun3();
+</script>
+</head>
+
+
+</html>

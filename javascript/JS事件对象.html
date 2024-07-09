@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   <div id="areaDiv"></div>
+   <div id="showMsg"></div>
+   <div id="box1"></div>
+</body>
+ <style>
+    #areaDiv{
+        width:300px;
+        height:300px;
+        background-color:red;
+    }
+    #box1{
+        width:400px;
+        height:400px;
+        background-color: green;
+        position:absolute;
+    }
+ </style>
+<script>
+  var areaDiv=document.getElementById("areaDiv");
+  var showMsg=document.getElementById("showMsg");
+    /*onmousemove 鼠标将会在元素移动时被触发
+    */
+   areaDiv.onmousemove=function()
+   {
+    var x=event.clientX;
+    var y=event.clientY;
+    console.log("x="+x+" y="+y);
+    showMsg.innerHTML="x="+x+" y="+y;
+   }
+   box1.onmousemove=function()
+   {
+    var left=event.clientX;
+    var top=event.clientY;
+    var st=document.body.scrollTop;
+    var sl=document.body.scrollLeft;
+    console.log(st);
+    box1.style.left=left+"px";
+    box1.style.top=top+"px";
+   }
+   /*pageX和pageY可以获取鼠标相对于当前页面的鼠标*/
+</script>
+</head>
+
+
+</html>

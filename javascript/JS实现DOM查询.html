@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   <div id="total">
+        <div id="inner">
+            <p>which country do you like</p>
+            <ul id="city">
+                <li id="bj">北京</li>
+                <li>上海</li>
+                <li>东京</li>
+                <li>首尔</li>
+            </ul>
+            <br>
+            <br>
+            <p>
+                which game do you like
+            </p>
+            <ul id="game">
+                <li id="red">红警</li>
+                <li>足球</li>
+                <li>飞车</li>
+                <li>war3</li>
+            </ul>
+
+            <p>
+                which OS do you phone
+            </p>
+            <ul id="os">
+                <li id="ios">ios</li>
+                <li>android</li>
+                <li>windows</li>
+            </ul>
+
+            <div class="inner">
+                gender:
+                <input type="radio" name="gender" value="male"/>
+                male
+                <input type="radio" name="gender" value="female"/>
+                female
+                <br>
+                <br>
+                name:
+                <input type="text" name="name" id="username" value="abcde"/>
+            </div>
+            <button id="btn01">查找#bj节点</button>
+            <button id="btn02">查找所有k节点</button>
+            <button id="btn03">查找name+gender节点</button>
+            <button id="btn04">查找#city所有k节点</button>
+            <button id="btn05">查找#city下所有k节点</button>
+            <button id="btn06">查找#city所有节点</button>
+            <button id="btn07">查找#phone的第一个节点</button>
+            <button id="btn08">查找#android的第一个兄弟节点</button>
+            <button id="btn09">查找#username的value节点</button>
+            <button id="btn10">设置#username的value节点</button>
+            <button id="btn11">查找#bj的文本值</button>
+    </div>
+</body>
+ <style>
+
+
+ </style>
+<script>
+    
+    var btn01=document.getElementById("btn01");
+    btn01.onclick=function()
+    {
+        var bj=document.getElementById("bj");
+        alert(bj.innerHTML);
+    };
+    var btn02=document.getElementById("btn02");
+    btn02.onclick=function()
+    {
+        var lis=document.getElementsByTagName("li");
+        for(var i=0;i<lis.length;i++)
+        console.log(lis[i].innerHTML);
+    }
+    var btn03=document.getElementById("btn03");
+    btn03.onclick=function()
+    {
+        var inputs=document.getElementsByName("gender");
+        alert(inputs.length);
+        /*对于自结束需要使用value来获取值*/
+        for(var i=0;i<inputs.length;i++)
+        {
+            console.log(inputs[i].value);
+        }
+    }
+    var btn05=document.getElementById("btn05");
+    btn05.onclick=function()
+    {
+        var city=document.getElementById("city");
+        var cns=city.childNodes;
+        /*CHILDNODE会获取包括文本在内的所有节点*/
+        for(var i=0;i<cns.length;i++)
+        console.log(cns[i].innerHTML);
+        var cns2=city.children;/*获取当前元素所有的子元素*/
+        for(var i=0;i<cns.length;i++)
+        console.log(cns2[i].innerHTML);
+        var fir=city.firstChild;/*获取第一个子节点（包括空白）*/
+        var fir2=city.firstElementChild;
+        /*获取当前元素的第一个子元素*/
+        var las=city.lastChild;
+        var las2=city.lastElementChild;
+    }
+    /*parentNode 表示当前节点的父节点
+    previousSibling 表示当前节点的前一个兄弟节点
+    nextSibling 表示当前节点的后一个兄弟节点*/
+</script>
+</head>
+
+
+</html>

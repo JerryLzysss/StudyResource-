@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+ 
+    
+</body>
+ <style>
+
+
+ </style>
+<script>
+ //获取body标签
+ /* var.body=document.getElementsByTagName("Body") */
+ //document中有属性body保存的是body引用
+ var bodys=document.body;
+ /* documentElement保存的是HTML根标签 */
+ var htmls=document.documentElement;
+ /* document.all代表页面中所有的元素 */
+ var alls=document.all;
+/*document.querySelector需要一个选择器的字符串作为参数，可以根据一个CSS选择器来查询
+只会返回一个*/
+ document.querySelector(".box1 div");
+ /*document.querySelectall需要一个选择器的字符串作为参数，可以根据一个CSS选择器来查询
+只会返回数组 即便只包含一个元素*/
+document.querySelectorAll(".box1");
+</script>
+</head>
+
+
+</html>

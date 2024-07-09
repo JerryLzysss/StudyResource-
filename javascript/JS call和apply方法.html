@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+  /*call和apply
+  都是函数对象方法需要使用函数对象
+  函数调用apply和call都会调用函数执行*/
+  function fun()
+  {
+    console.log("ok");
+  }
+  /*当引用一个函数时，这个函数就会成为该引用的this对象*/
+  /*call可以将实参依次传递，而apply需要封装到数组*/
+
+  fun.apply();
+  fun.call();
+  /*arguments是一个类数组对象来操作数据，也可以获取长度
+  调用函数，实参都会存在于arguments
+  Arguments[0]表示第一个实参
+  Arguments[1]表示第二个实参
+  */
+  function fun2()
+  {
+    console.log(arguments instanceof Array);
+    console.log(Array.isArray(arguments));
+    console.log(arguments.length);
+    console.log(arguments[2]);
+  }
+  fun2("hello",true,"ggsa");
+</script>
+</head>
+
+
+</html>

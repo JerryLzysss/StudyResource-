@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script type="module">
+       import * as m1 from './m1.js';
+       /* 针对上述三种情况
+       解构赋值
+       import{school} from ./m1.js 
+       import{school as school}from./m1.js
+       import {default as m3}from ./m1.js*/
+        console.log(m1);
+
+        /* 安装工具babel-cli babel-prese-env browserify(webpack)
+            npx babel src/js -d dist/js
+            打包npx browserify dist/js/app.js -o dist/bundle.js */
+    </script>
+    
+</html>

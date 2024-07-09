@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+   
+</body>
+ <style>
+   
+
+ </style>
+<script>
+  /* onkeydown按键按下
+    onkeyup按键松开 
+    */
+   document.onkeydown=function()
+   {
+    /*除了keyCode还有altKey,shiftKey,ctrlKey来判断是否这几个按键被按下*/
+   console.log(event.keyCode);
+   }
+   var input=document.getElementsByTagName("input");
+   input.onkeydown=function(event)
+   {
+    /*促使文本框不能输入数字
+    文本框输入内容属于onkeydown的默认行为
+    取消了默认行为则输入内容不会出现在文本框*/
+    return false;
+   }
+</script>
+</head>
+
+
+</html>

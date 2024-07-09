@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+       /* async和await将异步进行同步操作 */
+       /* async返回为promis
+       promise的结果由async函数执行返回决定 */
+       async function fn()
+       {
+            return new Promise((resolve,reject)=>{
+                
+                reject("2");
+            });
+
+       }
+       const result=fn();
+       result.then(value=>{
+        console.log(value);
+       },reason=>{
+        console.warn(reason);
+       })
+       /* await必须写在async
+        wait右侧表达式一般为promise
+        await返回是promie成功
+        失败则需要try..catch捕获 */
+        const p=new Promise((resolve,reject)=>{
+            reject("g");
+            resolve("用户数据");
+
+        })
+        async function main()
+        {
+           /*  try{
+                let result=await p;
+                console.log(result);
+            }
+            catch(e)
+            {
+                console.log(e);
+            } */
+            console.log("gg");
+        }
+        main();
+    </script>
+</html>

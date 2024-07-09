@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+        let m=Map();
+        m.set('1',1);
+        m.set('2',function()
+        {
+            console.log("ook");
+        });
+        console.log(m.size);
+        m.delete('1');
+        console.log(m.get('2'));
+        m.clear();
+        for(let v of m)
+        {
+            console.log(v);
+        }
+    </script>
+</html>

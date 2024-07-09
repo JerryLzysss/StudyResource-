@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+      /* 生成器目的是异步编程解决方案 */
+      /* 编程还有采用为node fa ajax mongodb */
+
+      function * gen(){
+        /* yield负责分割
+        可以迭代器遍历 */
+        yield 'g',
+        console.log("q");
+        yield 'g1',
+        yield 'g2'
+      }
+      /* let iterator=gen();
+      iterator.next();
+      iterator.next(); */
+      for (let v of gen())
+      {
+        console.log(v);
+      }
+
+      /* 实现异步的方法 */
+
+      function *tra(arg)
+      {
+        console.log(arg);
+        let one=yield 111;
+        console.log(one);
+        let two=yield 222;
+        console.log(two);
+        let three=yield 333;
+        console.log(three);
+      }
+      let iterator=tra('AAA');
+      console.log(iterator.next('AAA'));
+      console.log(iterator.next('BBB'));
+      console.log(iterator.next('CCC'));
+      console.log(iterator.next('DDD'));
+    </script>
+</html>

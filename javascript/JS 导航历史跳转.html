@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   <h1>History</h1>
+   <button id="history">历史</button>
+   <button id="location">位置</button>
+</body>
+ <style>
+   
+
+ </style>
+<script>
+ /* BOM
+ 浏览器对象
+ 可以实现对浏览器的操作
+ window浏览器
+ Navigator
+ 代表当前浏览器信息
+ location
+ 代表当前浏览器地址跳转页面
+ history
+ 代表浏览器历史记录，智能向前向后翻页
+ screen 
+ 代表用户屏幕信息
+*/
+/* console.log(navigator);
+console.log(location);
+console.log(history); */
+
+/*查看浏览器信息内容
+    可以通过正则判断属于哪种浏览器
+*/
+
+console.log(navigator.userAgent);
+
+var btn=document.getElementById("history");
+btn.onclick=function()
+{
+    /*返回浏览器URL数目*/
+    console.log(history.length);
+    /*分别对应后退前进，go需要传递函数，正数前进，负数后退*/
+  //  history.back();
+    //history.forward();
+    history.go(1);
+}
+var btn1=document.getElementById("location");
+btn1.onclick=function()
+{
+   /* alert(location)
+   可以直接获得地址栏 */
+   /*assign可以直接跳转其他页面*/
+   //location.assign("https://www.baidu.com");
+   /*刷新界面*/ 
+   
+   //location.reload();
+   /*replace()用于网页替换当前页面，调用完毕也会跳转*/
+   location.replace("https://www.baidu.com");
+}
+</script>
+</head>
+
+
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+   <div id="box1">
+    </div>
+    <div id="box2">
+    </div>
+</body>
+ <style>
+    #box1{
+        width:100px;
+        height:100px;
+        background-color: red;
+        position:absolute;
+    }
+    #box2{
+        width:100px;
+        height:100px;
+        background-color: yellow;
+        position: absolute;
+        left:200px;
+        
+    }
+
+ </style>
+<script>
+    /*拖拽流程
+    被拖拽元素按下onmousedown
+    鼠标移动跟随移动onmousemove
+    鼠标松开固定onmouseup*/
+    var box1=document.getElementById("box1");
+    box1.onmousedown=function()
+   {
+    document.onmousemove=function()
+    {
+    var left=event.clientX;
+    var top=event.clientY;
+
+   /*div偏移量=鼠标.clientX-元素.off.setLeft*/
+   /*var ol=event.clientX-box1.offsetLeft
+    var ot=event.clientY-box1.offsetTop
+    var left=event.clientX-ol
+    var Top=event.clientX-ot*/
+    box1.style.left=left+"px";
+    box1.style.top=top+"px";
+    }
+   }
+    box1.onmouseup=function()
+    {
+        document.onmousemove=null;
+    }
+</script>
+</head>
+
+
+</html>

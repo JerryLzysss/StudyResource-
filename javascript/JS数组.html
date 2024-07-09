@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+   var arr=new Array();
+   console.log(typeof(arr));
+   arr[0]=10;
+   arr[1]=12;
+   arr[2]=14;
+   /*长度为最大值，但是长度过长也不会报错，其余值为NULL*/
+   //arr[5]=25;
+   //arr[7]=14;
+   console.log(arr);
+
+   console.log(arr.length);
+   arr[arr.length]=1;
+   arr[arr.length]=2;
+   console.log(arr);
+   /*直接赋值数组*/
+   arr2=[10,40];
+   console.log(arr2);
+   /*创建长度为4的数组*/
+   arr3=new Array(4);
+   /*数组里面可以有任意数据类型,方法，函数*/
+  var obj={name:"ggg"};
+  function qs(){
+    console.log("sa");
+  }
+   arr4=["hel","q",30,true,obj,qs];
+   console.log(arr4[5]);
+
+
+   /*方法依次为增加删除最后一个元素，增加删除最前元素*/
+   arr4.push("zzs");
+   console.log(arr4);
+   arr4.pop();
+   console.log(arr4);
+  arr4.unshift("zzqq","nihao");
+  console.log(arr4);
+  arr4.shift();
+  console.log(arr4);
+
+  for(var i=0;i<arr.length;i++)
+  {
+    console.log(arr[i]);
+  }
+/*forEach()需要一个函数作为参数，需要定义形参
+  第一个参数:当前正在遍历元素
+  第二个参数:当前正在遍历元素的索引
+  第三个参数:当前正在遍历数组
+*/
+  /* arr.forEach(function(a,b,c)
+  {
+    console.log(b);
+  }); */
+
+/*slice从数组提取元素
+第一个参数为起始索引
+第二个参数为终止索引
+左闭右开*/
+var result=arr.slice(0,2);
+result=arr.slice(0);
+console.log(result);
+/*spice从数组删除元素
+并将指定元素从数组返回
+会影响原数组
+第一个参数表示开始的索引
+第二个参数表示删除的数量
+第三个参数之后会传递新元素到索引前边*/
+
+/* concat()可以连接两个或多个数组，并返回新数组
+join()可以将数组转换为字符串，不影响原数组，将转换的字符串产生返回
+可以加入连接符
+reverse()反转数组
+sort()排序数组
+ */
+</script>
+</head>
+
+
+</html>

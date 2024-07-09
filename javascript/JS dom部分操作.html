@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+    <!-- /*允许在按钮等控件直接绑定*/ -->
+    <button id="btn" onclick="">b</button>
+</body>
+ <style>
+
+
+ </style>
+<script>
+    /*文档代表整个网页*/
+    console.log(document);
+    /*获取到button对象*/
+    var btn=document.getElementById("btn");
+    console.log(btn);
+    /*修改内容*/
+    btn.innerHTML="change";
+    btn.onclick=function()
+    {
+        alert("点击");
+    }
+    /*事件包括交互行为，例如onclick==...*/
+
+    /*由于网页从上到下执行
+    因此要求先写HTML在写javascript*/
+
+    /*onload在整个页面加载完成之后才触发
+    为window绑定一个onload*/
+    
+    window.onload=function()
+    {
+        alert("onload");
+    };
+
+    /*getElementById()通过id获取一个元素
+    getElementsByTagName()通过标签名获取一组元素节点
+    getElementsByName()通过name获取一组元素节点对象
+    */
+
+
+</script>
+</head>
+
+
+</html>

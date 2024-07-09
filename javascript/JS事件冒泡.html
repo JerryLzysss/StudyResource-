@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+  <div id="box1">
+    box1
+    <span id="s1">span</span>
+</div>
+</body>
+ <style>
+    #box1{
+        width:100px;
+        height:100px;
+        background-color: yellowgreen;
+    }  
+    #s1{
+        background-color:yellow;
+    }
+ </style>
+<script>
+    /*事件冒泡
+    事件向上传导，当后代元素上的事件被触发，会引起祖先元素*/
+    var s1=document.getElementById("s1");
+    s1.onclick=function()
+    {
+        console.log("span");
+        /*取消冒泡*/
+        //event.cancelBubble=true;
+    }
+    var box1=document.getElementById("box1");
+    box1.onclick=function()
+    {
+        console.log("box");
+    }
+    document.body.onclick=function()
+    {
+        console.log("body");
+    }
+</script>
+</head>
+
+
+</html>

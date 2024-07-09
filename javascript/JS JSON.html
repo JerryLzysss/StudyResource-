@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+
+</body>
+ <style>
+
+
+ </style>
+<script>
+/* JSON
+特殊格式字符串可以被任意语言识别
+用于数据交互
+JSON分为:对象｛｝数组[]*/
+/* json-->js对象 
+JSON。parse()
+需要一个JSON字符串作为参数*/
+/* js对象-->JSON
+JSON.stringify()
+将对象转变为JSON字符串 
+eval()
+执行js语句*/
+var obj={
+    name:"gg",
+gender:"male"
+};
+
+var p=JSON.stringify(obj);
+var o=JSON.parse(p);
+console.log(o.gender);
+    </script>
+</head>
+
+
+</html>

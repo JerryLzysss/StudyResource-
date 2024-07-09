@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+       let S=Symbol();
+       let S2=Symbol('1');
+       let S3=Symbol('1');
+       console.log(S2==S3);
+       let S4=Symbol.for('5');
+       let S5=Symbol.for('5');
+       console.log(S4==S5);
+       /* 不能与其他数据进行运算 */
+       /* symbol作用为唯一规范数据的属性 */
+    </script>
+</html>

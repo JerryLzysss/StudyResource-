@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   <table id="Table">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>salary</th>
+        <th>&nbsp;</th>
+    </tr>
+    <tr>
+        <td>Tom</td>
+        <td>1@a.com</td>
+        <td>3000</td>
+        <td><a href="deleteEmp?id=001">Delete</a></td>
+    </tr>
+    <tr>
+        <td>He</td>
+        <td>1@b.com</td>
+        <td>4000</td>
+        <td><a href="deleteEmp?id=002">Delete</a></td>
+    </tr>
+   </table>
+   <div id="formDiv">
+    <h2>添加员工</h2>
+    <table>
+        <tr>
+            <td class="word">name:</td>
+            <td class="inp">
+                <input type="text" name="empName" id="empName">
+            </td>
+        </tr>
+        <tr>
+            <td class="word">email:</td>
+            <td class="inp">
+                <input type="text" name="email" id="empil">
+            </td>
+        </tr>
+        <tr>
+            <td class="word">salary:</td>
+            <td class="inp">
+                <input type="text" name="salary" id="salary">
+            </td>
+        </tr>
+    </table>
+   </div>
+</body>
+ <style>
+
+
+ </style>
+<script>
+    /*获取所有超链接*/
+    var allA=document.getElementsByTagName("a");
+    for(var i=0;i<allA.length;i++)
+    {
+        /*for循环会在页面加载完成之后立刻执行
+        而相应函数只有在点击时才会执行*/
+        allA[i].onclick=function()
+        {   
+
+            var tr=this.parentNode.parentNode;
+            var flag=confirm("确认删除否？");
+            if(flag)
+            tr.parentNode.removeChild(tr);
+            //alert(this);
+            /*this返回当前超链接*/
+            return false;
+            /*对于超链接执行以后会进行跳转
+            如果需要取消其默认行为
+            则需要返回否*/
+        }
+        
+    }
+
+
+
+</script>
+</head>
+
+
+</html>

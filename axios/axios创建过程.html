@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+    </script>
+    <head>
+        <link rel="stylesheet" href="../bootstrap/bootstrap-4.6.2-dist/css/bootstrap.css">
+        <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    </head>
+    <body>
+       
+        <div class="container">
+            <h2 class="page-header">基本使用</h2>
+            <button class="btn btn-primary">GET</button>
+            <button class="btn btn-warning">CANCEL</button>
+           
+        </div>
+        
+        <script>
+           function Axios(config){
+            this.defaults=config;/* 创建default默认 */
+            this.intercepters={
+                request:{},
+                response:{}
+            }
+           }
+            Axios.prototype.request=function(config){
+                console.log('发送ajax请求')
+            }
+            Axios.prototype.get=function(config){
+                console.log('发送get请求')
+            }
+            Axios.prototype.post=function(config){
+                console.log('发送post请求')
+            }
+            /* 声明函数 */
+            function createInstance(config){
+                /* 实例化一个对象 */
+                let context=new Axios(config)/* 可以context.get(),context.post(),但是不能context() */
+                /* 创建请求函数 */
+                let instance=Axios.prototype.request.bind(context)
+            /* 将Axios.protoype对象的方法添加到instance对象中 */
+                Object.keys(Axios.prototype).forEach(key=>{
+                    instance[key]=Axios.prototype[key].bind(context);
+                })
+                Object.keys(context).forEach(key=>{
+                    instance[key]=context[key];
+                })
+                console.dir(instance)
+                return instance;
+            }
+
+            let axios=createInstance({method:'GET'})
+            axios.get({})
+        </script>
+        
+    </body>
+</html>

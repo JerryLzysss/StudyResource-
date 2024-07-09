@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+        const p=new Promise(function(resolve,reject)
+        {
+            setTimeout(function()
+            {
+                /* let data='data';
+                resolve(data); */
+                let err='err';
+                reject(err);
+            },100);
+        });
+        p.then(function(value)
+        {
+            console.log(value);
+        },function(reason){
+            console.log(reason);
+        })
+    </script>
+</html>

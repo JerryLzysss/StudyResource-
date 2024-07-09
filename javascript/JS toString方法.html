@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+    /*输出方法toString(),可以为toString进行重载*/
+    var per=Person("1","2","3");
+    var obj={
+        name:"",
+        name2:"",
+        name3:"",
+        write:function()
+        {
+            alert("gg");
+        }
+    };
+    function Person(name,name2,name3)
+    {
+        var obj=new Object();
+        obj.name=name;
+        obj.name2=name2;
+        obj.name3=name3;
+        obj.write=function()
+        {
+            alert("gg");
+        };
+        
+        return obj;
+    };
+    var qq=new Person("1","2","3");
+    Person.prototype.toString=function()
+    {
+        return "xiugai";
+    }
+    qq.__proto__.toString=function()
+    {
+        return "ss";
+    }
+    console.log(qq.toString());
+</script>
+</head>
+
+
+</html>

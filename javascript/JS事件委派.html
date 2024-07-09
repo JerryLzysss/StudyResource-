@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+    <button id="btn01">btn01</button>
+    <ul id="u1">
+        <li><a href="javasript:;">超链接1</a></li>
+        <li><a href="javasript:;">超链接2</a></li>
+        <li><a href="javasript:;">超链接3</a></li>
+    </ul>
+
+</body>
+ <style>
+
+
+ </style>
+<script>
+   /*事件委派
+     一次事件可以应用到多个元素
+     将事件统一帮顶给元素的共同祖先元素
+   */
+  var btn01=document.getElementById("btn01");
+  btn01.onclick=function()
+  {
+    var u1=document.getElementById("u1");
+    var li=document.createElement("li");
+    li.innerHTML="<a href='javascript:;'>新建超链接</a>";
+    u1.appendChild(li);
+}
+/*此时需要重新绑定*/
+    var allA=document.getElementsByTagName("a");
+  /*  for(var i=0;i<allA.length;i++)
+    {
+        allA[i].onclick=function()
+        {
+            console.log("gg");
+        }
+    } */
+
+    u1.onclick=function()
+    {
+        if(event.target)
+        {
+            console.log("gg");
+        }
+    }
+   
+
+</script>
+</head>
+
+
+</html>

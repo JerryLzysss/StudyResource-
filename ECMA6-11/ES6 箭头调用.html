@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+         /* 声明 */
+        let fn=(a,b)=>{
+            return a+b;
+        }
+        console.log(fn(1,2));
+        /* this是静态的，始终指向函数声明所在作用域 */
+        function getName()
+        {
+            console.log(this.name);
+        }
+        let getName2=()=>{
+            console.log(this.name);
+        }
+        window.name='1';
+        const school={
+            name:"2"
+        }
+        getName();
+        getName2();
+        getName.call(school);
+        getName2.call(school);
+        /* 箭头函数不能作为构造函数实例化对象 */
+        /* 不能使用argument保存实参 */
+        let cal=(n)=>{
+            return n*n;
+        }
+        console.log(cal(8));
+       /*  箭头函数不适合与this有关的回调，对象的方法
+        适合定时器，数组的方法 */
+    </script>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+    /*对象是一种符合的数据类型
+    对象中可以保存多个不同数据类型的属性
+    */
+    /*
+    对象包括
+    内建对象String Math Boolean Number Function Object
+    宿主对象BOM DOM
+    自定义对象*/
+    var obj=new Object();
+    obj.name="1";
+    obj.gender="male";
+    obj.age=18;
+    /* 删除*/
+    delete obj.name;
+    obj["name"]="good";
+    var name="sb";
+    obj["name"]=name;
+    console.log(obj);
+    /*检查是否包含某属性*/
+    console.log("name" in obj);
+    var obj3=new Object();
+    var obj4=new Object();
+    obj3.name="qq";
+    obj4.name="qq";
+    /*比较两个基本数据类型就是比较值
+       比较两个引用类型是比较对象
+       如果地址不同则返回FALSE*/
+       console.log(obj3==obj4);
+
+    /*
+        使用对象字面量
+        
+    */
+   var obj5={
+    name:"qqq";
+    age:30;
+    gender:"male";
+   }
+   
+</script>
+</head>
+
+
+</html>

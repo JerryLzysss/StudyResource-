@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+/*方法创建*/
+var obj={
+    name:"",
+    id:"",
+    qq:"",
+    sayName:function()
+    {
+        alert(this.name);
+    }
+};
+function createPerson(name,id,qq)
+{
+    var obj=new Object();
+    obj.name=name;
+    obj.id=id;
+    obj.qq=qq;
+    obj.sayName=function()
+    {
+        alert(this.name);
+    };
+    return obj;
+};
+var obj2=createPerson("1","2","3");
+console.log(obj2);
+obj2.sayName();
+var per=new createPerson("1","2","4");
+per.sayName();
+/*改良消除函数的反复创建问题*/
+var objUpdate={
+    name:"qsq",
+    id:"",
+    qq:"",
+    sayName:funs
+   
+};
+function funs()
+{
+    alert(this.name);
+}
+objUpdate.sayName();
+</script>
+</head>
+
+
+</html>

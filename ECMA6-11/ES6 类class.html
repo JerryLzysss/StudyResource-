@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+       /*
+        ES5构造实例化
+       function phone(brand,price)
+       {
+        this.brand=brand;
+        this.price=price;
+       }
+       phone.prototype.call=function()
+       {
+        console.log("gg");
+       }
+       let x=new phone('1',100);
+       x.call(); */
+
+       class phone{
+            constructor(brand,price)
+            {
+                this.brand=brand;
+                this.price=price;
+            }
+            call()
+            {
+                console.log("gg");
+            }
+       }
+
+       /* 实例对象与构造原型对象相通
+       属于类的参数不属于实例的对象为静态变量 */
+       function test()
+       {
+
+       }
+       test.name='1';
+       test.change=function()
+       {
+        console.log("test");
+       }
+       test.prototype.size=5;
+       let nokia=new test();
+      /*  console.log(nokia.name);是不行的 */
+      console.log(nokia.size);
+
+
+
+      /* ES5继承
+      
+       function Dad(brand,price)
+       {
+        this.brand=brand;
+        this.price=price;
+        
+       }
+       Dad.prototype.call=function()
+       {
+        console.log("1");
+       }
+       function Son(brand,price,color,size)
+       {
+        Dad.call(this,brand,price);
+        this.color=color;
+        this.size=size;
+       }
+       Son.prototype=new Dad;
+       Son.prototype.constructor= Son;
+       Son.prototype.photo=function()
+       {
+        console.log("2");
+       }
+       const t1=new Son("1",100,"red",50);
+       console.log(t1); 
+       */
+       /* ES6继承*/  
+       class Dad {
+        constructor(brand,price)
+        {
+            this.brand=brand;
+            this.price=price;
+        }
+        call()
+        {
+            console.log("haha");
+        }
+       }
+       class Son extends Dad{
+        constructor(brand,price,color,size)
+        {
+            super(brand,price);
+            this.color=color;
+            this.size=size;
+        }
+        photo()
+        {
+            console.log("okok");
+        }
+        playGame()
+        {
+            console.log("good");
+        }
+        /* 重写，子类是不能直接调用父类方法 */
+        call()
+        {
+            console.log("notdad");
+        }
+       }
+
+    </script>
+</html>

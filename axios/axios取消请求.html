@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+
+    </script>
+    <head>
+        <link rel="stylesheet" href="../bootstrap/bootstrap-4.6.2-dist/css/bootstrap.css">
+       
+        <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    </head>
+    <body>
+       
+        <div class="container">
+            <h2 class="page-header">基本使用</h2>
+            <button class="btn btn-primary">GET</button>
+            <button class="btn btn-warning">CANCEL</button>
+           
+        </div>
+        
+        <script>
+            const btns=document.querySelectorAll('button')
+            let cancel=null;
+    
+            btns[0].onclick=function(){
+              
+                
+                if(cancel !==null){
+                    cancel();
+                }
+                axios({
+                    /* 请求类型 */
+                    method:'GET',
+                    /* URL */
+                    url:'http://localhost:3000/posts/dd9d',
+                    cancelToken:new axios.CancelToken(function(c){
+                        cancel=c;
+                        
+                    })
+
+                }).then(response=>{
+                
+                    cancel=null;
+                }).catch(reason=>{
+                    
+                })
+            }
+            btns[1].onclick=function(){
+                cancel();
+            }
+         
+            
+          
+        </script>
+        
+    </body>
+</html>

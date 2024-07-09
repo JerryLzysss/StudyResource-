@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+   
+<body>
+   
+</body>
+ <style>
+
+
+ </style>
+<script>
+ /*this 指向的是一个对象
+ 这个对象称为函数执行的上下文对象
+ 1.以函数方法调用返回Window
+ 2.以方法调用返回为object*/
+ function fun()
+ {
+    console.log(this);
+ };
+function fun2()
+{
+    console.log(this.name);
+}
+
+ var obj={
+    name:"me",
+    sayName:fun,
+    speakName:fun2
+ };
+ fun();
+ obj.sayName();
+ obj.speakName();
+</script>
+</head>
+
+
+</html>

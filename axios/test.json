@@ -1,0 +1,21 @@
+
+{
+    "posts": [
+    {
+      "id":1,
+      "title":"json-server",
+      "author":"/* npm install -g json-server 搭建json */"    
+    }
+    ],
+    "comments":[
+        {
+            "id":1,
+            "body":"some comment",
+            "postId":1
+        }
+    ],
+    "profile":{
+        "name":"typicode"
+    }
+
+}

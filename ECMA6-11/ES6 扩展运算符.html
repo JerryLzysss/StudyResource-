@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+   
+    
+    </head>
+    <body>
+    
+    </body>
+    <script>
+        /* 扩展运算符能将数组转换为逗号分隔的参数序列 */
+        let zxc=['1x','2y','3z','4a','5b'];
+        function trans()
+        {
+            console.log(arguments);
+        }
+        trans(...zxc);
+
+        /* 数组合并 */
+        const l=['1','2'];
+        const r=['3','4'];
+        const mid=[...l,...r];
+        console.log(mid);
+
+        /* 数组克隆同上 */
+
+        /* 伪数组转换真数组 */
+    </script>
+</html>
