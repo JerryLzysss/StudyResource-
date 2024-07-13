@@ -1,0 +1,7 @@
+.box1{
+    width:500px;
+    height:500px;
+    background-color:pink;
+    background-image:url("../images/1.jpg");
+    background-size:cover;
+}
