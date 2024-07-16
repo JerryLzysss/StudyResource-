@@ -11,5 +11,10 @@ TypeScript不能被js解析器直接执行
 * TypeScript 编译配置
 * TypeScript 语法
 * TypeScript 类型
+* TypeScript 声明
+* TypeScript 函数
+* TypeScript Number
+* TypeScript String
+* TypeScript 数组
 
 # TypeScript 总结
