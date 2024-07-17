@@ -11,6 +11,9 @@ https://v4.bootcss.com/docs/getting-started/introduction/
     * 偏移量 
 * 文字排版
 * 颜色
+* 表格
+* 图像形状
+* 超大屏
 ## BootStrap 4 容器
 -|Extra small(<576px)|small(>=576px)|Medium(>=768px)|Large(>=992px)|Extra large(>=1200px)
 ---|---|---|---|---|---
@@ -50,4 +53,23 @@ https://v4.bootcss.com/docs/getting-started/introduction/
 .list-unstyled|移除默认的列表样式，列表项中左对齐 (``` <ul>``` 和``` <ol>``` 中)。 这个类仅适用于直接子列表项 (如果需要移除嵌套的列表项，你需要在嵌套的列表中使用该样式)	
 .list-inline|将所有列表项放置同一行	
 .pre-scrollable|使``` <pre>``` 元素可滚动，代码块区域最大高度为340px,一旦超出这个高度,就会在Y轴出现滚动条
+## BootStrap4 表格
+类名|描述
+--|--
+.table-primary|蓝色: 指定这是一个重要的操作
+.table-success|绿色: 指定这是一个允许执行的操作
+.table-danger|红色: 指定这是可以危险的操作
+.table-info|浅蓝色: 表示内容已变更
+.table-warning|橘色: 表示需要注意的操作
+.table-active|灰色: 用于鼠标悬停效果
+.table-secondary|灰色: 表示内容不怎么重要
+.table-light|浅灰色，可以是表格行的背景
+.table-dark|深灰色，可以是表格行的背景
+
+类名|	屏幕宽度
+--|--
+.table-responsive-sm|	< 576px
+.table-responsive-md|	< 768px
+.table-responsive-lg|	< 992px
+.table-responsive-xl|	< 1200px
 # BootStrap 4 总结
