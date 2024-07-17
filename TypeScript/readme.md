@@ -10,11 +10,24 @@ TypeScript不能被js解析器直接执行
 * TypeScript 指令与参数
 * TypeScript 编译配置
 * TypeScript 语法
-* TypeScript 类型
-* TypeScript 声明
-* TypeScript 函数
-* TypeScript Number
-* TypeScript String
-* TypeScript 数组
-
+    * TypeScript 类型
+    * TypeScript 声明
+    * TypeScript 函数
+    * TypeScript 数组
+    * TypeScript 元组
+    * TypeScript 联合类型
+    * TypeScript 接口
+    * TypeScript 类
+    * TypeScript 对象(此对象是指类似于json的键值对)
+    * TypeScript 泛型
+* TypeScript 对象
+    * TypeScript Number
+    * TypeScript String
+    * TypeScript Array
+    * TypeScript Map
+* TypeScript 拓展
+    * TypeScript 命名空间
+    * TypeScript 声明文件
+    * TypeScript 模块
 # TypeScript 总结
+总结:TypeScript之于javascript就如less之于css一样，通过ts能够提高检测js的严谨程度，防止类型等原因的问题产生，还有就是能提供更多的操作空间，其结构也接近于java,当然并没有java的包等等操作.
