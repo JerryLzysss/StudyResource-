@@ -5,15 +5,23 @@ https://www.runoob.com/bootstrap4/bootstrap4-tutorial.html
 https://v4.bootcss.com/docs/getting-started/introduction/
 # BootStrap 4 目录
 * 入门
-* 容器
-* 网格系统
-    * 网格类
-    * 偏移量 
-* 文字排版
-* 颜色
-* 表格
-* 图像形状
-* 超大屏
+* 布局
+    * 容器
+    * 网格系统
+        * 网格类
+        * 偏移量 
+    * 文字排版
+    * 表格
+    * 图像形状
+* 组件
+    * 颜色
+    * 信息提示框
+    * 超大屏
+    * 徽章
+    * 面包屑
+    * 按钮
+    * 按钮组
+    * 卡片
 ## BootStrap 4 容器
 -|Extra small(<576px)|small(>=576px)|Medium(>=768px)|Large(>=992px)|Extra large(>=1200px)
 ---|---|---|---|---|---

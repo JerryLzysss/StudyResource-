@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- 必须的 meta 标签 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+    <!-- Bootstrap 的 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- JavaScript 文件是可选的。从以下两种建议中选择一个即可！ -->
+    <!-- 选项 1：jQuery 和 Bootstrap 集成包（集成了 Popper） -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-7ymO4nGrkm372HoSbq1OY2DP4pEZnMiA+E0F3zPr+JQQtQ82gQ1HPY3QIVtztVua" crossorigin="anonymous"></script>
+    <!-- 选项 2：Popper 和 Bootstrap 的 JS 插件各自独立 -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-Lge2E2XotzMiwH69/MXB72yLpwyENMiOKX8zS8Qo7LDCvaBIWGL+GlRQEKIpYR04" crossorigin="anonymous"></script>
+    -->
+</head>
+
+<body>
+    <!-- 按钮样式 -->
+        <button type="button" class="btn btn-primary">Primary</button>
+        <button type="button" class="btn btn-secondary">Secondary</button>
+        <button type="button" class="btn btn-success">Success</button>
+        <button type="button" class="btn btn-danger">Danger</button>
+        <button type="button" class="btn btn-warning">Warning</button>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-light">Light</button>
+        <button type="button" class="btn btn-dark">Dark</button>  
+        <button type="button" class="btn btn-link">Link</button>
+    <!-- 禁止换行设置样式:.text-nowrap $btn-white-space: nowrap -->
+    <!-- 可用作按钮的HTML标签 -->
+        <a class="btn btn-primary" href="#" role="button">Link</a>
+        <button class="btn btn-primary" type="submit">Button</button>
+        <input class="btn btn-primary" type="button" value="Input">
+        <input class="btn btn-primary" type="submit" value="Submit">
+        <input class="btn btn-primary" type="reset" value="Reset">
+    <!-- 带轮廓线的按钮(不包含背景颜色) -->
+        <button type="button" class="btn btn-outline-primary">Primary</button>
+        <button type="button" class="btn btn-outline-secondary">Secondary</button>
+        <button type="button" class="btn btn-outline-success">Success</button>
+        <button type="button" class="btn btn-outline-danger">Danger</button>
+        <button type="button" class="btn btn-outline-warning">Warning</button>
+        <button type="button" class="btn btn-outline-info">Info</button>
+        <button type="button" class="btn btn-outline-light">Light</button>
+        <button type="button" class="btn btn-outline-dark">Dark</button>
+    <!-- 尺寸不同的按钮 -->
+        <button type="button" class="btn btn-primary btn-lg">Large button</button>
+        <button type="button" class="btn btn-secondary btn-lg">Large button</button>
+        <button type="button" class="btn btn-primary btn-sm">Small button</button>
+        <button type="button" class="btn btn-secondary btn-sm">Small button</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Block level button</button>
+        <button type="button" class="btn btn-secondary btn-lg btn-block">Block level button</button>
+    <!-- 单选与多选 -->
+        <div class="btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input type="checkbox" checked> Checked
+            </label>
+            </div>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input type="radio" name="options" id="option1" checked> Active
+            </label>
+            <label class="btn btn-secondary">
+                <input type="radio" name="options" id="option2"> Radio
+            </label>
+            <label class="btn btn-secondary">
+                <input type="radio" name="options" id="option3"> Radio
+            </label>
+            </div>
+    <!-- 活动状态
+    当按钮处于活动状态时，按钮将表现为被按下的效果，即背景和边框变暗，如果启用了阴影效果，将会有 inset 阴影。由于这一效果是基于伪类（pseudo-class）实现的，因此无需为 <button> 添加任何类（class）。但是，如果需要以编程方式强制复现这一效果的话，可以使用 .active 类（并设置 aria-pressed=“true” 属性）。
+    -->
+        <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Primary link</a>
+        <a href="#" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Link</a>
+    <!--禁用状态
+    通过为 <button> 元素设置 disabled 属性（此属性是布尔类型的）可以使按钮看起来处于不可用状态。
+    -->
+        <button type="button" class="btn btn-lg btn-primary" disabled>Primary button</button>
+        <button type="button" class="btn btn-secondary btn-lg" disabled>Button</button>
+    <!--使用 <a> 元素创建的处于禁用状态的按钮具有些许不同的行为：
+
+    <a> 元素不支持 disabled 属性，因此必须设置 .disabled 类以使其在外观上显示为禁用状态。
+    包含了一些并未被全面支持的的属性，用于禁止按钮上的所有 鼠标事件（pointer-events） 。在支持这些属性的浏览器中，光标移动到被禁用的按钮上时将不会出现变化（即不会变为手的样子）。
+    利用 <a> 标签实现的禁用按钮应当设置 aria-disabled="true" 属性，以便向辅助技术提供当前元素的状态。
+    利用 <a> 标签实现的禁用按钮 不应 设置 href 属性。
+    -->
+        <a class="btn btn-primary btn-lg disabled" role="button" aria-disabled="true">Primary link</a>
+        <a class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Link</a> 
+    <!-- 
+    方法	描述
+    $().button('toggle')	切换状态
+    $().button('dispose')	消除元素
+    -->
+    <style>
+        
+    </style>
+    <script>
+
+    </script>
+</body>
