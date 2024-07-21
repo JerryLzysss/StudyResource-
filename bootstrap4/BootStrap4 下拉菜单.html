@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!-- 必须的 meta 标签 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+ 
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.net/jquery/3.2.1/jquery.min.js"></script>
+ 
+<!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+<script src="https://cdn.staticfile.net/popper.js/1.15.0/umd/popper.min.js"></script>
+ 
+<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+<script src="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!--需要放置在dropdown类里面或者是元素定位为relative的元素当中  -->
+    <!-- 一般情况下一个按钮配合一个dropdown-menu的菜单 -->
+    <div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+    Dropdown link
+    </a>
+    <!-- 可以加入button,通过btn-lg调节大小,btn-danger调节颜色 -->
+    <button type="button" class="btn btn-danger btn-lg dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    Action
+    </button>
+    <!-- 通过dropdown-toggle-split分开按钮 -->
+    <button type="button" class="btn btn-danger">Action</button>
+    <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <div class="dropdown-menu">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+    </div>
+    
+    <!-- 调节方向，通过设置btn-group dropup/dropdown/dropleft/dropright -->
+    <div class="btn-group dropup">
+    <button type="button" class="btn btn-secondary">
+    Split dropup
+    </button>
+    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <!-- 在bootstrap4允许在dropdown-menu中加入button -->
+    <div class="dropdown-menu">
+
+    <a class="dropdown-item" href="#">Action</a>
+    <!-- 通过设置active实现选中效果 -->
+    <a class="dropdown-item active" href="#">Another action</a>
+    <!-- diabled实现关闭功能 -->
+    <a class="dropdown-item diabled">Something else here</a>
+    </div>
+    </div>
+    <!-- 调整下拉框菜单的位置与大小 -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        Right-aligned menu
+        </button>
+    </div>
+    
+    <!--dropdown-menu-{大小}-{位置}  -->
+    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action</button>
+    <div class="dropdown-menu dropdown-menu-lg-left">
+       
+        <button class="dropdown-item" type="button">Action</button>
+        <button class="dropdown-item" type="button">Another action</button>
+        <button class="dropdown-item" type="button">Something else here</button>
+        
+    </div>
+    <!-- dropdown-header 标题 -->
+    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action</button>
+    <div class="dropdown-menu">
+        <a class="dropdown-header">Dropdown header123</a>
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+    </div>
+    <!-- dropdown-divider 分割线 -->
+    <div class="dropdown-menu">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#">Separated link</a>
+    </div>
+    <!-- dropdown-menu text-muted 文本-->
+    <div class="dropdown-menu p-4 text-muted" style="max-width: 200px;">
+    <p>
+    Some example text that's free-flowing within the dropdown menu.
+    </p>
+    <p class="mb-0">
+    And this is more example text.
+    </p>
+    <!-- 表单 -->
+    <div class="dropdown-menu">
+        <form class="px-4 py-3">
+          <div class="form-group">
+            <label for="exampleDropdownFormEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label for="exampleDropdownFormPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="dropdownCheck">
+              <label class="form-check-label" for="dropdownCheck">
+                Remember me
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">New around here? Sign up</a>
+        <a class="dropdown-item" href="#">Forgot password?</a>
+      </div>
+    </div>
+    </div>
+   
+    
+    <style>
+
+    </style>
+    <script>
+      </script>
+</body>

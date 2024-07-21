@@ -22,6 +22,8 @@ https://v4.bootcss.com/docs/getting-started/introduction/
     * 按钮
     * 按钮组
     * 卡片
+    * 轮播图
+    * 折叠
 ## BootStrap 4 容器
 -|Extra small(<576px)|small(>=576px)|Medium(>=768px)|Large(>=992px)|Extra large(>=1200px)
 ---|---|---|---|---|---
@@ -80,4 +82,93 @@ https://v4.bootcss.com/docs/getting-started/introduction/
 .table-responsive-md|	< 768px
 .table-responsive-lg|	< 992px
 .table-responsive-xl|	< 1200px
-# BootStrap 4 总结
+## BootStrap4 轮播图
+
+### data选项
+名字|类型|默认|描述
+--|--|--|--
+interval|number|5000|切换时间间隔
+keyboard|boolean|true|是否对键盘事件进行响应
+pause|string|hover|如果设置为hover,那么鼠标放上时可以暂停，设置为false,则不会触发
+ride|string|false|在用户执行完一轮后轮播，如果为carousel则在载入时轮播
+wrap|boolean|true|决定是否连续播放
+touch|boolean|true|决定是否向前向后滑动
+### methods方法
+```
+使用方法:$('#identifier').carousel({
+    interval: 2000
+})
+.carousel('cycle')从左到右循环轮播项目。
+.carousel('pause')停止轮播循环项目。	
+.carousel(number)循环轮播到某个特定的帧（从 0 开始计数，与数组类似）。	
+.carousel('prev')循环轮播到上一个项目。	
+.carousel('next')循环轮播到下一个项目。
+.carousel('dispose')摧毁元素
+.carousel('nextWhenVisible') 当父元素不显示或者自身不显示时，不执行循环(早于Slide.bs.carousel)
+.carousel('to') 循环特定的框架	(早于slide.bs.carousel)
+```
+### events事件
+```
+实例:
+('#identifier').on('slide.bs.carousel', function () {
+    // 执行一些动作...
+})
+slide.bs.carousel 调用Slide实例触发方法
+slid.bs.carousel 当完成动画的时候
+```
+
+## BootStrap4 折叠框
+### data选项
+名字|类型|默认|描述
+--|--|--|--
+parent|selector,object,dom|false|如果设置了选项，当该节点开启时候其他的折叠会随着关闭
+toggle|boolean|true|是否可以切换
+### methods方法
+```
+实例:$('#myCollapsible').collapse({
+  toggle: false
+})
+.collapse('toggle')|切换当前状态
+.collapse('show')|显示折叠框
+.collapse('hide')|关闭折叠框
+.collapse('dispose')|销毁折叠框
+```
+### 事件
+```
+实例:$('#myCollapsible').on('hidden.bs.collapse', function () {
+  // do something...
+})
+```
+show.bs.carousel 调用show实例触发方法
+shown.bs.carousel 当完成show动画的时候
+hide.bs.carousel 调用hide实例触发方法
+hidden.bs.carousel 当完成hide动画的时候
+
+## BootStrap4 下拉框
+
+### data选项
+名字|类型|默认|描述
+--|--|--|--
+offset|number,string,function|0|下拉菜单的偏移量
+flip|boolean|true|翻转
+boundary|string,element|scrollParent|边界防止溢出，设置的属性值有viewport,window,scrollParent或者是HTML元素
+reference|string,element|toggle|参考对应元素进行打开或关闭可以设置为toggle和parent，
+display|string|dynamic|如果使用static则会关闭
+popperConfig|null,object|null|修改popper属性
+
+### 方法
+
+方法|描述
+--|--
+.dropdown('toggle')|切换下拉框
+.dropdown('show')|显示下拉框
+.dropdown('hide')|隐藏下拉框
+.dropdown('update')|更新下拉框的位置
+.dropdown('dispose')|销毁下拉框
+
+### 事件
+show.bs.dropdown 调用show实例触发方法
+shown.bs.dropdown  当完成show动画的时候
+hide.bs.dropdown  调用hide实例触发方法
+hidden.bs.dropdown  当完成hide动画的时候
+# BootStrap4 总结
