@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!-- 必须的 meta 标签 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+ 
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.net/jquery/3.2.1/jquery.min.js"></script>
+ 
+<!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+<script src="https://cdn.staticfile.net/popper.js/1.15.0/umd/popper.min.js"></script>
+ 
+<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+<script src="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!-- 基本使用 -->
+    <ul class="list-group">
+        <!-- 选中样式 -->
+        <li class="list-group-item active" aria-current="true">An item</li>
+        <li class="list-group-item diabled" aria-disabled="true">A second item</li>
+        <li class="list-group-item">A third item</li>
+        <li class="list-group-item">A fourth item</li>
+        <li class="list-group-item">And a fifth one</li>
+      </ul>
+      <!-- 超链接与按钮 -->
+      <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+          The current link item
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">A second link item</a>
+        <a href="#" class="list-group-item list-group-item-action">A third link item</a>
+        <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
+        <a class="list-group-item list-group-item-action disabled">A disabled link item</a>
+      </div>
+      <div class="list-group">
+        <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+          The current button
+        </button>
+        <button type="button" class="list-group-item list-group-item-action">A second item</button>
+        <button type="button" class="list-group-item list-group-item-action">A third button item</button>
+        <button type="button" class="list-group-item list-group-item-action">A fourth button item</button>
+        <button type="button" class="list-group-item list-group-item-action" disabled>A disabled button item</button>
+      </div>
+      <!-- 边框去除 flush -->
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">An item</li>
+        <li class="list-group-item">A second item</li>
+        <li class="list-group-item">A third item</li>
+        <li class="list-group-item">A fourth item</li>
+        <li class="list-group-item">And a fifth one</li>
+      </ul>
+      <!-- 居中布局与大小调整 -->
+      <ul class="list-group list-group-horizontal">
+        <li class="list-group-item">An item</li>
+        <li class="list-group-item">A second item</li>
+        <li class="list-group-item">A third item</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-sm">
+        <li class="list-group-item">An item</li>
+        <li class="list-group-item">A second item</li>
+        <li class="list-group-item">A third item</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-md">
+        <li class="list-group-item">An item</li>
+        <li class="list-group-item">A second item</li>
+        <li class="list-group-item">A third item</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-lg">
+        <li class="list-group-item">An item</li>
+        <li class="list-group-item">A second item</li>
+        <li class="list-group-item">A third item</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-xl">
+        <li class="list-group-item">An item</li>
+        <li class="list-group-item">A second item</li>
+        <li class="list-group-item">A third item</li>
+      </ul>
+      <!-- 五颜六色的列表组 -->
+      <ul class="list-group">
+        <li class="list-group-item">A simple default list group item</li>
+      
+        <li class="list-group-item list-group-item-primary">A simple primary list group item</li>
+        <li class="list-group-item list-group-item-secondary">A simple secondary list group item</li>
+        <li class="list-group-item list-group-item-success">A simple success list group item</li>
+        <li class="list-group-item list-group-item-danger">A simple danger list group item</li>
+        <li class="list-group-item list-group-item-warning">A simple warning list group item</li>
+        <li class="list-group-item list-group-item-info">A simple info list group item</li>
+        <li class="list-group-item list-group-item-light">A simple light list group item</li>
+        <li class="list-group-item list-group-item-dark">A simple dark list group item</li>
+      </ul>
+      <!-- 配合badges -->
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          A list item
+          <span class="badge badge-primary badge-pill">14</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          A second list item
+          <span class="badge badge-primary badge-pill">2</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          A third list item
+          <span class="badge badge-primary badge-pill">1</span>
+        </li>
+      </ul>
+      <!-- 自定义内容 -->
+      <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action active">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">List group item heading</h5>
+            <small>3 days ago</small>
+          </div>
+          <p class="mb-1">Some placeholder content in a paragraph.</p>
+          <small>And some small print.</small>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">List group item heading</h5>
+            <small class="text-muted">3 days ago</small>
+          </div>
+          <p class="mb-1">Some placeholder content in a paragraph.</p>
+          <small class="text-muted">And some muted small print.</small>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">List group item heading</h5>
+            <small class="text-muted">3 days ago</small>
+          </div>
+          <p class="mb-1">Some placeholder content in a paragraph.</p>
+          <small class="text-muted">And some muted small print.</small>
+        </a>
+      </div>
+      <!-- js拓展 -->
+      <div class="row">
+        <div class="col-4">
+          <div class="list-group" id="list-tab" role="tablist">
+            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
+            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...</div>
+            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+          </div>
+        </div>
+      </div>
+      <!-- 动画效果 -->
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="home" role="tabpanel">...</div>
+        <div class="tab-pane fade" id="profile" role="tabpanel">...</div>
+        <div class="tab-pane fade" id="messages" role="tabpanel">...</div>
+        <div class="tab-pane fade" id="settings" role="tabpanel">...</div>
+      </div>
+   <style>
+
+    </style>
+    <script>
+      
+      </script>
+</body>

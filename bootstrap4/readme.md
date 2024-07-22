@@ -133,7 +133,7 @@ toggle|boolean|true|是否可以切换
 .collapse('hide')|关闭折叠框
 .collapse('dispose')|销毁折叠框
 ```
-### 事件
+### event事件
 ```
 实例:$('#myCollapsible').on('hidden.bs.collapse', function () {
   // do something...
@@ -156,7 +156,7 @@ reference|string,element|toggle|参考对应元素进行打开或关闭可以设
 display|string|dynamic|如果使用static则会关闭
 popperConfig|null,object|null|修改popper属性
 
-### 方法
+### methods方法
 
 方法|描述
 --|--
@@ -171,4 +171,38 @@ show.bs.dropdown 调用show实例触发方法
 shown.bs.dropdown  当完成show动画的时候
 hide.bs.dropdown  调用hide实例触发方法
 hidden.bs.dropdown  当完成hide动画的时候
+
+## BootStrap4 模态框(modal)
+### data选项
+名字|类型|默认|描述
+--|--|--|--
+backdrop|boolean/static|true|包含有背景，如果设置为static则不会在点击后关闭表单
+keyboard|boolean|true|当点击esc时关闭表单
+focus|boolean|true|集中焦点到modal上
+show|boolean|true|初始化时显示modal
+### methods方法
+```
+$('#myModal').modal({
+  keyboard: false
+})
+toggle:切换状态
+show:展示
+hide:隐藏
+handleupdate:更新
+dispose:销毁
+```
+### events事件
+```
+$('#myModal').on('hidden.bs.modal', function (event) {
+  // do something...
+})
+```
+事件|描述
+--|--
+show.bs.modal|当show实例方法调用时
+shown.bs.modal|当show动画执行完
+hide.bs.modal|当hide实例方法调用
+hidden.bs.modal|当hide动画执行完
+hidePrevented.bs.modal|当使用esc键或者点击背景(设置为static属性)或者keyboard配置设置为false时
+
 # BootStrap4 总结
