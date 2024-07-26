@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- 必须的 meta 标签 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<head>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.net/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+    <script src="https://cdn.staticfile.net/popper.js/1.15.0/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!-- 链接添加 .stretched-link 类以使 包含该链接的块级元素 
+     通过 ::after 伪元素变成可点击的区域。
+     在大多数情况下，这意味着如果某个设置了 position: relative; 属性的元素包含一个带有 .stretched-link 类的链接的话，改元素将变成可点击的区域。请注意，
+     鉴于 CSS position 的工作原理，.stretched-link 类不能与大多数表格元素混合使用。
+     Bootsrap 中的卡片（card）组件默认被设置了 position: relative 属性，因此在这种情况下，你可以安全地向卡片（card）组件中所包含的链接添加 .stretched-link 类，并且无需修改 HTML 代码。
+     延伸链接（stretched link）不支持多个链接和点击目标。但是，如果需要的话，你可以通过添加一些 position 和 z-index 样式来实现。
+
+ -->
+    <div class="card" style="width: 18rem;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Card with stretched link</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                content.</p>
+            <a href="#" class="btn btn-primary stretched-link">Go somewhere</a>
+        </div>
+    </div>
+    <!-- 媒体对象（media object）组件默认情况下没有设置 position: relative 属性，
+       因此需要自己添加 .position-relative 类，以防止链接溢出到父元素外。 -->
+       <div class="media position-relative">
+        <img src="..." class="mr-3" alt="...">
+        <div class="media-body">
+          <h5 class="mt-0">Media with stretched link</h5>
+          <p>This is some placeholder content for the media object. It is intended to mimic what some real-world content would look like, and we're using it here to give the component a bit of body and size.</p>
+          <a href="#" class="stretched-link">Go somewhere</a>
+        </div>
+      </div>
+    <style>
+
+
+
+    </style>
+    <script>
+
+    </script>
+</body>

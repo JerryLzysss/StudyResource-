@@ -13,6 +13,10 @@ https://v4.bootcss.com/docs/getting-started/introduction/
     * 文字排版
     * 表格
     * 图像形状
+    * 媒体对象
+    * 巨幕
+    * flex 伸缩布局
+    * position 定位
 * 组件
     * 颜色
     * 信息提示框
@@ -24,6 +28,36 @@ https://v4.bootcss.com/docs/getting-started/introduction/
     * 卡片
     * 轮播图
     * 折叠
+    * 下拉菜单
+    * 表单
+    * 输入组
+    * 列表组
+    * 模态框
+    * 导航
+    * 导航条
+    * 分页
+    * 弹出框
+    * 进度条
+    * 滚动监听
+    * 旋转图标
+    * 轻量弹框
+    * 工具提示框
+    * 边框
+    * 关闭图标
+* 样式
+  * 清除浮动
+  * display展示
+  * float浮动
+  * interactions 交互方式
+  * overflow 溢出
+  * screenreader 屏幕阅读器
+  * shadow 阴影
+  * size 尺寸
+  * margin,padding 间隔
+  * strectched link 拓展连接
+  * text 文本
+  * vertical-align 垂直对齐
+  * visible 可见性
 ## BootStrap 4 容器
 -|Extra small(<576px)|small(>=576px)|Medium(>=768px)|Large(>=992px)|Extra large(>=1200px)
 ---|---|---|---|---|---
@@ -205,4 +239,335 @@ hide.bs.modal|当hide实例方法调用
 hidden.bs.modal|当hide动画执行完
 hidePrevented.bs.modal|当使用esc键或者点击背景(设置为static属性)或者keyboard配置设置为false时
 
+## BootStrap4 工具提示框
+### data选项
+名字|类型|默认|描述
+--|--|--|--
+animation|boolean|true|添加隐藏过渡
+container|string,element,false|false|添加到一个指定元素，用来允许tooltip悬浮在靠近触发元素的文件流上。
+delay|number,object|0|推迟隐藏或者显示的时间
+html|boolean|false|允许在tooltip中使用html
+placement|string,function|'top'|设置tooltip的位置，如果是auto会自动调整
+selector|string,false|提供selector，tooltip会寄托到特定元素中
+template|string|`'<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'`|tooltip的模板，title对应.tooltip-inner,.arrow对应arrow,最外层必须有.tooltip和role="tooltip"
+title|string,element,function|""|默认title不会显示
+trigger|string|'hover focus'|如何触发tootip,拥有的为click,hover,focus,manual,可以通过.tooltip('show'),.tooltip('hide')以及.tooltip('toggle')方法进行触发
+offset|number,string,function|0|与其元素的对应的偏移量，如果使用function那么第一个参数必须是offset的数值，并且返回时必须是同样的结构，操作元素dom是第二个参数
+fallbackPlacement|string,array|flip|允许特定的popper使用这个反馈
+customClass|string,function|""，添加类到tooltip当tooltip展现时
+boundary|string,element|'scrollParent'|允许接收参数viewport,window,scrollParent,或者HTML元素(只允许JS的元素),用来控制边界
+sanitize|boolean|true|不懂..
+whiteList|object|default value|允许属性和标签的对象
+sanitizeFn|null,function|null|不懂..
+popperConfig|null,project|null|配置popper
+### methods方法
+```
+使用方法:
+$('#myModal').tooltip({
+  show:false
+})
+$('#element').tooltip('show') 显示
+$('#element').tooltip('hide')隐藏
+$('#element').tooltip('toggle')切换
+$('#element').tooltip('dispose')销毁
+$('#element').tooltip('enable')开启
+$('#element').tooltip('disable')禁用
+$('#element').tooltip('toggleEnabled')切换
+$('#element').tooltip('update')更新
+```
+### events事件
+```
+使用方法:
+$('#myTooltip').on('hidden.bs.tooltip', function () {
+  // do something...
+})
+show.bs.tooltip
+shown.bs.tooltip
+hide.bs.tooltip
+hidden.bs.tooltip
+inserted.bs.tooltip 当tooltip被插入到DOM元素之后触发
+```
+## BootStrap4 flex布局
+在bootstrap的flex布局中可以引入大部分的display下布局以及引入对应的大小模块
+### flex
+```
+.d-flex
+.d-inline-flex
+.d-sm-flex
+.d-sm-inline-flex
+.d-md-flex
+.d-md-inline-flex
+.d-lg-flex
+.d-lg-inline-flex
+.d-xl-flex
+.d-xl-inline-flex
+```
+### column && row
+```
+.flex-row
+.flex-row-reverse
+.flex-column
+.flex-column-reverse
+.flex-sm-row
+.flex-sm-row-reverse
+.flex-sm-column
+.flex-sm-column-reverse
+.flex-md-row
+.flex-md-row-reverse
+.flex-md-column
+.flex-md-column-reverse
+.flex-lg-row
+.flex-lg-row-reverse
+.flex-lg-column
+.flex-lg-column-reverse
+.flex-xl-row
+.flex-xl-row-reverse
+.flex-xl-column
+.flex-xl-column-reverse
+```
+### justify-content
+```
+.justify-content-start
+.justify-content-end
+.justify-content-center
+.justify-content-between
+.justify-content-around
+.justify-content-sm-start
+.justify-content-sm-end
+.justify-content-sm-center
+.justify-content-sm-between
+.justify-content-sm-around
+.justify-content-md-start
+.justify-content-md-end
+.justify-content-md-center
+.justify-content-md-between
+.justify-content-md-around
+.justify-content-lg-start
+.justify-content-lg-end
+.justify-content-lg-center
+.justify-content-lg-between
+.justify-content-lg-around
+.justify-content-xl-start
+.justify-content-xl-end
+.justify-content-xl-center
+.justify-content-xl-between
+.justify-content-xl-around
+```
+### align-item
+```
+.align-items-start
+.align-items-end
+.align-items-center
+.align-items-baseline
+.align-items-stretch
+.align-items-sm-start
+.align-items-sm-end
+.align-items-sm-center
+.align-items-sm-baseline
+.align-items-sm-stretch
+.align-items-md-start
+.align-items-md-end
+.align-items-md-center
+.align-items-md-baseline
+.align-items-md-stretch
+.align-items-lg-start
+.align-items-lg-end
+.align-items-lg-center
+.align-items-lg-baseline
+.align-items-lg-stretch
+.align-items-xl-start
+.align-items-xl-end
+.align-items-xl-center
+.align-items-xl-baseline
+.align-items-xl-stretch
+```
+### align-self
+```
+.align-self-start
+.align-self-end
+.align-self-center
+.align-self-baseline
+.align-self-stretch
+.align-self-sm-start
+.align-self-sm-end
+.align-self-sm-center
+.align-self-sm-baseline
+.align-self-sm-stretch
+.align-self-md-start
+.align-self-md-end
+.align-self-md-center
+.align-self-md-baseline
+.align-self-md-stretch
+.align-self-lg-start
+.align-self-lg-end
+.align-self-lg-center
+.align-self-lg-baseline
+.align-self-lg-stretch
+.align-self-xl-start
+.align-self-xl-end
+.align-self-xl-center
+.align-self-xl-baseline
+.align-self-xl-stretch
+```
+### fill
+```
+.flex-fill
+.flex-sm-fill
+.flex-md-fill
+.flex-lg-fill
+.flex-xl-fill
+```
+### grow && shrink
+```
+.flex-{grow|shrink}-0
+.flex-{grow|shrink}-1
+.flex-sm-{grow|shrink}-0
+.flex-sm-{grow|shrink}-1
+.flex-md-{grow|shrink}-0
+.flex-md-{grow|shrink}-1
+.flex-lg-{grow|shrink}-0
+.flex-lg-{grow|shrink}-1
+.flex-xl-{grow|shrink}-0
+.flex-xl-{grow|shrink}-1
+```
+### wrap
+```
+.flex-nowrap
+.flex-wrap
+.flex-wrap-reverse
+.flex-sm-nowrap
+.flex-sm-wrap
+.flex-sm-wrap-reverse
+.flex-md-nowrap
+.flex-md-wrap
+.flex-md-wrap-reverse
+.flex-lg-nowrap
+.flex-lg-wrap
+.flex-lg-wrap-reverse
+.flex-xl-nowrap
+.flex-xl-wrap
+.flex-xl-wrap-reverse
+```
+### order
+```
+.order-0
+.order-1
+.order-2
+.order-3
+.order-4
+.order-5
+.order-6
+.order-7
+.order-8
+.order-9
+.order-10
+.order-11
+.order-12
+.order-sm-0
+.order-sm-1
+.order-sm-2
+.order-sm-3
+.order-sm-4
+.order-sm-5
+.order-sm-6
+.order-sm-7
+.order-sm-8
+.order-sm-9
+.order-sm-10
+.order-sm-11
+.order-sm-12
+.order-md-0
+.order-md-1
+.order-md-2
+.order-md-3
+.order-md-4
+.order-md-5
+.order-md-6
+.order-md-7
+.order-md-8
+.order-md-9
+.order-md-10
+.order-md-11
+.order-md-12
+.order-lg-0
+.order-lg-1
+.order-lg-2
+.order-lg-3
+.order-lg-4
+.order-lg-5
+.order-lg-6
+.order-lg-7
+.order-lg-8
+.order-lg-9
+.order-lg-10
+.order-lg-11
+.order-lg-12
+.order-xl-0
+.order-xl-1
+.order-xl-2
+.order-xl-3
+.order-xl-4
+.order-xl-5
+.order-xl-6
+.order-xl-7
+.order-xl-8
+.order-xl-9
+.order-xl-10
+.order-xl-11
+.order-xl-12
+```
+### align-content
+```
+.align-content-start
+.align-content-end
+.align-content-center
+.align-content-between
+.align-content-around
+.align-content-stretch
+.align-content-sm-start
+.align-content-sm-end
+.align-content-sm-center
+.align-content-sm-between
+.align-content-sm-around
+.align-content-sm-stretch
+.align-content-md-start
+.align-content-md-end
+.align-content-md-center
+.align-content-md-between
+.align-content-md-around
+.align-content-md-stretch
+.align-content-lg-start
+.align-content-lg-end
+.align-content-lg-center
+.align-content-lg-between
+.align-content-lg-around
+.align-content-lg-stretch
+.align-content-xl-start
+.align-content-xl-end
+.align-content-xl-center
+.align-content-xl-between
+.align-content-xl-around
+.align-content-xl-stretch
+```
+## BootStrap4 float样式
+```
+.float-left
+.float-right
+.float-none
+.float-sm-left
+.float-sm-right
+.float-sm-none
+.float-md-left
+.float-md-right
+.float-md-none
+.float-lg-left
+.float-lg-right
+.float-lg-none
+.float-xl-left
+.float-xl-right
+.float-xl-none
+```
+
 # BootStrap4 总结
+总的来说，boootstrap是一款基于scss之上的布局组件，也就是说通过bootstrap的布局功能可以完成大部分网页上的设计，而且
+其中的类型样式齐全，源码可以修改，而且能对各种屏幕进行适应，在完成基础静态页面有着很大的用处，但是还有很多问题，框架的巨大难以避免，同时在数据的处理还是只能使用原生的方法，没有实现重要的修改。

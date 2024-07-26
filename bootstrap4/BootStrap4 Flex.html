@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!-- 必须的 meta 标签 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<head>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.net/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+    <script src="https://cdn.staticfile.net/popper.js/1.15.0/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.net/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!-- 如display所述也可以用一样的布局 -->
+    <div class="d-flex p-2 bd-highlight">I'm a flexbox container!</div>
+    <div class="d-inline-flex p-2 bd-highlight">I'm an inline flexbox container!</div>
+    <!-- 不同位置 -->
+    <div class="d-flex flex-row bd-highlight mb-3">
+        <div class="p-2 bd-highlight">Flex item 1</div>
+        <div class="p-2 bd-highlight">Flex item 2</div>
+        <div class="p-2 bd-highlight">Flex item 3</div>
+    </div>
+    <div class="d-flex flex-row-reverse bd-highlight">
+        <div class="p-2 bd-highlight">Flex item 1</div>
+        <div class="p-2 bd-highlight">Flex item 2</div>
+        <div class="p-2 bd-highlight">Flex item 3</div>
+    </div>
+    <div class="d-flex flex-column bd-highlight mb-3">
+        <div class="p-2 bd-highlight">Flex item 1</div>
+        <div class="p-2 bd-highlight">Flex item 2</div>
+        <div class="p-2 bd-highlight">Flex item 3</div>
+    </div>
+    <div class="d-flex flex-column-reverse bd-highlight">
+        <div class="p-2 bd-highlight">Flex item 1</div>
+        <div class="p-2 bd-highlight">Flex item 2</div>
+        <div class="p-2 bd-highlight">Flex item 3</div>
+    </div>
+    <!-- justify-content样式 -->
+    <div class="d-flex justify-content-start">...</div>
+    <div class="d-flex justify-content-end">...</div>
+    <div class="d-flex justify-content-center">...</div>
+    <div class="d-flex justify-content-between">...</div>
+    <div class="d-flex justify-content-around">...</div>
+    <!-- align-items -->
+    <div class="d-flex align-items-start">...</div>
+    <div class="d-flex align-items-end">...</div>
+    <div class="d-flex align-items-center">...</div>
+    <div class="d-flex align-items-baseline">...</div>
+    <div class="d-flex align-items-stretch">...</div>
+    <!-- align-self -->
+    <div class="align-self-start">Aligned flex item</div>
+    <div class="align-self-end">Aligned flex item</div>
+    <div class="align-self-center">Aligned flex item</div>
+    <div class="align-self-baseline">Aligned flex item</div>
+    <div class="align-self-stretch">Aligned flex item</div>
+    <!-- fill -->
+    <div class="d-flex bd-highlight">
+        <div class="p-2 flex-fill bd-highlight">Flex item with a lot of content</div>
+        <div class="p-2 flex-fill bd-highlight">Flex item</div>
+        <div class="p-2 flex-fill bd-highlight">Flex item</div>
+    </div>
+    <!-- grow and shrink -->
+    <div class="d-flex bd-highlight">
+        <div class="p-2 flex-grow-1 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Third flex item</div>
+    </div>
+    <div class="d-flex bd-highlight">
+        <div class="p-2 w-100 bd-highlight">Flex item</div>
+        <div class="p-2 flex-shrink-1 bd-highlight">Flex item</div>
+    </div>
+    <!-- auto margin -->
+    <div class="d-flex bd-highlight mb-3">
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+    </div>
+
+    <div class="d-flex bd-highlight mb-3">
+        <div class="mr-auto p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+    </div>
+
+    <div class="d-flex bd-highlight mb-3">
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="ml-auto p-2 bd-highlight">Flex item</div>
+    </div>
+    <!-- with align-items -->
+    <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+        <div class="mb-auto p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+    </div>
+
+    <div class="d-flex align-items-end flex-column bd-highlight mb-3" style="height: 200px;">
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="p-2 bd-highlight">Flex item</div>
+        <div class="mt-auto p-2 bd-highlight">Flex item</div>
+    </div>
+    <!-- wrap -->
+    <div class="d-flex flex-nowrap">
+        ...
+    </div>
+    <div class="d-flex flex-wrap">
+        ...
+    </div>
+    <div class="d-flex flex-wrap-reverse">
+        ...
+    </div>
+    <!-- order -->
+    <div class="d-flex flex-nowrap bd-highlight">
+        <div class="order-3 p-2 bd-highlight">First flex item</div>
+        <div class="order-2 p-2 bd-highlight">Second flex item</div>
+        <div class="order-1 p-2 bd-highlight">Third flex item</div>
+    </div>
+    <!-- align content -->
+    <div class="d-flex align-content-start flex-wrap">
+        ...
+    </div>
+    <div class="d-flex align-content-center flex-wrap">...</div>
+    <style>
+
+
+    </style>
+    <script>
+
+    </script>
+</body>
