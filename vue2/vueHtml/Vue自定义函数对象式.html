@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <style>
+       
+        </style>
+       <div id="root">
+            <h1>当前n值是{{n}}</h1>
+            <h2>放大的值为<span v-cal="n"></span></h2>
+            <button @click="n++">n+1</button>、
+            <hr>
+            <input type="text" v-fbind:value="n">
+        </div>
+
+       
+        <script>
+       
+            /* v-cloak指令（没有值）本质是一个特殊属性，配合CSS可以促使VUE接管容器后删除，避免出现网速慢引起的{{xxx}}提示 */
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    n:1
+                },
+                directives:
+                {
+                    /* 函数何时会被调用，指令与元素成功绑定 */
+                    /* 指令模板重新解析时 */
+                    /* 简写形式时是采用的bind与update */
+                    cal(element,binding)
+                    {
+                        element.innerText=binding.value*10
+                    },
+                    fbind:
+                    {
+                        //指令与元素成功绑定时
+                        bind(element,binding)
+                        {
+                            element.value=bingd.value
+                            console.log('bind')
+                        },
+                        //指令所在元素被插入页面时
+                        inserted(element,binding)
+                        {
+                            element.focus()
+                            console.log('inserted')
+                        },
+                        //指令所在模板被重新解析时
+                        update(element,binding)
+                        {
+                            element.value=binding.value
+                            console.log('update')
+                        }
+                    }
+                }
+                    /* Vue自定义指令总结:
+                    1.定义语法:局部为new Vue{ directives:{指令名，配置对象}}
+                    2.全局定义:Vue.directive(指令名，配置对象)
+                    配置对象常用3个回调bind,inserted,update
+                    指令定义时不加v-,但是使用需要增加v- */
+            })
+      
+           
+        </script>
+    </body>
+   </html>

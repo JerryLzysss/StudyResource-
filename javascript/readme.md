@@ -5,6 +5,7 @@ JavaScript（简称“JS”）是一种具有函数优先的轻量级，解释�
 
 # JavaScript 目录
 * JS 基本操作
+    * JS storage
     * JS BOM
         * js导航历史跳转 - navigator,history,screen.
     * JS DOM

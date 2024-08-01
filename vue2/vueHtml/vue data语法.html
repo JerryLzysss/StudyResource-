@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       <div id="root">
+        <h1>good</h1>
+        <h2>{{good}}</h2><!-- 插值语法 -->
+        <br>
+        <h1>good2</h1><!-- 指令语法 -->
+        <a v-bind:href="goods.url">{{goods.good}}</a>
+       </div>
+           <!-- name数据要写JS表达式，且name可以自动读取data的所有属性 -->
+            <!-- data更新伴随页面数据更新 -->
+        <script type="text/javascript">
+            Vue.config.productionTip=false;/* 生产提示 */
+            new Vue({
+                    el:'#root',//el用于指定当前Vue为哪个容器服务，通常为css选择器字符串
+                    data:{//data通常用于存储数据
+                        good:"hello",
+                        goods:{
+                        url:"https://www.baidu.com",
+                        good:"hello2"
+                        }/* 多级结构 */
+                    }
+            })      
+        </script>
+    </body>
+   </html>

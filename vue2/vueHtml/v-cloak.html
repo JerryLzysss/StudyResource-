@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <style>
+            [v-cloak]{
+                display:none;
+            }
+        </style>
+       <div id="root">
+            <div v-cloak>{{name}}</div>
+        </div>
+
+       
+        <script>
+       
+            /* v-cloak指令（没有值）本质是一个特殊属性，配合CSS可以促使VUE接管容器后删除，避免出现网速慢引起的{{xxx}}提示 */
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    name:'hello'
+                }
+
+            })
+      
+           
+        </script>
+    </body>
+   </html>

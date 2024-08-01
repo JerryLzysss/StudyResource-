@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <div id="root">
+            hello world
+        </div>
+        <style>
+       
+        </style>
+       
+        <!-- 
+            VueComponent.prototype._proto===Vue.prototype
+            组件实例对象可以访问到Vue原型上的属性和方法
+        -->
+
+        <!-- Vue的prototype=>Vue的原型对象
+             Vue的实例对象(new Vue)的_proto_=>Vue的原型对象
+             Vue的原型对象的_proto=>Object
+             VueComponent的prototype=>VueComponent的原型对象
+             VueComponent的实例对象的_proto_指向VueComponent的原型对象
+            VueComponent的原型对象的_proto_指向Vue的原型对象 -->
+        <script>
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    number:1
+                }
+            })
+            const vc=Vue.extend({
+                data()
+                {
+                    number:2
+                }
+            })
+            console.log(Vue.prototype);//Vue的原型对象
+            console.log(vm.__proto__);//Vue的实例对象的隐式原型对象
+         
+            console.log(vc.prototype.__proto__===vm.__proto__);
+        </script>
+    </body>
+   </html>

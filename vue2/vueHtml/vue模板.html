@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Vue工作需要一个Vue实例
+            root容器的代码符合html规范
+        root容器的代码被称为Vue模板  -->
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    
+    </head>
+    <body>
+        <div id="root">
+            <h1>hello, {{ name }} </h1> 
+        </div>
+           <!-- name数据要写JS表达式，且name可以自动读取data的所有属性 -->
+            <!-- data更新伴随页面数据更新 -->
+        <script type="text/javascript">
+            Vue.config.productionTip=false;/* 生产提示 */
+            new Vue({
+                
+                    el:'#root',//el用于指定当前Vue为哪个容器服务，通常为css选择器字符串
+                    data:{//data通常用于存储数据
+                        name:'1',
+                        address:'1'
+                    }
+                  
+                
+            }) 
+          
+           
+        </script>
+    </body>
+
+    <!-- VUE实例与容器一一对应 -->
+   </html>

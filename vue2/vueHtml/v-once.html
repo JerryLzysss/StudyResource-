@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <style>
+            [v-cloak]{
+                display:none;
+            }
+        </style>
+       <div id="root">
+        <!-- v-once所在节点在初次动态渲染后就视为静态资源
+                以后数据的改变不会引起v-oncde所在结构的更新 -->
+            <div v-once>{{name}}</div>
+            <button v-on:click="change()">修改name</button>
+        </div>
+
+       
+        <script>
+       
+      
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    name:'hello'
+                },
+                methods:{
+                    change()
+                    {
+                        this.name="gg";
+                    }
+                }
+            })
+      
+           
+        </script>
+    </body>
+   </html>

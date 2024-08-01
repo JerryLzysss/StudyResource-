@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+        <!-- 数据代理，通过一个对象代理对另一个对象中属性的操作 -->
+       <div id="root">
+        <input type="text" placeholder="获取CODE" @keydown.ctrl="showInfo">
+        <input type="text" placeholder="获取CODE2" @keyup.ctrl="showInfo">
+        <br>
+        <input type="text" placeholder="空格" @keydown.8="showInfo">
+        <input type="text" placeholder="获取内部" @keydown.tab="showInfo2">
+       <div>
+       <br>
+       </div>
+        </div>
+        <script>
+          /* Vue中常用的按键别名
+           回车=>Enter
+           删除=>delete
+           退出=>esc
+           空格=>space
+            换行=>tab
+            上=>up
+            下=>down
+            左=>left
+            右=>right
+            2.Vue未提供别名的按键可以使用按键原给的KEY
+            3.系统修饰:ctrl,alt,shift,mta
+            1.配合keyup使用按下修饰的同时按下其他键并释放
+            2.配合keydown使用正常触发
+            3.可以使用keycode使用*/
+            const v=new Vue({
+                el:'#root',
+                data:{
+                    name:"1",
+                    num:"1"
+                },
+                methods:{
+                    showInfo(e)
+                    {
+                        console.log(e.key,e.keyCode);
+                    },
+                    showInfo2(e)
+                    {
+                        console.log(e.target.value);
+                    }
+                }
+            })
+        </script>
+    </body>
+   </html>

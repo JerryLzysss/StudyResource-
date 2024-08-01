@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+       
+       <div id="root">
+        <school></school>
+        <student></student>
+       </div>
+    <style>
+       
+    </style>
+       
+        <script>
+           /* Vue使用组件的步骤
+           1.定义组件
+           2.注册组件
+           3.使用组件
+           定义组件:使用Vue.extend(options)
+           区别是:el不要写，由vm管理
+           data必须写成函数，防止数据之间引用
+           注册组件
+           1.局部注册:new Vue传入components
+           2.全局注册侧:Vue.compoent('组件名',组件) */
+            const school=Vue.extend({
+                //el:'#data',不写el配置项，因为最终所有组件都由一个
+                template:
+                `
+                <div>
+                    <h2>{{schoolName}}</h2>
+                    <h2>{{address}}</h2>
+                </div>
+                `,
+                data(){
+                    return{
+                        schoolName:'1',
+                        address:'1'
+                    }
+                }/* 组件的data不写成对象 */
+            })
+            const student=Vue.extend({
+                template:
+                `
+                <div>
+                    <h2>{{Name}}</h2>
+                    <h2>{{age}}</h2>
+                </div>
+                `,
+                data()
+                {
+                    return{
+                        Name:'2',
+                        age:2,
+                    }
+                }
+            })
+            Vue.component('school',school);
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    msg:'ok'
+                },
+                components:{
+                    school:school,
+                    student:student
+                }
+
+            })
+        </script>
+    </body>
+   </html>

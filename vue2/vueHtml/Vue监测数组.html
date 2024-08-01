@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        <input type="text" placeholder="name" v-model="keyword">
+        <button @click="update()">更新</button>
+        <ul>
+             <li v-for="(p,index) of persons" :key="index">{{p.name}},{{p.age}}</li>
+        </ul>
+        </div>
+        <script>
+            /* 数组方式采用了包裹，因此不能直接操作数组的索引，而是需要通过,push,pop,shift,unshift,sort,reverse,splice等方法进行修改
+            Vue.set也可以操作，但是使用不多 */
+           const vm=new Vue({
+                el:'#root',
+                data:{
+                    keyword:"",
+                    sortType:0,
+                  persons:[
+             /*      Vue.set(vm.persons[0],'age',18) */
+             /* vm.persons.push({id:'005',name:'l',age:12}) */
+                    {id:'001',name:'张三'},
+                    {id:'002',name:'李四',age:19},
+                    {id:'003',name:'王五',age:20},
+                    {id:'004',name:'李二',age:21}
+                    ],
+                },
+                methods:{
+                    
+                 
+                }   
+                
+               
+            })
+            
+          
+            
+           
+        </script>
+    </body>
+   </html>

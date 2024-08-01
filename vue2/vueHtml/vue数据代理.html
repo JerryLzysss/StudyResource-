@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+        <!-- 数据代理，通过一个对象代理对另一个对象中属性的操作 -->
+       <div id="root">
+        <h1>账户:{{_data.username}}</h1>
+        <h1>密码:{{_data.password}}</h1>
+        </div>
+        <script>
+            const v=new Vue({
+
+                el:'#root',
+                data:{
+                    username:'1',
+                    password:'1'
+                }
+            })
+         let obj={x:100}
+         let obj2={y:200}
+         Object.defineProperty(obj2,'x',{
+            get()
+            {
+                return obj.x;
+            },
+            set(value)
+            {
+                obj.x=value
+            }
+         })
+         /* VUE中的数据代理
+         1.通过vm对象来代理data对象中属性的操作
+         2.Vue中数据代理的好处:方便操作data数据
+         3.基本原理:通过defineProperty把data对象所有属性添加到vm上
+         为没一个添加到vm的属性都指定一个getter/setter
+         在getter/setter操作data中对应的属性 */
+        </script>
+    </body>
+   </html>

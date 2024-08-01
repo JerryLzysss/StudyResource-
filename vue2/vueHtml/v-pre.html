@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <style>
+         
+        </style>
+       <div id="root">
+        <!-- v-pre指令 跳过其节点的编译过程
+            可利用他跳过，没有使用指令语法，使用插值语法的节点，会加快编译 -->
+            <div v-pre>name</div>
+        </div>
+
+       
+        <script>
+       
+         
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    name:'hello'
+                }
+
+            })
+      
+           
+        </script>
+    </body>
+   </html>

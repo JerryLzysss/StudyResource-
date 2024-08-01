@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        姓:<input type="text" v-model="firstname"><br></br>
+        姓2:<input type="text" v-model="secondname"><br></br>
+    
+        <br></br>
+    
+       <div>
+       <br>
+       </div>
+        </div>
+        <script>
+           
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    firstname:'',
+                    secondname:'',
+                       
+                    
+                   
+                },
+                /* Vue的watch默认不监视对象内部值的改变
+                    配置deep:true可以检测多层
+                    Vue自身可以监视对象内部的改变，但vue提供的watch不可用
+                     */
+                watch:{
+                 /*    'firstname.first':{
+                     
+                        handler(newValue,oldValue)
+                        {
+                            console.log('firstname.first被修改了',newValue,oldValue);
+                        }
+                    } */
+                   firstname(val)
+                   {
+                    setTimeout(()=>{
+                        
+                        this.fullname=this.firstname+this.secondname
+                        console.log(this.fullname)
+                    },1000)
+                   },
+                   secondname(val)
+                   {
+                    setTimeout(()=>{
+                        
+                        this.fullname=this.firstname+this.secondname
+                        console.log(this.fullname)
+                    },1000)
+                   }
+                }
+                /* computed与watch的区别
+                1.computed能完成的，watch都能完成
+                2.watch能完成的，computed不一定能完成,watch可以进行异步操作
+                所有不被Vue管理的函数（定时器，与ajax的回调写成箭头，this指向才正确） */
+            })
+        </script>
+    </body>
+   </html>

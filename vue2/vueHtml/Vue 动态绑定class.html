@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    
+    <body>
+       <style>
+            .basic{
+                font-size:15px;
+                background:blue;
+                width:100px;
+                height:200px;
+            }
+            .num1{
+                font-size:20px;
+            }
+            .num2{
+                font-size:40px;
+            }
+            .num3{
+               font-size:60px;
+            }
+       </style>
+       <div id="root">
+        <!-- 确定CLASS样式 字符串写法，适用于:样式类名不确定，需要动态指定 -->
+        <div class="basic" :class='mood' @click="changeMood()">{{name}}</div>
+        <br></br>
+        <!-- 确定class样式 数组写法，适用于:绑定样式不确定，名字不确定 -->
+        <!-- vm.arr.push推入样式 vm.arr.shift推出样式 -->
+        <div class="basic" :class='arr'>{{name}}</div>
+        <br></br>
+        <!-- 绑定class样式，对象写法，适用于绑定样式个数确定，名字确定，动态决定用不用 -->
+        <div class="basic" :class="mood2">{{name}}</div>
+        <!-- style样式
+        :style="{font-size:20px 其中xxx是动态值}
+        ：style="[a,b]"其中a、b是样式对象 -->
+        <br></br>
+    
+       <div>
+       <br>
+       </div>
+        </div>
+        <script>
+           
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                   name:'1',
+                   mood:'num2',
+                   arr:['num1','num2','num3'],
+                   mood2:{
+                        num1:true,
+                        num2:false,
+                        num3:false
+                   }
+                },
+                methods:{
+                    changeMood()
+                    {
+                        const arr=['num1','num2','num3']
+                        const index=Math.floor(Math.random()*3)
+                        this.mood=arr[index];
+                        console.log(index)
+                    }
+                }
+                /* Vue的watch默认不监视对象内部值的改变
+                    配置deep:true可以检测多层
+                    Vue自身可以监视对象内部的改变，但vue提供的watch不可用
+                     */
+             
+                
+              
+            })
+        </script>
+    </body>
+   </html>

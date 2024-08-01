@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        <input type="text" placeholder="name" v-model="keyword">    
+        <ul>
+             <li v-for="(p,index) of filterpersons" :key="index">{{p.name}},{{p.age}}</li>
+            </ul>
+        </div>
+        <script>
+           const vm=new Vue({
+                el:'#root',
+                data:{
+                    keyword:"",
+                  persons:[
+                    {id:'001',name:'张三',age:18},
+                    {id:'002',name:'李四',age:19},
+                    {id:'003',name:'王五',age:20},
+                    {id:'004',name:'李二',age:21}
+                    ],
+                    filePersons:[
+
+                    ]
+                },
+            /*     watch:{
+                   
+                     keyword(val)
+                    {
+                        this.filePersons=this.persons.filter((p)=>{
+                            return p.name.indexOf(val)!=-1
+                        })
+                    } 
+                }, */
+                computed:{
+                  
+                    filterpersons()
+                    {
+                        return this.persons.filter((p)=>{
+                            return p.name.indexOf(this.keyword)!=-1;
+                        })
+                    }
+                }
+            })
+        </script>
+    </body>
+   </html>

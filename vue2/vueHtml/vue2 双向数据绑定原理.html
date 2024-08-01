@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       <div id="root">
+        <h1>账户:{{username}}</h1>
+        <h1>密码:{{password}}</h1>
+        </div>
+        <script>
+           const vm=new Vue({
+                
+                el:'#root',
+                data:{
+                    username:'1',
+                    password:'1'
+                }
+                /* M:模型对应data的数据
+                   V:视图模板
+                   VM：视图模型:Vue实例对象 */
+                   /* data中所有属性最后出现在vm身上
+                   vm身上所有的属性和vue原型上所有属性都可以在vue模板直接使用 */
+            })
+            
+            let vms ={
+                name:'1',
+                sex:'1'
+            }
+            Object.defineProperty(vms,'age',{
+            /*     value:'2', */
+              /*   enumerable:true,//可枚举
+                writable:true,//可写入
+                configurable:true,//可删除  */ 
+                get:function()
+                {
+                    console.log("获得了"+age);
+                    return number;
+                },
+                set:function(value)
+                {
+                    console.log("修改了"+value);
+                    age=value;
+                }
+                /* value=get
+                   set=writable两者不能共用 */
+            })
+                   
+        </script>
+    </body>
+   </html>

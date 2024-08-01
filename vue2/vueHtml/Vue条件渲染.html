@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        <h1 v-show="true">hello world</h1>
+        <h1 v-if="true">hello world</h1>
+        <!-- v-if写法:
+             v-if="表达式"
+             v-else-if="表达式"
+             v-else="表达式"
+            适用于切换频率较低的场景
+            不展示的DOM直接被移除
+            v-show
+            适用于切换频率较高的场景
+            不展示的DOM使用样式隐藏
+            v-if可能无法获取元素
+            v-show不会出现这种情况
+             -->
+        </div>
+        <script>
+           
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    firstname:'',
+                    secondname:'',
+                       
+                    
+                   
+                },
+                /* Vue的watch默认不监视对象内部值的改变
+                    配置deep:true可以检测多层
+                    Vue自身可以监视对象内部的改变，但vue提供的watch不可用
+                     */
+                watch:{
+                 /*    'firstname.first':{
+                     
+                        handler(newValue,oldValue)
+                        {
+                            console.log('firstname.first被修改了',newValue,oldValue);
+                        }
+                    } */
+                   firstname(val)
+                   {
+                    setTimeout(()=>{
+                        
+                        this.fullname=this.firstname+this.secondname
+                        console.log(this.fullname)
+                    },1000)
+                   },
+                   secondname(val)
+                   {
+                    setTimeout(()=>{
+                        
+                        this.fullname=this.firstname+this.secondname
+                        console.log(this.fullname)
+                    },1000)
+                   }
+                }
+                /* computed与watch的区别
+                1.computed能完成的，watch都能完成
+                2.watch能完成的，computed不一定能完成,watch可以进行异步操作
+                所有不被Vue管理的函数（定时器，与ajax的回调写成箭头，this指向才正确） */
+            })
+        </script>
+    </body>
+   </html>

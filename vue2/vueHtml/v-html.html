@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    <body>
+        <!-- v-html
+        1.作用:向指定节点中渲染包含html结构的内容
+        2.与插值语法区别
+    （1）v-html会替换节点中所有的内容，{{xx}}则不会
+    （2）v-html可以识别html结构
+        3.v-html容易导致xss攻击
+          不应该在用户提交的内容使用v-html -->
+       <div id="root">
+            <div v-html="str"></div>
+        </div>
+
+       
+        <script>
+       
+            
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    str:'<a href="javascript:alert(1)">点击</a>'
+                }
+
+            })
+      
+           
+        </script>
+    </body>
+   </html>

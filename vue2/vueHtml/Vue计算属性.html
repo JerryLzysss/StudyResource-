@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        姓:<input type="text" v-model="firstname"><br></br>
+        名:<input type="text" v-model="lastname"><br></br>
+        全名:<span>{{firstname}}-{{lastname}}</span>
+        <br></br>
+        全名2:<span>{{fullName}}</span>
+       <div>
+       <br>
+       </div>
+        </div>
+        <script>
+            /* 计算属性:
+            1.定义属性不存在，通过已有属性
+            2.原理object.defineproperty
+            3.优势与method相比，内部有缓存机制
+            4.最终属性最终出现在vm
+            5.计算属性修改必须与set函数相应 */
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    firstname:'',
+                    lastname:''
+                },
+               computed:{
+                fullName:{
+                    //get的作用读取fullName
+                    //get调用:1.初次读取 2.依赖数据发生变化
+                    get()
+                    {
+                        console.log('get调用')
+                        return this.firstname+'-'+this.lastname
+                    },
+                    set(value)
+                    {
+                        console.log('set',value)
+                    }
+                }
+                /* 简写:不能有set */
+                /* fullName:function()
+                {
+                    console.log('get');
+                } */
+               }
+            })
+        </script>
+    </body>
+   </html>

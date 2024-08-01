@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       <div id="root">
+        <h1>账户:{{username}}</h1>
+        <h1>密码:{{password}}</h1>
+        </div>
+        <script>
+           const vm=new Vue({
+                
+                el:'#root',
+                data:{
+                    username:'1',
+                    password:'1'
+                }
+                /* M:模型对应data的数据
+                   V:视图模板
+                   VM：视图模型:Vue实例对象 */
+                   /* data中所有属性最后出现在vm身上
+                   vm身上所有的属性和vue原型上所有属性都可以在vue模板直接使用 */
+            })
+        </script>
+    </body>
+   </html>

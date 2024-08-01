@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+        <!-- 数据代理，通过一个对象代理对另一个对象中属性的操作 -->
+       <div id="root">
+        <h1>账户:{{_data.username}}</h1>
+        <h1>密码:{{_data.password}}</h1>
+        <button v-on:click="showInfo($event,11)">点我</button>
+        <button @click="showInfo($event,22)">点我2</button>
+        </div>
+        <script>
+            const v=new Vue({
+
+                el:'#root',
+                data:{
+                    username:'1',
+                    password:'1'
+                },
+                methods:{
+                    showInfo(event,number){
+                            console.log(event,number);
+                    }
+                }
+            })
+      /* 1.使用v-on:xxx或@xxx绑定事件，其中xxx是事件名 
+         2.事件需要配置在methods对象中，最终会在vm上出现
+         3.methods中配置的函数，不适用箭头函数
+         4.methods中配置的函数都是vue所管理的函数，this的指向是vm或组件
+         5.@click="demo*和@click=demo($event)效果一致，但是后面可以传参*/
+       
+        </script>
+    </body>
+   </html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <style>
+       
+        </style>
+       <div id="root">
+            <h1>当前n值是{{n}}</h1>
+            <h2>放大的值为<span v-cal="n"></span></h2>
+            <button @click="n++">n+1</button>
+        </div>
+
+       
+        <script>
+                    /*生命周期:
+                    1.new Vue()
+                    2.初始化事件生命周期，此时还没进行数据代理(此时不能通过vm访问data)
+                    before create
+                    3.初始化数据监测、数据代理（此时可以通过vm访问data）  
+                    created
+                    4.Vue开始解析模板，生成虚拟DOM
+                    是否存在el选择器:
+                    YES判断是否有模板template
+                    NO则是通过vm.$mount手动挂载在执行
+                    是否存在模板
+                    YES执行模板
+                    NO编译内部HTML
+                    beforemount(此时页面呈现的是未经Vue编译的Dom，对Dom操作无效)
+                    将内存的虚拟DOM转为真实DOM
+                    mounted（页面呈现的是经过Vue编译的Dom，但是尽可能避免）
+                    bedoreupdate(页面和数据并不同步)
+                    生成新虚拟DOM
+                    updated(完成页面和数据同步)
+                   beforedestroy
+                   此时vm所有的data,methods,指令都可用
+                   关闭定时器，取消订阅，解绑
+                   destroyed
+                    */
+
+                    /*
+                    常用的声明钩子:
+                    1.mounted 发送ajax,定时器，绑定事件对，订阅信息
+                    2.beforedestroy 清楚定时器，解绑自定义事件，取消订阅信息。
+                    vm.$destroy
+                    完全摧毁，解绑全部命令
+                    借助Vue开发者工具看不到任何信息
+                    再beforeDEstroy操作数据不会再出发更新数据
+                    销毁后原生DOM依然有效
+                     */
+
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    n:1
+                },
+                directives:
+                {
+                   
+                }
+
+            })
+      
+           
+        </script>
+    </body>
+   </html>

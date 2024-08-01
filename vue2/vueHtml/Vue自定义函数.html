@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.11.9/dayjs.min.js"></script>
+    </head>
+    
+    <body>
+        <style>
+       
+        </style>
+       <div id="root">
+            <h1>当前n值是{{n}}</h1>
+            <h2>放大的值为<span v-cal="n"></span></h2>
+            <button @click="n++">n+1</button>
+        </div>
+
+       
+        <script>
+       
+            /* v-cloak指令（没有值）本质是一个特殊属性，配合CSS可以促使VUE接管容器后删除，避免出现网速慢引起的{{xxx}}提示 */
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                    n:1
+                },
+                directives:
+                {
+                    /* 函数何时会被调用，指令与元素成功绑定 */
+                    /* 指令模板重新解析时 */
+                    cal(element,binding)
+                    {
+                        element.innerText=binding.value*10
+                    }
+                }
+
+            })
+      
+           
+        </script>
+    </body>
+   </html>

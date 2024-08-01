@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+        <!-- 数据代理，通过一个对象代理对另一个对象中属性的操作 -->
+       <div id="root">
+        姓:<input type="text" v-model="firstname"><br></br>
+        名:<input type="text" v-model="lastname"><br></br>
+        全名:<span>{{firstname}}-{{lastname}}</span>
+        <br></br>
+        全名2:<span>{{fullname()}}</span>
+       <div>
+       <br>
+       </div>
+        </div>
+        <script>
+            const v=new Vue({
+                el:'#root',
+                data:{
+                    firstname:'',
+                    lastname:''
+                },
+                methods:{
+                    fullname()
+                    {
+                        return this.firstname+this.lastname
+                    }
+                }
+            })
+        </script>
+    </body>
+   </html>

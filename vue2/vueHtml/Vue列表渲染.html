@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+            <ul>
+                <!-- v-for指令
+                 1.用于指示列表数据
+                2.v-for=(item,index) in xxx :key="yyy" -->
+                <!-- 遍历数组 -->
+                <li v-for="p in persons" :key="p.id">{{p.name}}-{{p.age}}</li>
+                <!-- 遍历对象 -->
+               
+                <li v-for="(p,index) in car" :key="index">{{p}},{{index}}</li>
+                <!-- 遍历字符串 -->
+                <li v-for="(p,index) in str" :key="index">{{p}},{{index}}</li>
+            </ul>
+        </div>
+        <script>
+           
+            const vm=new Vue({
+                el:'#root',
+                data:{
+                  persons:[
+                    {id:'001',name:'张三',age:18},
+                    {id:'002',name:'李四',age:19},
+                    {id:'003',name:'王五',age:20}
+                  ],
+                  car:{
+                    name:'1',
+                    place:'1',
+                    num:'1'
+                  },
+                   str:"hello"
+                },
+              
+            })
+        </script>
+    </body>
+   </html>

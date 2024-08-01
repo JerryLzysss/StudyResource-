@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        <input type="text" placeholder="name" v-model="keyword">
+        <button @click="update()">更新</button>
+        <ul>
+             <li v-for="(p,index) of persons" :key="index">{{p.name}},{{p.age}}</li>
+        </ul>
+        </div>
+        <script>
+           const vm=new Vue({
+                el:'#root',
+                data:{
+                    keyword:"",
+                    sortType:0,
+                  persons:[
+                    {id:'001',name:'张三',age:18},
+                    {id:'002',name:'李四',age:19},
+                    {id:'003',name:'王五',age:20},
+                    {id:'004',name:'李二',age:21}
+                    ],
+                },
+                methods:{
+                    update()
+                    {
+                        this.persons[0].name='ok',/* 单点更新可以成立 */
+                        this.persons[0]={id:'005',name:'ok',age:13}/* 能够更新数据但是不出现页面更新 */
+                        /*  */
+                    }
+                 
+                }   
+                
+               
+            })
+            let data={
+                name:'1',
+                age:18
+            }
+            let vms={}
+            const obs=new Observer(data)
+            vms._data=data=obs
+            /* 通过汇总所有 */
+            function Observer(obj)
+            {
+                //将对象所有属性形成一个数组
+                const keys=Object.keys(obj)
+                keys.forEach((k)=>{
+                    Object.defineProperty(this,k,{
+                        get()
+                        {
+                            console.log("get");
+                            return obj[k]
+                        },
+                        set(value)
+                        {
+                            obj[k]=value
+                            console.log("set");
+                        }
+                    })
+                })
+            }
+            
+           
+        </script>
+    </body>
+   </html>

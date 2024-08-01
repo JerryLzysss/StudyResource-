@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        <input type="text" placeholder="name" v-model="keyword">
+        <button @click="update()">更新</button>
+        <ul>
+             <li v-for="(p,index) of persons" :key="index">{{p.name}},{{p.age}}</li>
+        </ul>
+        </div>
+        <script>
+            /* Vue.set() 向响应式增加一个property,并更新试图，必须用于向响应式对象增加新property
+    
+    对象不能是Vue实例或者是Vue实例的根数据对象        */
+            /* 1.Vue监视所有层次数据
+                2.通过Setter实现监视
+                在new Vue时就传入监测数据
+                （1）对象后追加的属性，VUe默认不做响应处理
+                （2）如需要给后添加属性做响应式
+                需要vue.set(target,propertyName/index,value)或者
+                vm.$set
+                如何监测数组
+                （1）调用原生对应方法
+                (2)重新解析模板
+                vue修改数组需要使用API:push,pop,shift,unshift,
+                vue.set或者vm.$set
+                vue.set方法不能给vm或vm._data进行修改 
+            */
+    const vm=new Vue({
+                el:'#root',
+                data:{
+                    keyword:"",
+                    sortType:0,
+                  persons:[
+           
+                    {id:'001',name:'张三'},
+                    {id:'002',name:'李四',age:19},
+                    {id:'003',name:'王五',age:20},
+                    {id:'004',name:'李二',age:21}
+                    ],
+                },
+                methods:{
+                    
+                 
+                }   
+                
+               
+            })
+            /*  数据劫持原理。 
+            数据劫持,指的是在访问或者修改对象的某个属性时,
+            通过一段代码拦截这个行为,进行额外的操作或者修改返回结果 */
+          
+            
+           
+        </script>
+    </body>
+   </html>

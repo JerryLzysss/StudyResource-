@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>vue</title>
+        <script type="text/javascript" src="./vue.js"></script>
+    </head>
+    <body>
+       
+       <div id="root">
+        <form @submit="demo()">
+            账号:<input type="text" v-model="account"><br>
+            密码:<input type="password" v-model="password"><br>
+            性别:
+            男:<input type="radio" name="sex" v-model="sex">
+            女:<input type="radio" name="sex" v-model="sex"><br>
+            爱好:
+            学习<input type="checkbox" v-model="hobby" value="study">
+            睡觉<input type="checkbox" v-model="hobby" value="sleep">
+            吃饭<input type="checkbox" v-model="hobby" value="eat">
+            <select v-model="city">
+                <option value="">请选择校区</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+            </select>
+            <button>提交</button>
+
+        </form>
+        </div>
+        <script>
+            const vm=new Vue({
+
+                el:'#root',
+                data:{
+                    account:'',
+                    password:'',
+                        sex:'',
+                        hobby:[],
+                        city:'',
+                        
+                },
+                methods:{
+                    demo()
+                    {
+                        console.log(vm._data);
+                    }
+                }
+            })
+           
+          /* 收集表单数据
+          若<input type="text" 则v-model收集的是value值 用户输入的就是value值
+           若<input type="radio" 则v-model收集的是value值 且要给标签配置value
+           若<input type="checkbox" 
+           没有配置value则收集的是checked表示是否勾选
+           配置value后，若不是数组则是checked（勾选 or未勾选）
+           若配置为数组则收集数组
+           v-model的三个修饰符
+           v-model.trim输入首尾空格过滤
+           v-model.lay失去焦点在收集数据
+           v-model.number输入字符串转为有效数字
+            */
+            
+           
+        </script>
+    </body>
+   </html>
