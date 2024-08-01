@@ -1,30 +1,6 @@
 # todolist
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-
-### pubsub
+## pubsub
 ```
 1.一种组件间通信的方式
 2.使用步骤:
@@ -35,12 +11,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 5.在beforeDestroy钩子，使用PubSub.unsubsceribe(pid)取消订阅
 ```
 
-### nextTick
+## nextTick
 语法:this.$nextTick('###')
 作用:在下一次DOM更新结束后执行指定的回调
 使用时间:在改变数据后，要基于更新后的DOM进行某些操作的时候
 
-### Vue解决跨域
+## Vue解决跨域
 在Vue.config.js中添加如下配置
 devServer:{
     proxy:"http://localhost:5000"
@@ -68,3 +44,25 @@ module.exports={
         }
     }
 }
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
