@@ -1,9 +1,9 @@
 <template>
+    <!-- 通配符匹配全局 -->
     <div id="app">
-      home123
-      
+     123
     </div>
-  </template>
+  </template>   
 <script>
 export default{ 
 

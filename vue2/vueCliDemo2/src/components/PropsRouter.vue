@@ -1,11 +1,10 @@
 <template>
     <div id="app">
-      home123
-      
+        {{ id }}
     </div>
   </template>
 <script>
 export default{ 
-
+    props:['id']
   }
 </script> 
