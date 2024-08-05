@@ -357,11 +357,12 @@ npm run build
 import store from store.js
 
 ```
-## State
+## 五个过程与其概念
+### State
 Vuex 使用单一状态树——是的，用一个对象就包含了全部的应用层级状态。”而存在。这也意味着，每个应用将仅仅包含一个 store 实例。
-### 获得状态
+#### 获得状态
 由于已经将vuex绑定在了原型上，通过this.$store.state.xxx属性就能够访问到该相关属性。
-### mapState
+#### mapState
 当一个组件需要获取多个状态的时候，将这些状态都声明为计算属性会有些重复和冗余。为了解决这个问题，可以使用 mapState 函数,说白了就是通过这个函数将this.$store.state.xxx映射为平常使用的数据，然后直接通过模板语法使用.
 ```
 ---使用mapState---
@@ -383,27 +384,27 @@ show(){
 ```
 使用...mapState用作对象展开运算符,当需要放置其他方法的时候，如果还是以mapState的形式，无法引入到位置上，因此可以用...mapState作为存储的方式.
 
-## Getter
+### Getter
 类似于store的计算属性,当需要对state中的属性进行过滤等操作且不影响原数据的前提之下，可以使用Getter.
 基本访问的方式和state保持一致，以及其拥有的mapper函数用法也和mapstate一致。
 
-## Mutation
+### Mutation
 更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的事件类型和一个回调函数。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：
 而当需要在函数中使用这个方法的时候则是通过store.commit('xxxx')来实现.
-### payload
+#### payload
 payload属于mutations的额外参数,可以传入对象或者是字符串之类，可以根据需要设置传入的类型.
 另一种传递payload的方式是通过store.commit({type,payload})其他内容不变，也可以通过暴露常量的方式来处理mutation事件.
-### mutations同步
+#### mutations同步
 mutations必须是同步函数，同时，mutations也可以通过映射方式来进行简写，方式是同样的引入mapMutations,之后的操作就和getters与state一样了.
 解决mutations的异步问题可以通过action实现.
-## Action
+### Action
 Action提交的是mutation,需要commit使用，而不是直接变更状态，其操作可以包含异步操作.
-### Action分发
+#### Action分发
 Action调用需要通过dispatch方法执行，即调用的时候需要使用this.$store.dispatch(operation,payload),其作用在于处理异步操作，因此该函数返回的结果是promise类型，也就可以通过promise的回调方法来逐步执行.同理，其也有所对应的映射方式mapAction.
-## Module
+### Module
 由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
 为了解决以上问题，Vuex 允许我们将 store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter。
-### 基本使用
+#### 基本使用
 ```
 const moduleA = {
   state: () => ({ ... }),
@@ -428,7 +429,7 @@ const store = createStore({
 store.state.a // -> moduleA 的状态
 store.state.b // -> moduleB 的状态
 ```
-## 命名空间
+### 命名空间
 默认情况下，模块内部的 action 和 mutation 仍然是注册在全局命名空间的——这样使得多个模块能够对同一个 action 或 mutation 作出响应。Getter 同样也默认注册在全局命名空间，但是目前这并非出于功能上的目的（仅仅是维持现状来避免非兼容性变更）。必须注意，不要在不同的、无命名空间的模块中定义两个相同的 getter 从而导致错误。
 如果希望你的模块具有更高的封装度和复用性，你可以通过添加 namespaced: true 的方式使其成为带命名空间的模块。当模块被注册后，它的所有 getter、action 及 mutation 都会自动根据模块注册的路径调整命名
 说白了就是在模块里面加入namespaced:true。
@@ -449,9 +450,9 @@ const ModuleA={
 this.$store.state.commit('increment')
 需要注意的是:如果出现重复函数那么就会执行多次，也就是出现错误,因此如果需要出现重复命名可以使用namespaced:true,否则就不能出现同名的情况.
 ```
-## 方法获取
+### 方法获取
 mutation与getters只能对内部进行操作,而在actions中可以获取到大量参数,诸如rootState等等，相比于mutations,actions的操作更为广泛.因此，当需要修改到其他模块的时候可以使用action(...arg)来获取到相应的参数.
-## 命名空间的map绑定
+### 命名空间的mapper绑定
 
 通过对应到模块名的绑定，例如模块名为
 ```
@@ -487,10 +488,112 @@ const { mapState, mapActions } = createNamespacedHelpers('module')
 })
 ```
 然后绑定完后，同样使用模板语法例如{{count}}来引入即可.
-## 模块的方法函数
+### 模块的方法函数
 ```
 store.registerModule('module',{}) //注册模块
 store.registerModule(['module1','module2'],{})//注册嵌套模块module1/module2
 store.unregisterModule(moduleName)//卸载动态模块(不能卸载静态模块，也就是初始声明的).
 store.hasModule(moduleName)//查询是否已经注册某个模块(此处的moduleName需要以数组形式传递，例如['module1','module2']=>'module1/module2')
+```
+## 其余要点
+### 项目结构
+应用层级的状态应该集中到单个 store 对象中。
+提交 mutation 是更改状态的唯一方法，并且这个过程是同步的。
+异步逻辑都应该封装到 action 里面。
+### UseState钩子(Vue3)
+可以通过调用 useStore 函数，来在 setup 钩子函数中访问 store。这与在组件中使用选项式 API 访问 this.$store 是等效的。
+```
+import {useStore} from 'vuex'
+export default{
+  setup(){
+    const store=useStore()
+    return{
+      increment:()=>store.commit('increment')
+    }
+  }
+}
+```
+### 插件
+Vuex 的 store 接受 plugins 选项，这个选项暴露出每次 mutation 的钩子。Vuex 插件就是一个函数，它接收 store 作为唯一参数：
+```
+const myPlugin = (store) => {
+  // 当 store 初始化后调用
+  store.subscribe((mutation, state) => {
+    // 每次 mutation 之后调用
+    // mutation 的格式为 { type, payload }
+  })
+}
+const store = createStore({
+  // ...
+  plugins: [myPlugin]
+})
+```
+在插件中不允许直接修改状态——类似于组件，只能通过提交 mutation 来触发变化。
+通过提交 mutation，插件可以用来同步数据源到 store。例如，同步 websocket 数据源到 store（下面是个大概例子，实际上 createWebSocketPlugin 方法可以有更多选项来完成复杂任务）：
+```
+export default function createWebSocketPlugin (socket) {
+  return (store) => {
+    socket.on('data', data => {
+      store.commit('receiveData', data)
+    })
+    store.subscribe(mutation => {
+      if (mutation.type === 'UPDATE_DATA') {
+        socket.emit('update', mutation.payload)
+      }
+    })
+  }
+}
+const plugin = createWebSocketPlugin(socket)
+
+const store = createStore({
+  state,
+  mutations,
+  plugins: [plugin]
+})
+```
+Vuex 自带一个日志插件用于一般的调试:
+```
+import { createLogger } from 'vuex'
+const store = createStore({
+  plugins: [createLogger()]
+})
+const logger = createLogger({
+  collapsed: false, // 自动展开记录的 mutation
+  filter (mutation, stateBefore, stateAfter) {
+    // 若 mutation 需要被记录，就让它返回 true 即可
+    // 顺便，`mutation` 是个 { type, payload } 对象
+    return mutation.type !== "aBlocklistedMutation"
+  },
+  actionFilter (action, state) {
+    // 和 `filter` 一样，但是是针对 action 的
+    // `action` 的格式是 `{ type, payload }`
+    return action.type !== "aBlocklistedAction"
+  },
+  transformer (state) {
+    // 在开始记录之前转换状态
+    // 例如，只返回指定的子树
+    return state.subTree
+  },
+  mutationTransformer (mutation) {
+    // mutation 按照 { type, payload } 格式记录
+    // 我们可以按任意方式格式化
+    return mutation.type
+  },
+  actionTransformer (action) {
+    // 和 `mutationTransformer` 一样，但是是针对 action 的
+    return action.type
+  },
+  logActions: true, // 记录 action 日志
+  logMutations: true, // 记录 mutation 日志
+  logger: console, // 自定义 console 实现，默认为 `console`
+})
+```
+### 严格模式
+在状态发生变更后，不是由mutations引起的状态变更就会报错.
+<strong>不要在发布环境下启用严格模式！</strong>严格模式会深度监测状态树来检测不合规的状态变更——请确保在发布环境下关闭严格模式，以避免性能损失。
+```
+const store = createStore({
+  // ...
+  strict: process.env.NODE_ENV!=='production'
+})
 ```
