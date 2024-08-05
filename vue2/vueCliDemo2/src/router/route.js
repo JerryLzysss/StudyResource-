@@ -11,12 +11,16 @@ import PropsRouter from '@/components/PropsRouter.vue'
 import Guard from '@/components/Guard.vue'
 import DataFetch from '@/components/DataFetch.vue'
 import DataFetch2 from '@/components/DataFetch2.vue'
+import VueXDemo from '@/components/vueXDemo.vue'
 const Foo={template:`<div>Foo</div>`}
 const Bar={template:`<div>Bar</div>`}
 const router=new VueRouter({
     routes:[{
         name:'home,',
         path:'/home',
+        scrollBehavior(to,from,savedPosition){
+            return {x:0,y:0}
+        },
         component:Home,
     },{
         name:'about',
@@ -73,6 +77,9 @@ const router=new VueRouter({
     },{
         path:'/DataFetch2',
         component:DataFetch2
+    },{
+        path:'/vueX',
+        component:VueXDemo,
     }],
     
 

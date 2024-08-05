@@ -332,3 +332,165 @@ router.push('/admin').catch(failure => {
 ```
 
 # VueX
+Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。Vuex 也集成到 Vue 的官方调试工具 devtools extension (opens new window)，提供了诸如零配置的 time-travel 调试、状态快照导入导出等高级调试功能。
+## 安装
+前置:promise
+如果浏览器不支持Promise,那么需要安装相关的promise管理器，例如ES6-promise
+```<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>```
+或者是```npm install es6-promise --save```
+1.直接下载/CDN引入
+```<script src="https://unpkg.com/vuex@3.0.0"></script>```
+2.npm引入
+npm install vuex@3
+3.git克隆
+```
+git clone https://github.com/vuejs/vuex.git node_modules/vuex
+cd node_modules/vuex
+npm install
+npm run build
+```
+## 使用
+1.建立store.js实现基本操作state,getters,mutations,actions
+2.引入store
+```
+---main.js---
+import store from store.js
+
+```
+## State
+Vuex 使用单一状态树——是的，用一个对象就包含了全部的应用层级状态。”而存在。这也意味着，每个应用将仅仅包含一个 store 实例。
+### 获得状态
+由于已经将vuex绑定在了原型上，通过this.$store.state.xxx属性就能够访问到该相关属性。
+### mapState
+当一个组件需要获取多个状态的时候，将这些状态都声明为计算属性会有些重复和冗余。为了解决这个问题，可以使用 mapState 函数,说白了就是通过这个函数将this.$store.state.xxx映射为平常使用的数据，然后直接通过模板语法使用.
+```
+---使用mapState---
+computed:mapState({
+  count:state=> state.count,
+  count2: state => state.count2,
+  count3: state => state.count3,
+  show: function (state) {
+    return state.count + ' - ' + state.count2 + ' - ' + state.count3
+  }
+})
+---不使用mapState---
+count = this.$store.state.count,
+count2 = this.$store.state.count2,
+count3 = this.$store.state.count3,
+show(){
+  return this.$store.state.count + '-' + this.$store.state.count2 + ' - ' + this.$store.state.count3
+}
+```
+使用...mapState用作对象展开运算符,当需要放置其他方法的时候，如果还是以mapState的形式，无法引入到位置上，因此可以用...mapState作为存储的方式.
+
+## Getter
+类似于store的计算属性,当需要对state中的属性进行过滤等操作且不影响原数据的前提之下，可以使用Getter.
+基本访问的方式和state保持一致，以及其拥有的mapper函数用法也和mapstate一致。
+
+## Mutation
+更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的事件类型和一个回调函数。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：
+而当需要在函数中使用这个方法的时候则是通过store.commit('xxxx')来实现.
+### payload
+payload属于mutations的额外参数,可以传入对象或者是字符串之类，可以根据需要设置传入的类型.
+另一种传递payload的方式是通过store.commit({type,payload})其他内容不变，也可以通过暴露常量的方式来处理mutation事件.
+### mutations同步
+mutations必须是同步函数，同时，mutations也可以通过映射方式来进行简写，方式是同样的引入mapMutations,之后的操作就和getters与state一样了.
+解决mutations的异步问题可以通过action实现.
+## Action
+Action提交的是mutation,需要commit使用，而不是直接变更状态，其操作可以包含异步操作.
+### Action分发
+Action调用需要通过dispatch方法执行，即调用的时候需要使用this.$store.dispatch(operation,payload),其作用在于处理异步操作，因此该函数返回的结果是promise类型，也就可以通过promise的回调方法来逐步执行.同理，其也有所对应的映射方式mapAction.
+## Module
+由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
+为了解决以上问题，Vuex 允许我们将 store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter。
+### 基本使用
+```
+const moduleA = {
+  state: () => ({ ... }),
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... }
+}
+
+const moduleB = {
+  state: () => ({ ... }),
+  mutations: { ... },
+  actions: { ... }
+}
+
+const store = createStore({
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+})
+
+store.state.a // -> moduleA 的状态
+store.state.b // -> moduleB 的状态
+```
+## 命名空间
+默认情况下，模块内部的 action 和 mutation 仍然是注册在全局命名空间的——这样使得多个模块能够对同一个 action 或 mutation 作出响应。Getter 同样也默认注册在全局命名空间，但是目前这并非出于功能上的目的（仅仅是维持现状来避免非兼容性变更）。必须注意，不要在不同的、无命名空间的模块中定义两个相同的 getter 从而导致错误。
+如果希望你的模块具有更高的封装度和复用性，你可以通过添加 namespaced: true 的方式使其成为带命名空间的模块。当模块被注册后，它的所有 getter、action 及 mutation 都会自动根据模块注册的路径调整命名
+说白了就是在模块里面加入namespaced:true。
+例如:
+```
+---使用命名空间---
+const ModuleA={
+    namespaced:true,
+    state:()=>({count:1}),
+    mutations:{
+        increment(state){
+          console.log(state.count)
+        }
+    }
+}
+访问的时候需要使用this.$store.state.commit('moduleA(模块名)/increment(函数)')
+---不使用命名空间---
+this.$store.state.commit('increment')
+需要注意的是:如果出现重复函数那么就会执行多次，也就是出现错误,因此如果需要出现重复命名可以使用namespaced:true,否则就不能出现同名的情况.
+```
+## 方法获取
+mutation与getters只能对内部进行操作,而在actions中可以获取到大量参数,诸如rootState等等，相比于mutations,actions的操作更为广泛.因此，当需要修改到其他模块的时候可以使用action(...arg)来获取到相应的参数.
+## 命名空间的map绑定
+
+通过对应到模块名的绑定，例如模块名为
+```
+computed: {
+  ...mapState({
+    a: state => state.module.a,
+    b: state => state.module.b
+  }),
+  ...mapGetters([
+    getter1:'module/getter1',
+    getter2:'module/getter2',
+  ])
+},
+methods: {
+  ...mapActions([
+    mapper1:'module/mapper1',
+    mapper2:'module/mapper2'
+  ])
+  }
+```
+也可以通过为mapState/mapGetters...提供第一个参数作为映射的对应模块.
+```
+...mapState('module',{
+  mapper1:'mapper1'
+})
+```
+还有一种方法就是通过createNamespacedHelpers创建辅助函数
+```
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapActions } = createNamespacedHelpers('module')
+...mapState({
+  mapper1:'mapper1'
+})
+```
+然后绑定完后，同样使用模板语法例如{{count}}来引入即可.
+## 模块的方法函数
+```
+store.registerModule('module',{}) //注册模块
+store.registerModule(['module1','module2'],{})//注册嵌套模块module1/module2
+store.unregisterModule(moduleName)//卸载动态模块(不能卸载静态模块，也就是初始声明的).
+store.hasModule(moduleName)//查询是否已经注册某个模块(此处的moduleName需要以数组形式传递，例如['module1','module2']=>'module1/module2')
+```
