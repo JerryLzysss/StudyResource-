@@ -1,0 +1,25 @@
+mongodb是一种基于分布式文件存储的数据库
+下载地址:https://www.mongodb.com/try/download/community
+
+解压方式:
+1.压缩包解压至C：\Program Files
+2.创建C:\data\db
+可以为bin目录配置到环境变量Path
+运行命令mongod（初始化）
+在mongo客户端里输入mongo运行（6.0版本之后采用mongosh方式运行）
+
+show dbs显示所有数据库
+use xxx使用数据库没有则自动动创建
+db 显示当前所在数据库
+db.dropDatabase()删除当前数据库
+
+db.createCollection('xxx')创建xxx集合
+show collections 显示所有集合
+db.xxx.drop()删除xxx集合
+db.xxx.renameCollection('yyy')将xxx集合重命名为yyy
+
+db.xxx.insert(yyy) 插入yyy文档
+db.xxx.find(yyy)查询yyy文档
+db.xxx.update(yyy,zzz)对满足yyy条件的zzz进行更新
+db.xxx.remove(yyy)删除满足yyy条件的文档
+

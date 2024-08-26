@@ -1,0 +1,2 @@
+Mongoose是对象文档数据库
+官网http://www.mongoosejs.net
