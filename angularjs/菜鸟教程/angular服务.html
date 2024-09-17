@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+<!-- 在 AngularJS 中，服务是一个函数或对象，可在你的 AngularJS 应用中使用。
+AngularJS 内建了30 多个服务。
+有个 $location 服务，它可以返回当前页面的 URL 地址。
+AngularJS 会一直监控应用，处理事件变化， AngularJS 使用 $location 服务比使用 window.location 对象更好。
+相比于window的内部服务，其处理事件能力在原生window之上 -->
+<div ng-app="myApp">
+    <ul>
+        <li ng-repeat="x in counts">{{x | myFormat}}</li>
+    </ul>
+</div>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('customersCtrl', function($scope, $location,$http,$timeout,hexafy) {
+    $scope.myUrl = $location.absUrl();
+    $http.get("welcome.htm").then(function (response) {
+        $scope.myWelcome = response.data;
+    });
+    $timeout(function () {
+        $scope.myHeader = "How are you today?";
+    }, 2000);
+    $interval(function () {
+        $scope.theTime = new Date().toLocaleTimeString();
+    }, 1000);
+    $scope.hex = hexafy.myFunc(255);
+});
+/* 自定义服务，使用的时候需要导入相应的服务名,其作用类似于将功能服务进行分开*/
+app.service('hexafy', function() {
+    this.myFunc = function (x) {
+        return x.toString(16);
+    }
+});
+/* 过滤器引用 */
+app.filter('myFormat',['hexafy', function(hexafy) {
+    return function(x) {
+        return hexafy.myFunc(x);
+    };
+}]);
+</script>
+</html>

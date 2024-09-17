@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular-animate.min.js"></script>
+</head>
+<!-- ng-animate
+AngularJS 提供了动画效果，可以配合 CSS 使用。
+AngularJS 使用动画需要引入 angular-animate.min.js 库。
+ng-hide-animate
+ng-hide-add (如果元素将被隐藏)
+ng-hide-remove (如果元素将显示)
+ng-hide-add-active (如果元素将隐藏)
+ng-hide-remove-active (如果元素将显示) 
+ngAnimate 模型可以添加或移除 class 。
+ngAnimate 模型并不能使 HTML 元素产生动画，
+但是 ngAnimate 会监测事件，类似隐藏显示 HTML 元素 ，
+如果事件发生 ngAnimate 就会使用预定义的 class 来设置 HTML 元素的动画。-->
+<body ng-app="myApp">
+    <div ng-app="ngAnimate">
+    <h1>隐藏 DIV: <input type="checkbox" ng-model="myCheck"></h1>
+    
+    <div ng-hide="myCheck"></div>
+    </div>
+    <script>
+    var app = angular.module('myApp', ['ngAnimate']);
+    </script>
+    <style>
+        div {
+            transition: all linear 0.5s;
+            background-color: lightblue;
+            height: 100px;
+        }
+        .ng-hide {
+            height: 0;
+        }
+    </style>
+</body>
+
+</html>

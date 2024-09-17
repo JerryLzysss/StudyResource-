@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+ <!-- 表达式与vue方式一样:通过{{expression}}来实现 -->
+  <!-- ng-app表示实例
+       ng-init表示初始化
+       ng-bind表示单向绑定 -->
+       <!-- 类似于 JavaScript 表达式，AngularJS 表达式可以包含字母，操作符，变量。
+与 JavaScript 表达式不同，AngularJS 表达式可以写在 HTML 中。
+与 JavaScript 表达式不同，AngularJS 表达式不支持条件判断，循环及异常。
+与 JavaScript 表达式不同，AngularJS 表达式支持过滤器。 -->
+<div ng-app="" ng-init="q=1;b=2">
+   <p>初始化:{{q*b}}</p>
+</div>
+ 
+</body>
+</html>

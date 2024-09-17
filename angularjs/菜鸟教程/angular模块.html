@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<!-- 在 AngularJS 中我们可以使用 ng-option 指令来创建一个下拉列表，列表项通过对象和数组循环输出，如下实例: -->
+<div ng-app="myApp" ng-controller="personCtrl">
+<!-- JavaScript 中应避免使用全局函数。因为他们很容易被其他脚本文件覆盖。
+AngularJS 模块让所有函数的作用域在该模块下，避免了该问题。 -->
+</div>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function ($scope) {
+        $scope.names = ["Google", "Runoob", "Taobao"];
+    });
+    app.directive("runoobDirective", function() {
+    return {
+        template : "我在指令构造器中创建!"
+    };
+});
+</script>
+</body>
+
+</html>

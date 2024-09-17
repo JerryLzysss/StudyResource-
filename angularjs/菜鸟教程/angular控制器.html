@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<!-- AngularJS 应用程序被控制器控制。
+ng-controller 指令定义了应用程序控制器。
+控制器是 JavaScript 对象，由标准的 JavaScript 对象的构造函数 创建。 -->
+<!-- 在大型的应用程序中，通常是把控制器存储在外部文件中。
+只需要把 <script> 标签中的代码复制到名为 personController.js 的外部文件中即可
+    personController.js
+    <div ng-app="myApp" ng-controller="personCtrl">
+	First Name: <input type="text" ng-model="firstName"><br>
+	Last Name: <input type="text" ng-model="lastName"><br><br>
+	Full Name: {{firstName + " " + lastName}}
+	</div><script src="personController.js"></script>
+    
+    app.html
+    <div ng-app="myApp" ng-controller="namesCtrl">
+    <ul>
+    <li ng-repeat="x in names">
+        {{ x.name + ', ' + x.country }}  </li>
+    </ul>
+    </div>
+    <script src="namesController.js"></script>
+    -->
+<div ng-app="myApp" ng-controller="myCtrl">
+
+    名: <input type="text" ng-model="firstName"><br>
+    姓: <input type="text" ng-model="lastName"><br>
+    <br>
+    姓名: {{firstName + " " + lastName}}
+    
+    </div>
+    
+    <script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope) {
+        $scope.firstName = "John";
+        $scope.lastName = "Doe";
+    });
+    </script>
+</body>
+</html>

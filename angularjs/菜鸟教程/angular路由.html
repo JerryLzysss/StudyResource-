@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AngularJS 路由实例 - 菜鸟教程</title>
+<script src="https://cdn.bootcss.com/angular.js/1.7.0/angular.min.js"></script>
+<script src="https://cdn.bootcss.com/angular.js/1.7.0/angular-route.min.js"></script>
+</head>
+<!--
+如果我们只需要在 ng-view 中插入简单的 HTML 内容，则使用该参数：
+.when('/computers',{template:'这是电脑分类页面'})
+templateUrl:
+如果我们只需要在 ng-view 中插入 HTML 模板文件，则使用该参数：
+$routeProvider.when('/computers', {
+    templateUrl: 'views/computers.html',
+});
+controller:function、string或数组类型，在当前模板上执行的controller函数，生成新的scope。
+controllerAs:
+string类型，为controller指定别名。
+redirectTo:重定向的地址。
+resolve:指定当前controller所依赖的其他模块。
+$routeProvider.when(url,{
+    template:string, //在ng-view中插入简单的html内容
+    templateUrl:string, //在ng-view中插入html模版文件
+    controller:string,function / array, //在当前模版上执行的controller函数
+    controllerAs:string, //为controller指定别名
+    redirectTo:string,function, //重定向的地址
+    resolve:object<key,function> //指定当前controller所依赖的其他模块
+}); -->
+<body ng-app='routingDemoApp'>
+ 
+    <h2>AngularJS 路由应用</h2>
+    <ul>
+        <li><a href="#!/">首页</a></li>
+        <li><a href="#!/computers">电脑</a></li>
+        <li><a href="#!/printers">打印机</a></li>
+        <li><a href="#!/blabla">其他</a></li>
+    </ul>
+     
+    <div ng-view></div>
+    <script>
+        angular.module('routingDemoApp',['ngRoute'])
+        .config(['$routeProvider', function($routeProvider){
+            $routeProvider
+            .when('/',{template:'这是首页页面'})
+            .when('/computers',{template:'这是电脑分类页面'})
+            .when('/printers',{template:'这是打印机页面'})
+            .otherwise({redirectTo:'/'});
+        }]);
+        /* angular.module('ngRouteExample', ['ngRoute'])
+.controller('HomeController', function ($scope, $route) { $scope.$route = $route;})
+.controller('AboutController', function ($scope, $route) { $scope.$route = $route;})
+.config(function ($routeProvider) {
+    $routeProvider.
+    when('/home', {
+        templateUrl: 'embedded.home.html',
+        controller: 'HomeController'
+    }).
+    when('/about', {
+        templateUrl: 'embedded.about.html',
+        controller: 'AboutController'
+    }).
+    otherwise({
+        redirectTo: '/home'
+    });
+}); */
+    </script>
+</body>
+</html>

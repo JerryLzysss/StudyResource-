@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<!-- 在 AngularJS 中我们可以使用 ng-option 指令来创建一个下拉列表，列表项通过对象和数组循环输出，如下实例: -->
+<div ng-app="myApp" ng-controller="personCtrl">
+    <option ng-repeat="x in names">{{x}}</option>
+    <!-- 两种相似实现的方法，此处是ng-repeat -->
+    <select ng-model="selectedSite">
+        <option ng-repeat="x in sites" value="{{x.url}}">{{x.site}}</option>
+    </select>
+
+    <h1>你选择的是: {{selectedSite}}</h1>
+        <!-- 两种相似实现的方法，此处是ng-option-->
+    <select ng-model="selectedSite" ng-options="x.site for x in sites">
+    </select>
+
+    <h1>你选择的是: {{selectedSite.site}}</h1>
+    <p>网址为: {{selectedSite.url}}</p>
+</div>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function ($scope) {
+        $scope.names = ["Google", "Runoob", "Taobao"];
+    });
+</script>
+</body>
+
+</html>

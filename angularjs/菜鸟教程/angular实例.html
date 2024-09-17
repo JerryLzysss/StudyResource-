@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+ <!-- ng-model 指令可以为应用数据提供状态值(invalid, dirty, touched, error):
+  其中状态值有如下几种ng-empty
+ng-not-empty 非空
+ng-touched 点击
+ng-untouched 非点击
+ng-valid 有效
+ng-invalid 无效
+ng-dirty  改变
+ng-pending 判断
+ng-pristine 未交互-->
+<div ng-app="">
+    <input type="text" ng-model="name"></p>
+    <p>双向绑定:{{name}}</p>
+    Email:
+    <input type="email" name="myAddress" ng-model="text">
+    <span ng-show="myForm.myAddress.$error.email">不是一个合法的邮箱地址</span>
+    <p>编辑邮箱地址，查看状态的改变。</p>
+<h1>状态</h1>
+<p>Valid: {{myForm.myAddress.$valid}} (如果输入的值是合法的则为 true)。</p>
+<p>Dirty: {{myForm.myAddress.$dirty}} (如果值改变则为 true)。</p>
+<p>Touched: {{myForm.myAddress.$touched}} (如果通过触屏点击则为 true)。</p>
+</div>
+<!-- 可以通过CSS修改其对应类别的显示 -->
+<style>
+    input.ng-invalid {
+        background-color: lightblue;
+    }
+    </style>
+</body>
+</html>

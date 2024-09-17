@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+ <!-- $http 是 AngularJS 中的一个核心服务，用于读取远程服务器的数据。
+  也就是axios常用的get与post等方法
+  下列是$http服务的一些方法
+  $http.get
+$http.head
+$http.post
+$http.put
+$http.delete
+$http.jsonp
+$http.patch -->
+<div ng-app="" ng-init="q=1;b=2">
+   <p>初始化:{{q*b}}</p>
+</div>
+
+</body>
+<script>
+    // 简单的 GET 请求，可以改为 POST
+    var app = angular.module('myApp', []);
+    
+    app.controller('siteCtrl', function($scope, $http) {
+        $http({
+            method: 'GET',
+            url: 'https://www.runoob.com/try/angularjs/data/sites.php'
+        }).then(function successCallback(response) {
+                $scope.names = response.data.sites;
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+        });
+      
+    });
+</script>
+</html>
