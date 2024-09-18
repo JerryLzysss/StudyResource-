@@ -1,9 +1,7 @@
 [TOC]
 # angularAPI
 
-参考地址:https://www.angular.cn/api 与 https://www.runoob.com/angularjs/angularjs-reference.html
-
-# 常用api
+参考地址:https://www.runoob.com/angularjs/angularjs-reference.html
 
 ## 指令
 指令|描述
