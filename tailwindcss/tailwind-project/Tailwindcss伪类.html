@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- hover伪类，实现效果即是通过hover: 
+   在该伪类中目前开启的有:backgroundColor,backgroundOpacity,borderColor,borderOpacity
+   boxShadow,gardientColorStops,,opacity,rotate,scale,skew,textColor,textDecoration
+   textOpacity,translate
+   如果需要开启更多可以参照如下所示-->
+   <!-- 
+      ---tailwind.config.js---
+      module.exports = {
+          variants:{
+            extend:{
+              padding:['hover']} //为padding开启hover
+            }
+      }
+    -->
+<button class="border-2 bg-black text-white hover:bg-white hover:text-black">
+  button
+</button>
+<!-- focus伪类，实现方式同理通过focus: 目前开启focus的有accessibility,backgroundColor,backgroundOpacity
+ borderColor,borderOpacity,boxShadow,gradientColorStops,opacity,outline,placeholderColor,placeholderOpacity
+ ringColor,ringOffsetColor,ringOffsetWidth,ringOpacity,ringWidth,rotate,scale,skew,textColor,textDecoration
+ textOpacity,translate,zIndex,同理添加可以通过
+ ---tailwind.config.js---
+  variants:{
+  extend:{
+    maxHeight:['focus']
+    }
+  }
+ -->
+<input type="text" class="px-2 outline focus:outline-2 focus:outline-sky-500" placeholder="请聚焦这里..." />
+  <!-- active伪类,实现方式同理通过active: 默认情况下所有插件都没有启用active -->
+  <button class="bg-sky-500 active:bg-pink-500">button</button>
+    <!-- before:属性-键值的形式来实现伪元素 -->
+<label class="block">
+  <span
+    class="before:content-['⭐️'] before:mr-2 after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-medium text-slate-700">
+    Email
+  </span>
+  <input type="email" name="email" class="mt-1 px-3 py-2 bg-white border placeholder-slate-400 rounded-md"
+    placeholder="请输入你的邮箱..." />
+</label>
+<!--group-hover伪类,表示当鼠标悬停在一个指定父元素时对其子元素设置样式，给父元素添加group类，给子元素功能类添加group-hover前缀
+默认开启的有backgroundOpacity,borderColor,borderOpacity,boxShadow,opacity,textColor,textdecoration,textOpacity-->
+<div class="group border-indigo-100 hover:bg-white hover:shadow-lg hover:border-transparent">
+  <p class="text-indigo-600 group-hover:text-gray-900">Project</p>
+  <p class="text-indigo-500 group-hover:text-gray-500">Second Project</p>
+</div>
+<!-- 同理group-focus也有如上操作，不过默认所有属性都没启用，需要在variants变体中进行添加 -->
+<!-- 除此之外还有focus-within(前缀在该元素或其任何后代具有焦点时应用程序),focus-visible(当元素具有焦点且仅在用户使用键盘时才应用功能类),motion-safe，motion-reduce等等 -->
+
+<!-- 状态伪类 -->
+ <!-- diabled:当只有禁用的时候才应用该类 -->
+ <button class="disabled:opacity-50" disabled>
+123
+ </button>
+ <button class="disabled:opacity-50">
+123
+ </button>
+ <!--visited:当链接被访问后才应用类  -->
+ <a href="#" class="text-blue-600 visited:text-purple-600">link</a>
+ <!-- checked:单选或复选被选中时才应用功能类 -->
+<input type="checkbox" class="appearance-none checked:bg-blue-600 checked:border-transparent">
+<!-- first-child:当且仅当元素是父元素的第一个子元素才应用功能类,需要注意的是first:需要添加到子元素，默认所有插件都没有启用该变体 -->
+ <!-- last-child:当且仅当元素是父元素的最后子元素才应用功能类 -->
+  <!-- odd-child:当元素是父元素的奇数子元素才应用功能类 -->
+   <!-- even-child:当元素是父元素的偶数子元素才应用功能类 -->
+ <!-- 如果需要自定义添加变体，可以通过@variants来应用状态变体 -->
+<!-- 默认情况下没有提供所有变体，即variants为空 -->
+    
+   
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+ <!-- 可以直接设置relative,absolute,fixed，sticky等等布局 -->
+<div class="relative h-40 border-2 bg-sky-200">
+  <p>父容器</p>
+  <div class="absolute top-10 left-10 size-48 bg-red-300">
+    子元素A
+  </div>
+  <div class="absolute top-16 left-16 size-48 bg-green-300">
+    子元素B
+  </div>
+  <div class="absolute top-24 left-24 size-48 bg-blue-300">
+    子元素C
+  </div>
+</div>
+<ul class="h-40 border-2 overflow-auto">
+  <nav class="sticky top-0 bg-teal-500">navigation</nav>
+  <li>#item1</li>
+  <li>#item2</li>
+  <li>#item3</li>
+  <li>#item4</li>
+  <li>#item5</li>
+  <li>#item6</li>
+  <li>#item7</li>
+  <li>#item8</li>
+  <li>#item9</li>
+  <li>#item10</li>
+</ul>
+<button class="fixed bottom-10 right-10 size-10 text-white text-xl bg-purple-500 rounded-full"></button>
+  +
+</button>
+<!-- 如果需要设置层级，可以通过z-*来设置 -->
+<div class="absolute top-16 left-16 size-48 bg-green-300 z-10"></div>
+  子元素B
+</div>
+
+    
+   
+</body>
+
+</html>

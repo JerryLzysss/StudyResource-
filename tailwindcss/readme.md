@@ -1,5 +1,7 @@
 [TOC]
 
+参考文档:1.https://juejin.cn/column/7362805232647487514 2.https://www.w3cschool.cn/tailwind_css/
+
 # TailwindCSS 介绍
 
 本 CSS 框架本质上是一个工具集，包含了大量类似 flex、 pt-4、 text-center 以及 rotate-90 等工具类，可以组合使用并直接在 HTML 代码上实现任何 UI 设计。
@@ -14,5 +16,5 @@ Tailwind CSS 使用许多自定义 CSS 规则，例如 ​@tailwind​、​@app
 vscode 的 tailwindcss 语法支持拓展:[网址](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 # TailwindCSS 目录
-  * 安装
-  
+
+- 安装
