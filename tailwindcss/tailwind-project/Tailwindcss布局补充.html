@@ -1,0 +1,162 @@
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- 跨多行，多列或者多页显示元素片段 -->
+  <span class="decoration-clone bg-gradient-to-b from-yellow-400 to-red-500 text-transparent">hello</span>
+    <span class="decoration-slice bg-gradient-to-b from-yellow-400 to-red-500 text-transparent">world</span>
+  <!-- box-border给予元素包括有内边距与外边距-->
+   <div class="box-border h-32 w-32 p-4 border-4">1234</div>
+   <!-- display布局补充 -->
+    <!-- 
+    block display: block;
+    inline-block display: inline-block;
+    inline display: inline;
+    flex display: flex;
+    inline-flex display: inline-flex;
+    table display: table;
+    inline-table display: inline-table;
+    table-caption display: table-caption;
+    table-cell display: table-cell;
+    table-column display: table-column;
+    table-column-group display: table-column-group;
+    table-footer-group display: table-footer-group;
+    table-header-group display: table-header-group;
+    table-row-group display: table-row-group;
+    table-row display: table-row;
+    flow-root display: flow-root;
+    grid display: grid;
+    inline-grid display: inline-grid;
+    contents display: contents;
+    list-item display: list-item;
+    hidden display: none; -->
+    <div class="space-y-4">
+      <span class="block">block 1</span>
+      <span class="block">block 2</span>
+      <span class="block">block 3</span>
+    </div>
+
+    <!-- flow-root -->
+    <div class="space-y-4">
+      <div class="flow-root">
+        <div class="my-4">1</div>
+      </div>
+      <div class="flow-root">
+        <div class="my-4">2</div>
+      </div>
+    </div>
+    <!-- inline-block -->
+    <div class="space-x-4">
+      <div class="inline-block">1</div>
+      <div class="inline-block">2</div>
+      <div class="inline-block">3</div>
+    </div>
+    <!-- grid -->
+    <span class="inline-grid grid-cols-3 gap-x-4">
+      <span>grid 1</span>
+      <span>grid 2</span>
+      <span>grid 3</span>
+    </span>
+    <span class="inline-grid grid-cols-3 gap-x-4">
+      <span>grid 4</span>
+      <span>grid 5</span>
+      <span>grid 6</span>
+    </span>
+    <!-- contents -->
+    <div class="flex ">
+      <div class="flex-1 ">1</div>
+      <div class="contents">
+        <div class="flex-1 ">2</div>
+        <div class="flex-1 ">3</div>
+      </div>
+      <div class="flex-1 ">4</div>
+    </div>
+    <!-- table -->
+    <div class="table w-full">
+      <div class="table-row-group">
+        <div class="table-row">
+          <div class="table-cell">A cell with more content</div>
+          <div class="table-cell">Cell 2</div>
+          <div class="table-cell">Cell 3</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell">Cell 4</div>
+          <div class="table-cell">A cell with more content</div>
+          <div class="table-cell">Cell 6</div>
+        </div>
+      </div>
+    </div>
+    <!-- float 控制元素周围内容浮动
+      float-right	float: right;
+      float-left	float: left;
+      float-none	float: none;-->
+      <br>
+<img class="float-right" src="./image.png">
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis et lorem sit amet vehicula. Etiam vel nibh nec
+  nisi euismod mollis ultrices condimentum velit. Proin velit libero, interdum ac rhoncus sit amet, pellentesque ac
+  turpis. Quisque ac luctus turpis, vel efficitur ante. Cras convallis risus vel vehicula dapibus. Donec eget neque
+  fringilla, faucibus mi quis, porttitor magna. Cras pellentesque leo est, et luctus neque rutrum eu. Aliquam consequat
+  velit sed sem posuere, vitae sollicitudin mi consequat. Mauris eget ipsum sed dui rutrum fringilla. Donec varius
+  vehicula magna sit amet auctor. Ut congue vehicula lectus in blandit. Vivamus suscipit eleifend turpis, nec sodales
+  sem vulputate a. Curabitur pulvinar libero viverra, efficitur odio eu, finibus justo. Etiam eu vehicula felis.</p>
+  </body>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  -------
+<img class="float-left" src="./image.png">
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis et lorem sit amet vehicula. Etiam vel nibh nec
+  nisi euismod mollis ultrices condimentum velit. Proin velit libero, interdum ac rhoncus sit amet, pellentesque ac
+  turpis. Quisque ac luctus turpis, vel efficitur ante. Cras convallis risus vel vehicula dapibus. Donec eget neque
+  fringilla, faucibus mi quis, porttitor magna. Cras pellentesque leo est, et luctus neque rutrum eu. Aliquam consequat
+  velit sed sem posuere, vitae sollicitudin mi consequat. Mauris eget ipsum sed dui rutrum fringilla. Donec varius
+  vehicula magna sit amet auctor. Ut congue vehicula lectus in blandit. Vivamus suscipit eleifend turpis, nec sodales
+  sem vulputate a. Curabitur pulvinar libero viverra, efficitur odio eu, finibus justo. Etiam eu vehicula felis.</p>
+</html>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+---------------
+<img class="float-none" src="./image.png">
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis et lorem sit amet vehicula. Etiam vel nibh nec
+  nisi euismod mollis ultrices condimentum velit. Proin velit libero, interdum ac rhoncus sit amet, pellentesque ac
+  turpis. Quisque ac luctus turpis, vel efficitur ante. Cras convallis risus vel vehicula dapibus. Donec eget neque
+  fringilla, faucibus mi quis, porttitor magna. Cras pellentesque leo est, et luctus neque rutrum eu. Aliquam consequat
+  velit sed sem posuere, vitae sollicitudin mi consequat. Mauris eget ipsum sed dui rutrum fringilla. Donec varius
+  vehicula magna sit amet auctor. Ut congue vehicula lectus in blandit. Vivamus suscipit eleifend turpis, nec sodales
+  sem vulputate a. Curabitur pulvinar libero viverra, efficitur odio eu, finibus justo. Etiam eu vehicula felis.</p>
+  <!-- 清除元素周围内容的浮动
+        clear-left	clear: left;
+        clear-right	clear: right;
+        clear-both	clear: both;
+        clear-none	clear: none;-->
+</html>

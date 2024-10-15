@@ -1,37 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* base:最基础的层级，界定了一些基础样式例如margin/padding/color/font-size 
-components:这个层级创建可复用的样式，例如按钮，卡片，默认情况下是空的. 
-utilities:作为工具层级，包括了tailwind的大部分功能，例如:layout,flex,grid,spacing,colors,border等等 */
 
-/* @layers 告诉tailwind想要把对应样式放在上述哪一个层级，实际需要配合@apply来使用
- @layers base => 放到基础层
- @layers components => 放到组件层
- @layers utilities =>放到工具层*/
-@layer components{
-    .btnTest{
-      @apply bg-black text-white min-w-[80px];
+@layer components {
+  .btnTest {
+    @apply text-white min-w-[80px];
+  }
+
+    .card {
+      width: theme(spacing.48);
+      height: theme(spacing.48);
+      padding: theme(spacing.5);
+      border-radius: theme('borderRadius.md');
+      background-color: theme('colors.sky.300');
     }
-    /* .card与.cardC等价，唯一不同的是使用theme来获取回原来tailwind的样式与使用apply来使用样式 */
-    .card{
-      width:theme(spacing.48);
-      height:theme(spacing.48);
-      padding:theme(spacing.5);
-      border-radius:theme('borderRadius.md');
-      background-color:theme('colors.sky.300');
-    }
-    .cardC{
+  
+    .cardC {
       @apply size-48 rounded-md bg-sky-300;
     }
-    @variants responsive,hover{
-      .btn-blue{
+  
+    @variants responsive, hover {
+      .btn-blue {
         @apply py-2 px-4 bg-blue-500;
       }
     }
-}
-@layer utilities{
-  .flexTest{
-    @apply flex items-center justify-center;
-  }
-}
+    }
+  
+    @layer utilities {
+      .flexTest {
+        @apply flex items-center justify-center;
+      }
+    }

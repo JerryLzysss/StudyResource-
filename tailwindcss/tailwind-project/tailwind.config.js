@@ -1,9 +1,12 @@
+/*
+ * @Description: 
+ */
 
-/** @type {import('tailwindcss').Config} */
+///** @type {import('tailwindcss').Config} */
 module.exports = {
   // content表示应用tailwind的文件
   content: ['./**/*.{html, js}'],
-  theme: {
+  //theme: {
     // 如果直接设置样式就会进行覆盖
     //   colors: {
     //   blue: '#1fb6ff',
@@ -19,18 +22,18 @@ module.exports = {
 
 
     // extend表示用来追加所需颜色
-    extend: {
+  //  extend: {
       // colors: {
       //   'primary-dark': '#1f2937',
       //   'primary-light': '#f3f4f6',
       //   'secondary-dark': '#1f2937',
       //   'secondary-light':'#f3f4f6'
       // }
-    },
+   // },
     
-  },
+ // },
   // plugins通过自定义插件拓展tailwind功能
-  plugins: [
+  //plugins: [
     //postcss-nesting(tailwind嵌套)
 
 
@@ -66,22 +69,22 @@ module.exports = {
     //   }
     //   addUtilities(newUtilities,['responsive','hover'])
     // })
-  ],
+ // ],
   //presets通过自定义预设样式，多个项目共享一套配置 
-  presets: [{
+  //presets: [{
     
-  }],
+  //}],
   //prefix:未所有tailwind生成的utilities类添加前缀，避免命名冲突
-  prefix: [{
+ // prefix: [{
     
-  }],
+ // }],
   // important:配置所有utilities类为!important以确保它们优先应用
-  important: [{
+ // important: [{
     
-  }],
+ // }],
   // corePlugins：禁用不想使用的样式，减少CSS体积
-  corePlugins: [{
+  //corePlugins: [{
     
-  }]
+  //}]
 }
 

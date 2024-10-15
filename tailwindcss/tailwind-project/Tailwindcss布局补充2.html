@@ -1,0 +1,82 @@
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Object fit用于控制可替换元素的内容如何调整大小的功能类。
+   object-contain	object-fit: contain;
+object-cover	object-fit: cover;
+object-fill	object-fit: fill;
+object-none	object-fit: none;
+object-scale-down	object-fit: scale-down; -->
+<div class="bg-rose-300"></div>
+  <img src="./image.png"class="object-contain h-48 w-full" >
+</div>
+<div class="bg-indigo-300"></div>
+  <img src="./image.png" class="object-cover h-48 w-full">
+</div>
+<div class="bg-yellow-300"></div>
+<img src="./image.png" class="object-fill h-48 w-full">
+</div>
+<div class="bg-red-300"></div>
+<img src="./image.png" class="object-none h-48 w-full">
+</div>
+<div class="bg-green-300"></div>
+<img src="./image.png" class="object-scale-down h-48 w-full">
+</div>
+<div class="flex">
+<img class="object-none object-left-top bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-top bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-right-top bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-left bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-center bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-right bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-left-bottom bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-bottom bg-yellow-300 w-24 h-24 " src="./image.png">
+<img class="object-none object-right-bottom bg-yellow-300 w-24 h-24 " src="./image.png">
+</div>
+<!--  用于控制元素如何处理超出容器的内容的功能类。
+overflow-auto	overflow: auto;
+overflow-hidden	overflow: hidden;
+overflow-visible	overflow: visible;
+overflow-scroll	overflow: scroll;
+overflow-x-auto	overflow-x: auto;
+overflow-y-auto	overflow-y: auto;
+overflow-x-hidden	overflow-x: hidden;
+overflow-y-hidden	overflow-y: hidden;
+overflow-x-visible	overflow-x: visible;
+overflow-y-visible	overflow-y: visible;
+overflow-x-scroll	overflow-x: scroll;
+overflow-y-scroll	overflow-y: scroll;-->
+<div class="overflow-visible h-24 ...">Lorem ipsum dolor sit amet...</div>
+<div class="overflow-auto h-32 ...">Lorem ipsum dolor sit amet...</div>
+<div class="overflow-hidden h-32 ...">Lorem ipsum dolor sit amet...</div>
+<div class="overflow-y-auto h-32 ...">Lorem ipsum dolor sit amet...</div>
+<div class="overflow-x-auto ...">QrLmmW69vMQD...</div>
+<div class="overflow-y-auto h-32 ...">Lorem ipsum dolor sit amet...</div>
+<div class="overflow-x-scroll ...">QrLmmW69vMQD...</div>
+<div class="overflow-y-scroll h-32 ...">Lorem ipsum dolor sit amet...</div>
+<div class="overflow-scroll h-32 ...">Lorem ipsum dolor sit amet...</div>
+
+
+
+</body>
+
+</html>
