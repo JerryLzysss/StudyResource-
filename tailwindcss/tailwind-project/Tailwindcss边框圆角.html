@@ -1,0 +1,112 @@
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+<!--
+ * @Description: 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- 圆角 
+   用 ​.rounded-sm​, ​.rounded​, 或 ​.rounded-lg​ 等实用功能类来应用不同的边框半径大小到一个元素上。
+   用 ​rounded-full​ 功能类来创建药丸形和圆圈.
+   用 ​rounded-none​ 从元素中删除现有的边框半径。
+   用 ​rounded-{t|r|b|l}{-size?}​ 只对元素的一侧进行圆角处理.
+   用 ​rounded-{tl|tr|br|bl}{-size?}​ 只将圆角应用到元素的一个边角上。-->
+  <div class="rounded-sm "></div>
+  <div class="rounded "></div>
+  <div class="rounded-md "></div>
+  <div class="rounded-lg "></div>
+  <div class="rounded-full py-3 px-6">Pill Shape</div>
+  <div class="rounded-full h-24 w-24 flex items-center justify-center">Circle</div>
+  <!-- 边框厚度
+用于控制元素边框宽度的功能类。
+用 ​border​, ​.border-0​, ​.border-2​, ​.border-4​, 或 ​.border-8​ 等功能类来设置一个元素所有边框的宽度。
+用 ​border-{side}​, ​.border-{side}-0​, ​.border-{side}-2​, ​.border-{side}-4​, 或 ​.border-{side}-8​ 等功能类来设置元素一侧的边框宽度。 
+使用 ​divid-{x/y}-{width}​ 和 ​divid-{color}​ 功能类在子元素之间添加边框。-->
+  <div class="border-0 border-indigo-600 "></div>
+  <div class="border border-indigo-600 "></div>
+  <div class="border-2 border-indigo-600 "></div>
+  <div class="border-4 border-indigo-600 "></div>
+  <div class="border-8 border-indigo-600 "></div>
+  <!-- 边框颜色 -->
+  <input class="border-2 border-red-500 ">
+  <!-- 用 ​border-opacity-{amount}​ 功能类控制元素边框颜色的不透明度值。 -->
+  <div class="border-4 border-light-blue-500 border-opacity-100 "></div>
+  <div class="border-4 border-light-blue-500 border-opacity-75 "></div>
+  <div class="border-4 border-light-blue-500 border-opacity-50 "></div>
+  <div class="border-4 border-light-blue-500 border-opacity-25 "></div>
+  <div class="border-4 border-light-blue-500 border-opacity-0 "></div>
+  <!--边框样式
+用于控制元素边框样式的功能类。 
+  border-solid	border-style: solid;
+border-dashed	border-style: dashed;
+border-dotted	border-style: dotted;
+border-double	border-style: double;
+border-none	border-style: none; -->
+<div class="border-solid border-4 border-light-blue-500 "></div>
+<div class="border-dashed border-4 border-light-blue-500 "></div>
+<div class="border-dotted border-4 border-light-blue-500 "></div>
+<div class="border-double border-4 border-light-blue-500 "></div>
+<div class="border-none border-4 border-light-blue-500 "></div>
+<!-- 分割线用 ​divid-x-{amount}​ 功能在水平元素之间添加边框。
+ 用 ​divide-y-{amount}​ 功能在堆叠元素之间添加边框。
+ 用 ​divide-x-reverse​ 或 ​divide-y-reverse​ 功能类来确保边界被添加到每个元素的正确一侧
+ 用 ​divide-{color}​ 功能控制元素之间的边框颜色。
+ 用 ​divide-opacity-{amount}​ 功能控制元素之间边框的不透明度。
+ divide-{style}​ 功能控制元素之间的边框样式。
+ 用 ​divide-opacity-{amount}​ 功能控制元素之间边框的不透明度。 -->
+<div class="grid grid-cols-3 divide-x divide-green-500">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+</div>
+<div class="grid grid-cols-1 divide-y divide-yellow-500">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+</div>
+<div class="flex flex-col-reverse divide-y divide-y-reverse divide-rose-400">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+</div>
+<div class="divide-y-4 divide-yellow-600 divide-dashed">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+</div>
+<!-- 轮廓环厚度
+ 用 ​ring-{width}​ 功能来为元素应用特定厚度的实心盒状阴影。 环默认为半透明的蓝色，类似于许多系统中默认的焦点环样式。
+ 默认情况下，​focus ​变体是为 ​ring-{width}​ 功能启用的，这使得通过在任何 ​ring-{width}​ 功能的开头添加 ​focus:​，可以很容易地将其用于自定义焦点样式。
+ 用 ​ring-inset​ 功能来强制在元素的内部而不是外部渲染一个环。这对于位于屏幕边缘，环的一部分不可见的的元素来说是很有用的。
+ ring-opacity-{amount}​ 功能来控制环的不透明度。
+ 用 ​ring-offset-{width}​ 功能来模拟偏移，添加纯白色的盒状阴影，并增加相应的轮廓环的厚度以适应偏移。
+ 用 ​ring-offset-{color}​ 功能来改变环形偏移的颜色。通常这样做是为了使偏移量与父背景色相匹配，因为在 CSS 中真正的盒状阴影偏移是不存在的。 -->
+<button class=" ring-0">ring-0</button>
+<button class=" ring-2">ring-2</button>
+<button class=" ring">ring</button>
+<button class=" ring-4">ring-4</button>
+<button class=" focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
+  Button
+</button>
+<button class=" ring-4 ring-pink-300">
+  Default
+</button>
+
+<button class=" ring-4 ring-pink-300 ring-inset">
+  Inset
+</button>
+</body>
+
+</html>

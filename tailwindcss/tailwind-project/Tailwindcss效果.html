@@ -1,0 +1,125 @@
+<!--
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- 外阴影
+   用 ​shadow-sm​、​shadow​、​shadow-md​、​shadow-lg​、​shadow-xl​ 或 ​shadow-2xl​ 实用程序将不同大小的外框阴影应用于元素。
+   用 ​shadow-inner​ 功能类为元素应用一个微妙的插入框阴影。这对表单控件或井等元素很有用。
+   用 ​shadow-none​ 从元素中移除现有的盒状阴影。这最常见的是用来移除应用在较小断点上的阴影。 -->
+  <div class="shadow-sm ..."></div>
+  <div class="shadow ..."></div>
+  <div class="shadow-md ..."></div>
+  <div class="shadow-lg ..."></div>
+  <div class="shadow-xl ..."></div>
+  <div class="shadow-2xl ..."></div>
+  <div class="shadow-inner ..."></div>
+  <!-- 表格边框
+   用于控制表格边框是否应该折叠或分开的功能类。
+   border-collapse	border-collapse: collapse;
+border-separate	border-collapse: separate; -->
+<table class="border-separate border border-green-800 ...">
+  <thead>
+    <tr>
+      <th class="border border-green-600 ...">State</th>
+      <th class="border border-green-600 ...">City</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border border-green-600 ...">Indiana</td>
+      <td class="border border-green-600 ...">Indianapolis</td>
+    </tr>
+    <tr>
+      <td class="border border-green-600 ...">Ohio</td>
+      <td class="border border-green-600 ...">Columbus</td>
+    </tr>
+    <tr>
+      <td class="border border-green-600 ...">Michigan</td>
+      <td class="border border-green-600 ...">Detroit</td>
+    </tr>
+  </tbody>
+</table>
+<!-- 表格布局
+用于控制表格布局算法的功能类。 
+table-auto	table-layout: auto;
+table-fixed	table-layout: fixed;
+-->
+<table class="table-auto">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Views</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Intro to CSS</td>
+      <td>Adam</td>
+      <td>858</td>
+    </tr>
+    <tr class="bg-emerald-200">
+      <td>A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
+      <td>Adam</td>
+      <td>112</td>
+    </tr>
+    <tr>
+      <td>Intro to JavaScript</td>
+      <td>Chris</td>
+      <td>1,280</td>
+    </tr>
+  </tbody>
+</table>
+<!-- 表单外观
+用于控制原生表单控件样式的功能类。
+appearance-none	appearance: none; -->
+<select>
+  <option>Yes</option>
+  <option>No</option>
+  <option>Maybe</option>
+</select>
+
+<select class="appearance-none">
+  <option>Yes</option>
+  <option>No</option>
+  <option>Maybe</option>
+</select>
+<!-- 光标效果
+当鼠标悬停在一个元素上时，用于控制光标样式的功能类。 -->
+<div class="cursor-auto">
+  Hover over this text
+</div>
+<!-- 轮廓
+用于控制元素轮廓的功能类。 
+outline-none	outline: 2px solid transparent; outline-offset: 2px;
+outline-white	outline: 2px dotted white; outline-offset: 2px;
+outline-black	outline: 2px dotted black; outline-offset: 2px;
+-->
+<!-- 指向事件
+用于控制元素是否响应指向事件的功能类。
+pointer-events-none	pointer-events: none;
+pointer-events-auto	pointer-events: auto; -->
+<!--大小调整
+用于控制一个元素如何调整大小的功能类。 
+resize-none	resize: none;
+resize-y	resize: vertical;
+resize-x	resize: horizontal;
+resize	resize: both; -->
+<!-- 用户选择
+用于控制用户是否可以在元素中选择文本的功能类。
+select-none	user-select: none;
+select-text	user-select: text;
+select-all	user-select: all;
+select-auto	user-select: auto;
+ -->
+</body>
+
+</html>

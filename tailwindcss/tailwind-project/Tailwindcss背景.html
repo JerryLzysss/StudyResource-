@@ -1,0 +1,98 @@
+<!--
+ * @Description: 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="./dist/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- 背景图像固定
+   使用 ​bg-fixed​ 来固定相对于视口的背景图片。
+   使用 ​bg-local​ 来滚动容器和视口的背景图片。 
+   使用 ​bg-scroll​ 来滚动背景图片与视口，而不是容器。-->
+  <div class="bg-fixed " style="background-image: url('./image.png')"></div>
+  <div class="bg-local " style="background-image: url('./image.png')"></div>
+  <div class="bg-scroll " style="background-image: url('./image.png')"></div>
+  <!-- 背景图像裁剪
+   用于控制元素背景的边界框的实用功能类。
+   使用 ​bg-clip-text​ 来裁剪元素的背景以匹配文本的形状。对于您想让背景图片通过文本可见的效果很有用。 -->
+  <div class="bg-clip-border p-6 bg-indigo-600 border-4 border-indigo-300 border-dashed"></div>
+  <div class="bg-clip-padding p-6 bg-indigo-600 border-4 border-indigo-300 border-dashed"></div>
+  <div class="bg-clip-content p-6 bg-indigo-600 border-4 border-indigo-300 border-dashed"></div>
+    <!-- 控制元素背景如何相对于边框、填充和内容定位
+     用于控制元素背景如何相对于边框、填充和内容定位的实用程序。
+      bg-origin-border	background-origin: border-box;
+      bg-origin-padding	background-origin: padding-box;
+      bg-origin-content	background-origin: content-box; -->
+      <div class="bg-origin-border p-4 border-4 border-dashed " style="background-image: url('./image.png')">
+        1
+      </div>
+      
+      <div class="bg-origin-padding p-4 border-4 border-dashed " style="background-image: url('./image.png')">
+        2
+      </div>
+      
+      <div class="bg-origin-content p-4 border-4 border-dashed " style="background-image: url('./image.png')">
+        3
+      </div>
+      <!--
+      用于控制元素背景图片位置的功能类
+      bg-bottom	background-position: bottom;
+      bg-center	background-position: center;
+      bg-left	background-position: left;
+      bg-left-bottom	background-position: left bottom;
+      bg-left-top	background-position: left top;
+      bg-right	background-position: right;
+      bg-right-bottom	background-position: right bottom;
+      bg-right-top	background-position: right top;
+      bg-top	background-position: top;  -->
+      <div class="bg-no-repeat bg-left-top " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-top " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-right-top " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-left " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-center " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-right " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-left-bottom " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-bottom " style="background-image: url('./image.png');"></div>
+      <div class="bg-no-repeat bg-right-bottom " style="background-image: url('./image.png');"></div>
+      <!-- 用于控制元素背景图像重复的功能类。
+        bg-repeat	background-repeat: repeat;
+        bg-no-repeat	background-repeat: no-repeat;
+        bg-repeat-x	background-repeat: repeat-x;
+        bg-repeat-y	background-repeat: repeat-y;
+        bg-repeat-round	background-repeat: round;
+        bg-repeat-space	background-repeat: space; -->
+        <!-- 控制背景图像大小
+         bg-auto	background-size: auto;
+          bg-cover	background-size: cover;
+          bg-contain	background-size: contain;
+          -->
+          <!-- 控制背景图像
+           bg-none	background-image: none;
+bg-gradient-to-t	background-image: linear-gradient(to top, var(--tw-gradient-stops));
+bg-gradient-to-tr	background-image: linear-gradient(to top right, var(--tw-gradient-stops));
+bg-gradient-to-r	background-image: linear-gradient(to right, var(--tw-gradient-stops));
+bg-gradient-to-br	background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+bg-gradient-to-b	background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+bg-gradient-to-bl	background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
+bg-gradient-to-l	background-image: linear-gradient(to left, var(--tw-gradient-stops));
+bg-gradient-to-tl	background-image: linear-gradient(to top left, var(--tw-gradient-stops));
+ -->
+<!-- 渐变色设置 -->
+<div class="bg-gradient-to-r from-red-500 "></div>
+<div class="bg-gradient-to-r from-green-400 to-blue-500"></div>
+<div class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500"></div>
+<button type="button" class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500">
+  Hover me
+</button>
+<button type="button" class="bg-gradient-to-r from-green-400 to-blue-500 focus:from-pink-500 focus:to-yellow-500">
+  Focus me
+</button>
+  </body>
+
+</html>
