@@ -186,3 +186,12 @@ git push origin master
 为了解决这个问题，你可以使用--allow-unrelated-histories选项来允许合并不相关的历史。执行以下命令：
 ```git pull --allow-unrelated-histories```
 
+## 13.与其他人合并代码
+方法一:(简单粗暴) git pull origin develop =>获取当前主分支
+注意:如果没有提交当前的代码会提示出要求先提交代码，可以先上传到自己的分支(git push 自己的分支)
+git push => git pull origin develop => git push 即可.
+也就是说先将代码提交到自己分支，然后拉取主分支中其他人写的代码，然后合并代码即可.
+方法二:(暂存) git stash =>将自己的代码存起来
+git stash => git pull origin develop => git stash pop => merge
+暂存起自己的代码，此时就与dev分支的代码相同，再去拉取dev分支代码后合并他人的代码，之后再将自己暂存的代码pop出来后与当前代码进行合并.
+
