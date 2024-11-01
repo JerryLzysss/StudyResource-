@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+   
+    <title>Hello from Electron renderer!</title>
+  </head>
+  <body>
+    <h1>Hello from Electron renderer!</h1>
+    <p>👋</p>
+    <h1 id="info">1234</h1>
+    <h1 id="info2">1234</h1>
+  <script>
+    const information=document.getElementById('info')
+    const information2 = document.getElementById('info2')
+    const pingF=async()=>{
+      const response = await window.versions.ping()
+      alert(response)
+     information2.innerText=response
+    }
+    pingF()
+
+    information.innerText= `This app is using Chrome (v${window.versions.chrome()}), Node.js (v${window.versions.node()}), and Electron (v${window.versions.electron()})`
+  </script>
+  </body>
+  
+</html>
