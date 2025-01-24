@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+</head>
+<body>
+    <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+        <!-- 定义滤镜 -->
+        <filter id="filter_id">
+          <!-- 滤镜效果 -->
+        </filter>
+        
+        <!-- 应用滤镜的目标元素 -->
+        <rect x="50" y="50" width="100" height="80" filter="url(#filter_id)" />
+      </svg>
+      <!-- 
+        模糊（Blur）：使图像产生模糊效果，通过 <feGaussianBlur> 元素实现。
+        阴影（Shadow）：为图像添加阴影效果，通过 <feDropShadow> 元素实现。
+        亮度、对比度调整（Brightness, Contrast）：调整图像的亮度和对比度，通过 <feComponentTransfer> 元素实现。
+        颜色矩阵（Color Matrix）：通过颜色矩阵操作修改图像的颜色，通过 <feColorMatrix> 元素实现。
+        混合模式（Blend Mode）：将两个图像混合在一起，通过 <feBlend> 元素实现。
+       -->
+        <!-- 模糊效果可以通过<feGaussianBlur>来实现
+            in表示输入图像,通常为SourceGraphic表示自身慕白哦
+            stdDeviation表示标准差,可以用两个数字分别表示水平和垂直,
+            数值越大则模糊程度越高 -->
+       <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <filter id="f1" x="0" y="0">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="15" />
+          </filter>
+        </defs>
+        <rect width="90" height="90" stroke="green" stroke-width="3"
+        fill="yellow" filter="url(#f1)" />
+      </svg>
+<!-- 阴影效果可以通过feOffset来实现,其中feOffset dx与dy表示阴影的偏移位置 -->
+      <!-- 也可以通过feDropShadow来实现,其中stdDeviation定义模糊半径,flood-color定义颜色,flood-opacity定义阴影不透明度 -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <filter id="f1" x="0" y="0" width="200%" height="200%">
+            <feOffset result="offOut" in="SourceGraphic" dx="20" 
+      dy="20" />
+            <feBlend in="SourceGraphic" in2="offOut" 
+      mode="normal" />
+          </filter>
+        </defs>
+        <rect width="90" height="90" stroke="green" stroke-width="3"
+        fill="yellow" filter="url(#f1)" />
+      </svg>
+      <!-- svg的渐变有两种元素实现，一种是linearGradient用于创建线性渐变
+       另一种是radialGradient用于创建放射性渐变 -->
+       <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+        <!-- 定义线性渐变 -->
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="red" />
+          <stop offset="100%" stop-color="blue" />
+        </linearGradient>
+       
+        <!-- 应用线性渐变的矩形 -->
+        <rect x="50" y="50" width="100" height="80" fill="url(#gradient)" />
+      </svg>
+        <!-- id标识应用渐变的元素，x1y1是起始点,x2y2是终点,stop是渐变的颜色和颜色位置 -->
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+              <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="200" cy="70" rx="85" ry="55" fill="url(#grad1)" />
+          <text fill="#ffffff" font-size="45" font-family="Verdana" x="150" y="86">
+          SVG</text>
+        </svg>
+        <!-- radialGradient用于环形等渐变方式 -->
+        <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+          <!-- 定义径向渐变 -->
+          <radialGradient id="gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" stop-color="red" />
+            <stop offset="100%" stop-color="blue" />
+          </radialGradient>
+          <!-- cx,cy,rx,ry(或者r)用来设置圆心位置和水平宽度垂直宽度(r则是圆形) -->
+          <!-- 应用径向渐变的圆形(椭圆则是ellipse并改为使用rx和ry) -->
+          <circle cx="100" cy="100" r="80" fill="url(#gradient)" />
+        </svg>
+   <script>
+        
+   </script>
+</body>

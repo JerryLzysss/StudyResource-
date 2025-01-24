@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+</head>
+<body>
+    <div>模拟圆角矩形生成</div>
+    <input type="text" id="Point1" placeholder="点1坐标"></input>
+    <input type="text" id="Point2" placeholder="点2坐标"></input>
+    <input type="text" id="cornerRadius" placeholder="圆角度数"></input>
+    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" id="Round1">
+        <circle cx="10" cy="10" r="5" fill="blue" stroke="black" stroke-width="2" />
+      </svg>
+      <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" id="Round2">
+        <circle cx="10" cy="10" r="5" fill="red" stroke="black" stroke-width="2" />
+      </svg>
+    <button id="clear">清空</button>
+    <button id="draw">绘制</button>
+    <canvas id="ctx" width="5000" height="5000"></canvas>
+    <script>
+        const p1=document.getElementById("Point1");
+        const p2=document.getElementById("Point2");
+        const r=document.getElementById("cornerRadius");
+        const clear=document.getElementById("clear");
+        const draw=document.getElementById("draw");
+        const Round1=document.getElementById("Round1");
+        const Round2=document.getElementById("Round2");
+      
+        let c=document.getElementById("ctx");
+        c.addEventListener('click',function(e){
+            const x=e.pageX;
+            const y=e.pageY;
+           
+      
+            if(p1.value=="")
+            {
+            p1.value=(x+","+y);
+            Round1.style.position="absolute";
+            Round1.style.top=y;
+            Round1.style.left=x;
+            Round1.style.display="unset";
+            }
+            else
+            {
+            p2.value=(x+","+y);
+            Round2.style.position="absolute";
+            Round2.style.top=y;
+            Round2.style.left=x;
+            Round2.style.display="unset";
+            }
+        })
+        clear.addEventListener('click',function(e){
+            let ctx=c.getContext("2d"); 
+            ctx.clearRect(0,0,5000,5000);
+            ctx.beginPath();
+            p1.value="";
+            p2.value="";
+            r.value="";
+            Round1.style.display="none";
+            Round2.style.display="none";
+        })
+        draw.addEventListener('click',function(e){
+           
+            let ctx=c.getContext("2d"); 
+                ctx.clearRect(0,0,5000,5000);
+              
+                const x=p1.value.split(",");
+                const y=p2.value.split(",");
+                Round1.style.top=x[1];
+                Round1.style.left=x[0];
+                Round2.style.top=y[1];
+                Round2.style.left=y[0];
+            if(x.length==2&&y.length==2)
+            {   
+                //取两个端点的最小值与最大值
+                const MinX=Math.min(x[0],y[0]);
+                const MinY=Math.min(x[1]-45,y[1]-45);
+                const MaxX=Math.max(x[0],y[0]);
+                const MaxY=Math.max(x[1]-45,y[1]-45);
+                let rr=r.value;
+                
+                if(rr=="")
+                rr=0;
+                //取得两端点的最大半径,当半径大于此阈值的时候图形出现崩塌
+                const MaxR=Math.min((MaxX-MinX),(MaxY-MinY))/2;
+                rr=Math.min(MaxR,rr);
+                console.log(rr);
+                ctx.beginPath();
+                ctx.moveTo(add(MinX,rr),MinY);
+
+                ctx.quadraticCurveTo(MinX,MinY,MinX,add(MinY,rr));
+                console.log(MinX,MinY,add(MinX,rr),MinY)
+                ctx.lineTo(MinX,MaxY-rr);
+                ctx.quadraticCurveTo(MinX,MaxY,add(MinX,rr),MaxY);
+                ctx.lineTo(MaxX-rr,MaxY);
+                ctx.quadraticCurveTo(MaxX,MaxY,MaxX,MaxY-rr);
+                ctx.lineTo(MaxX,add(MinY,rr))
+                ctx.quadraticCurveTo(MaxX,MinY,MaxX-rr,MinY);
+                ctx.closePath();
+                ctx.stroke();
+                
+                
+            }
+            else{
+                console.log("error");
+            }
+            
+        })
+       function add(x,y)
+       {
+        return parseFloat(x)+parseFloat(y);
+       }
+      
+    </script>
+</body>

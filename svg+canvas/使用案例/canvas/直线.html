@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+</head>
+<body>
+    <div>模拟拖拽直线生成</div>
+    <input type="text" id="Point1"></input>
+    <input type="text" id="Point2"></input>
+    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" id="Round1">
+        <circle cx="10" cy="10" r="5" fill="blue" stroke="black" stroke-width="2" />
+      </svg>
+      <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" id="Round2">
+        <circle cx="10" cy="10" r="5" fill="red" stroke="black" stroke-width="2" />
+      </svg>
+    <button id="clear">清空</button>
+    <button id="draw">绘制</button>
+    <canvas id="ctx" width="5000" height="5000"></canvas>
+    <script>
+        const p1=document.getElementById("Point1");
+        const p2=document.getElementById("Point2");
+        const clear=document.getElementById("clear");
+        const draw=document.getElementById("draw");
+        const Round1=document.getElementById("Round1");
+        const Round2=document.getElementById("Round2");
+        console.log(Round1,Round2);
+        let c=document.getElementById("ctx");
+        c.addEventListener('click',function(e){
+            const x=e.pageX;
+            const y=e.pageY;
+           
+      
+            if(p1.value=="")
+            {
+            p1.value=(x+","+y);
+            Round1.style.position="absolute";
+            Round1.style.top=y;
+            Round1.style.left=x;
+            }
+            else
+            {
+            p2.value=(x+","+y);
+            Round2.style.position="absolute";
+            Round2.style.top=y;
+            Round2.style.left=x;
+            }
+        })
+        clear.addEventListener('click',function(e){
+            p1.value="";
+            p2.value="";
+        })
+        draw.addEventListener('click',function(e){
+           
+            let ctx=c.getContext("2d"); 
+            const x=p1.value.split(",");
+            const y=p2.value.split(",");
+            ctx.clearRect(0,0,5000,5000);
+            ctx.beginPath();
+            console.log(x,y);
+            
+            if(x.length==2&&y.length==2)
+            { 
+                  
+                console.log(x[0],y[0],x[1],y[1]);
+                ctx.beginPath();
+                ctx.moveTo(y[0],y[1]-45);
+                ctx.lineTo(x[0],x[1]-45);  
+              
+                ctx.stroke();
+            }
+            else{
+                console.log("error");
+            }
+            
+        })
+       
+        
+    </script>
+</body>

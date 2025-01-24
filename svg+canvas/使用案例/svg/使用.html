@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+</head>
+<body>
+    <!-- 通过img标签可以将svg图像作为图片嵌入到HTML中，
+     可以通过src指定svg文件的路径，也可以设置width和height -->
+    <img src="示例.svg" width="300" height="300">
+    <!-- 通过Object标签可以将外部资源嵌入到HTML页面中，可以使用data属性指定文件的路径,
+     type指定资源的MIME类型 -->
+    <object data="示例.svg" type="image/svg+xml" width="200" height="200"></object>
+    <!-- iframe标签用于在HTML页面中嵌入另一个HTML，可以使用svg指定文件的路径 -->
+    <iframe src="示例.svg" width="200" height="200"></iframe>
+    <!-- a标签也能应用于链接svg文件 -->
+     <a href="示例.svg">查看svg文件</a>
+     <!-- 使用CSS背景的background-image属性也可以嵌入 -->
+     <div id="bg"></div>
+     <style>
+        #bg{
+            width:200px;
+            height:200px;
+            background-image:url("示例.svg");
+            background-size:cover;
+        }
+     </style> 
+    <script>
+        
+    </script>
+</body>

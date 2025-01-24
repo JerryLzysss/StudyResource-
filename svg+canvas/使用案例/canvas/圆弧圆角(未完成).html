@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+</head>
+<body>
+    <div>模拟圆角弧度</div>
+    <input type="text" id="Point1" placeholder="点1坐标"></input>
+    <input type="text" id="Point2" placeholder="点2坐标"></input>
+    <input type="text" id="arc" placeholder="弧度"></input>
+    <input type="text" id="round" placeholder="圆角"></input>
+    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" id="Round1">
+        <circle cx="10" cy="10" r="5" fill="blue" stroke="black" stroke-width="2" />
+      </svg>
+      <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" id="Round2">
+        <circle cx="10" cy="10" r="5" fill="red" stroke="black" stroke-width="2" />
+      </svg>
+    <button id="clear">清空</button>
+    <button id="draw">绘制</button>
+    <button id="auto">自动</button>
+    <canvas id="ctx" width="5000" height="5000"></canvas>
+    <script>
+        const p1=document.getElementById("Point1");
+        const p2=document.getElementById("Point2");
+        const arc=document.getElementById("arc");
+        const clear=document.getElementById("clear");
+        const draw=document.getElementById("draw");
+        const auto=document.getElementById("auto");
+        const Round1=document.getElementById("Round1");
+        const Round2=document.getElementById("Round2");
+        const round=document.getElementById("round");
+        let c=document.getElementById("ctx");
+        c.addEventListener('click',function(e){
+            const x=e.pageX;
+            const y=e.pageY;
+           
+      
+            if(p1.value=="")
+            {
+            p1.value=(x+","+y);
+            Round1.style.position="absolute";
+            Round1.style.top=y;
+            Round1.style.left=x;
+            Round1.style.display="unset";
+            }
+            else
+            {
+            p2.value=(x+","+y);
+            Round2.style.position="absolute";
+            Round2.style.top=y;
+            Round2.style.left=x;
+            Round2.style.display="unset";
+            }
+        })
+        clear.addEventListener('click',function(e){
+            let ctx=c.getContext("2d"); 
+            ctx.clearRect(0,0,5000,5000);
+            ctx.beginPath();
+            p1.value="";
+            p2.value="";
+            arc.value="";
+            Round1.style.display="none";
+            Round2.style.display="none";
+        })
+        draw.addEventListener('click',function(e){
+           
+            let ctx=c.getContext("2d"); 
+                ctx.clearRect(0,0,5000,5000);
+              ctx.beginPath();
+                const x=p1.value.split(",");
+                const y=p2.value.split(",");
+                Round1.style.top=x[1];
+                Round1.style.left=x[0];
+                Round2.style.top=y[1];
+                Round2.style.left=y[0];
+            if(x.length==2&&y.length==2)
+            {   
+                //取两个端点的最小值与最大值
+                const MinX=Math.min(x[0],y[0]);
+                const MinY=Math.min(x[1]-45,y[1]-45);
+                const MaxX=Math.max(x[0],y[0]);
+                const MaxY=Math.max(x[1]-45,y[1]-45);
+                if(arc.value=="")
+                arc.value=0;
+                if(round.value=="")
+                round.value=0;
+                //特殊值判断，当arc.value==100的时候只需要绘制圆弧即可.
+                if(Math.abs(arc.value)==100)
+                {
+                    let ctx=c.getContext("2d"); 
+                    const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                    const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                    ctx.moveTo(MaxX,RW);
+                    ctx.quadraticCurveTo(MaxX,MinY,RH,MinY);
+                    ctx.moveTo(MaxX,RW);
+                    ctx.quadraticCurveTo(MaxX,MaxY,RH,MaxY);
+                    ctx.moveTo(MinX,RW);
+                    ctx.quadraticCurveTo(MinX,MinY,RH,MinY);
+                    ctx.moveTo(RH,MaxY);
+                    ctx.quadraticCurveTo(MinX,MaxY,MinX,RW);
+                    ctx.stroke();
+                }
+                else{
+                    
+                    RT(MinX,MinY,MaxX,MaxY,arc.value);
+                    RB(MinX,MinY,MaxX,MaxY,arc.value);
+                    LT(MinX,MinY,MaxX,MaxY,arc.value);
+                    LB(MinX,MinY,MaxX,MaxY,arc.value);
+                    Line(MinX,MinY,MaxX,MaxY,arc.value);
+                }
+            }
+            else{
+                console.log("error");
+            }
+            
+        })
+        //自动旋转进行参考
+        auto.addEventListener('click',function(e){
+            if(arc.value=="")
+            arc.value=-100;
+            if(round.value=="")
+            round.value=0;
+            if(p1.value=="")
+            p1.value="100,400";
+            if(p2.value=="")
+            p2.value="1000,900";
+            setInterval(()=>{
+                let ctx=c.getContext("2d"); 
+                ctx.clearRect(0,0,5000,5000);
+                ctx.beginPath();
+                const x=p1.value.split(",");
+                const y=p2.value.split(",");
+                // if(arc.value<100)
+                // arc.value++;
+                if(round.value<100)
+                round.value++;
+                const MinX=Math.min(x[0],y[0]);
+                const MinY=Math.min(x[1]-45,y[1]-45);
+                const MaxX=Math.max(x[0],y[0]);
+                const MaxY=Math.max(x[1]-45,y[1]-45);
+        
+                RT(MinX,MinY,MaxX,MaxY,arc.value);
+                RB(MinX,MinY,MaxX,MaxY,arc.value);
+                LT(MinX,MinY,MaxX,MaxY,arc.value);
+                LB(MinX,MinY,MaxX,MaxY,arc.value);
+                Line(MinX,MinY,MaxX,MaxY,arc.value);
+            },500)
+        })
+        function add(x,y)
+       {
+        return parseFloat(x)+parseFloat(y);
+       }
+       //返回两个点之间的距离 
+       function distance(startX,startY,endX,endY)
+        {
+            return Math.hypot(endX-startX,endY-startY);
+        }
+        //根据t值计算出某个在曲线上点的位置
+        function bezierTPoint(x0,x1,y0,y1,z0,z1,t)
+        {
+            const x=t*t*x0+2*t*(1-t)*y0+(1-t)*(1-t)*z0;
+            const y=t*t*x1+2*t*(1-t)*y1+(1-t)*(1-t)*z1;
+            return [x,y];
+        }
+        //根据位置计算距离
+        function PositionT(x0,x1,y0,y1,z0,z1,length)
+        {
+            let t0=0;
+            let t1=1;
+            let t;
+            
+            while(t0<t1)
+            {
+                
+                t=(t0+t1)*0.5;
+                
+                const curPoint=bezierTPoint(x0,x1,y0,y1,z0,z1,t)
+                const curlength=distance(curPoint[0],curPoint[1],z0,z1);
+                
+                if(Math.abs(curlength-length)<1e-3)
+                {
+       
+                    return t;
+                }
+                else if(curlength<length)
+                {
+                    t0=t;
+
+                }
+                else{
+                    t1=t;
+                }
+            }
+            return null;
+        }
+       //绘制右上角的圆弧
+       function RT(MinX,MinY,MaxX,MaxY,arc)
+       {
+      
+            //不存在圆弧角度的情况下由两条直线与圆弧组成
+            if(round.value==0)
+            {
+            if((arc>=75&&arc<100)||(arc>=-25&&arc<0))
+            {
+              
+                const point=(100-arc)*3.6;//计算角度,arc1=3.6度
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                const HH=MaxX-RH;//水平方向的半径(如果是圆则与水平方向保持一致)
+                const WW=MaxY-RW;//垂直方向的半径(如果是圆则与垂直方向保持一致)
+              
+                const angle=point*Math.PI/180;//角度换算
+                const nowR=(HH*WW)/Math.sqrt(HH*HH*Math.sin(angle)+WW*WW*Math.cos(angle));//计算点所在的半径长度      
+              
+            
+                const A=HH*Math.sin(angle);//公式
+                const B=WW*Math.cos(angle);//公式
+                const nowX=RH+(HH*WW*Math.cos(angle))/Math.sqrt(A*A+B*B)//公式
+                const nowY=RW-(HH*WW*Math.sin(angle))/Math.sqrt(A*A+B*B)//公式
+                let ctx=c.getContext("2d"); 
+                ctx.moveTo(RH,RW);
+                ctx.lineTo(nowX,nowY);
+
+                if(arc>=75&&arc<100)
+                {
+                 ctx.quadraticCurveTo(nowX,MinY,RH,MinY);
+                }
+                else{
+                    ctx.quadraticCurveTo(MaxX,nowY,MaxX,RW);
+                }
+                
+       
+                ctx.stroke();
+            }
+            else if(arc>-100&&arc<=-25)
+            {
+                let ctx=c.getContext("2d"); 
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                ctx.moveTo(MaxX,RW);
+                ctx.quadraticCurveTo(MaxX,MinY,RH,MinY);
+                
+                ctx.stroke();
+            }
+            else
+            return ;
+            }
+            //存在圆弧角度的情况下由三个顶点出发进行弯曲形成弧形
+            else
+            {
+                if((arc>=75&&arc<100)||(arc>=-100&&arc<0))
+                {
+              
+                const point=(100-arc)*3.6;//计算角度,arc1=3.6度
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                const HH=MaxX-RH;//水平方向的半径(如果是圆则与水平方向保持一致)
+                const WW=MaxY-RW;//垂直方向的半径(如果是圆则与垂直方向保持一致)
+                const angle=point*Math.PI/180;//角度换算
+                const nowR=(HH*WW)/Math.sqrt(HH*HH*Math.sin(angle)+WW*WW*Math.cos(angle));//计算点所在的半径长度      
+             
+                const A=HH*Math.sin(angle);//公式
+                const B=WW*Math.cos(angle);//公式
+                const nowX=RH+(HH*WW*Math.cos(angle))/Math.sqrt(A*A+B*B)//公式
+                const nowY=RW-(HH*WW*Math.sin(angle))/Math.sqrt(A*A+B*B)//公式
+                let ctx=c.getContext("2d"); 
+                
+                const PCenter=[RH,RW]//圆心
+                
+                const t1=PositionT(MinX,MinY,nowX,MinY,nowX,nowY,Math.min(round.value,nowR*0.5));    
+               
+                const TP1=bezierTPoint(MinX,MinY,nowX,MinY,nowX,nowY,t1);//第一个点
+                const t2=PositionT(nowX,nowY,nowX,nowY,RH,RW,Math.min(round.value,nowR*0.5));
+                const TP2=bezierTPoint(nowX,nowY,nowX,nowY,RH,RW,t2);//第二个点
+                ctx.moveTo(TP1[0],TP1[1]);
+             
+            
+               
+                    // ctx.lineTo(TP1[0],TP1[1]);
+                //     ctx.lineTo(TP2[0],TP2[1]);
+      
+                ctx.quadraticCurveTo(nowX,nowY,TP2[0],TP2[1]);
+                const t3=PositionT(nowX,nowY,nowX,nowY,RH,RW,Math.min(round.value,nowR*0.5));
+                const TP3=bezierTPoint(nowX,nowY,nowX,nowY,RH,RW,t3)
+                ctx.lineTo(TP3[0],TP3[1]);
+                const t4=PositionT(MaxX,RW,MaxX,RW,RH,RW,Math.min(round.value,(MaxX-RH)*0.5));
+                const TP4=bezierTPoint(MaxX,RW,MaxX,RW,RH,RW,t4);
+                 ctx.quadraticCurveTo(RH,RW,TP4[0],TP4[1]);
+   
+                const t5=PositionT(RH,RW,RH,RW,MaxX,RW,Math.min(round.value,(MaxX-RH)*0.5));
+                const TP5=bezierTPoint(RH,RW,RH,RW,MaxX,RW,t5);
+                ctx.lineTo(TP5[0],TP5[1]);
+                const t6=PositionT(RH,MaxY,MaxX,MaxY,MaxX,RW,Math.min(round.value,(MaxX-RH)*0.5));
+                const TP6=bezierTPoint(RH,MaxY,MaxX,MaxY,MaxX,RW,t6);
+                ctx.quadraticCurveTo(MaxX,RW,TP6[0],TP6[1]);
+             
+        
+                 
+              
+                const DesY1=MinY;
+              
+                const a=WW;
+                const b=HH;
+                const yy1=RW-TP1[1];
+                const yy2=RW-MinY;
+                const xx1=TP1[0]-RH;
+                const DesX1=(1-(yy1*yy2/b/b))*(a*a/xx1);
+               
+                ctx.quadraticCurveTo(TP6[0],MaxY,RH,MaxY); 
+                ctx.moveTo(TP1[0],TP1[1]);
+                console.log("TP1[0]",TP1[0],"TP1[1]",TP1[1]);
+                console.log("yy1",yy1,"yy2",yy2,"xx1",xx1);
+                console.log(DesX1,DesY1);
+                if(TP1[0]>RH)
+                {
+              
+                    ctx.quadraticCurveTo(DesX1+RH,MinY,RH,MinY);
+                }
+                ctx.quadraticCurveTo(MinX,MinY,MinX,RW);
+                ctx.quadraticCurveTo(MinX,MaxY,RH,MaxY);
+               
+                  
+                // ctx.moveTo(RH,MinY); 
+                // ctx.lineTo(TP1[0],TP1[1]);
+                //ctx.lineTo(DesX,DesY);
+              //  ctx.lineTo(RH,MinY);
+     
+                ctx.stroke();
+             
+                }
+                else
+                return ;
+            }
+        }
+        //绘制右下角的圆弧
+        function RB(MinX,MinY,MaxX,MaxY,arc)
+       {
+            
+            if((arc>-100&&arc<=-75)||(arc>0&&arc<=25))
+            {
+                if(round.value==0)
+                {
+                const point=(100-arc)*3.6;//计算角度,arc1=3.6度
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                const HH=MaxX-RH;//水平方向的半径(如果是圆则与水平方向保持一致)
+                const WW=MaxY-RW;//垂直方向的半径(如果是圆则与垂直方向保持一致)
+                const angle=point*Math.PI/180;//角度换算
+                const nowR=(HH*WW)/Math.sqrt(HH*HH*Math.sin(angle)+WW*WW*Math.cos(angle));//计算点所在的半径长度      
+             
+                const A=HH*Math.sin(angle);//公式
+                const B=WW*Math.cos(angle);//公式
+                const nowX=RH+(HH*WW*Math.cos(angle))/Math.sqrt(A*A+B*B)//公式
+                const nowY=RW-(HH*WW*Math.sin(angle))/Math.sqrt(A*A+B*B)//公式
+                let ctx=c.getContext("2d"); 
+                ctx.moveTo(RH,RW);
+                ctx.lineTo(nowX,nowY);
+               // ctx.quadraticCurveTo(nowX,MaxY,RH,MaxY);
+                //ctx.lineTo(RH-HH,RW);
+                
+                if(arc>-100&&arc<=-75)
+                {
+                    ctx.quadraticCurveTo(nowX,MaxY,RH,MaxY);
+                }
+                else{
+                    ctx.quadraticCurveTo(MaxX,nowY,MaxX,RW);
+                }
+                ctx.stroke();
+                }
+            }
+            else if(arc>=25&&arc<100)
+            {
+                if(round.value==0)
+                {
+                    let ctx=c.getContext("2d"); 
+                    const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                    const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                    ctx.moveTo(MaxX,RW);
+                    ctx.quadraticCurveTo(MaxX,MaxY,RH,MaxY);
+                    ctx.stroke();
+                
+                }
+            }
+            else
+            return ;
+        }
+        //绘制左上角的圆弧
+        function LT(MinX,MinY,MaxX,MaxY,arc)
+       {
+            
+            if((arc>50&&arc<=75)||(arc>-50&&arc<=-25))
+            {
+                if(round.value==0)
+                {
+                const point=(100-arc)*3.6;//计算角度,arc1=3.6度
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                const HH=MaxX-RH;//水平方向的半径(如果是圆则与水平方向保持一致)
+                const WW=MaxY-RW;//垂直方向的半径(如果是圆则与垂直方向保持一致)
+                const angle=point*Math.PI/180;//角度换算
+                const nowR=(HH*WW)/Math.sqrt(HH*HH*Math.sin(angle)+WW*WW*Math.cos(angle));//计算点所在的半径长度      
+             
+                const A=HH*Math.sin(angle);//公式
+                const B=WW*Math.cos(angle);//公式
+                const nowX=RH+(HH*WW*Math.cos(angle))/Math.sqrt(A*A+B*B)//公式
+                const nowY=RW-(HH*WW*Math.sin(angle))/Math.sqrt(A*A+B*B)//公式
+                let ctx=c.getContext("2d"); 
+                ctx.moveTo(RH,RW);
+                ctx.lineTo(nowX,nowY);
+               // ctx.quadraticCurveTo(nowX,MinY,RH,MinY);
+                
+                if(arc>50&&arc<=75)
+                {
+                    ctx.quadraticCurveTo(MinX,nowY,MinX,RW);
+                }
+                else{
+                    ctx.quadraticCurveTo(nowX,MinY,RH,MinY);
+                }
+       
+                ctx.stroke();
+                }
+            }
+            else if((arc>-100&&arc<=-50)||(arc>=75&&arc<100))
+            {
+                if(round.value==0)
+                {
+                let ctx=c.getContext("2d"); 
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                ctx.moveTo(MinX,RW);
+                ctx.quadraticCurveTo(MinX,MinY,RH,MinY);
+              
+                ctx.stroke();
+                }
+            }
+            else
+            return ;
+        }
+        //绘制左下角的圆弧
+        function LB(MinX,MinY,MaxX,MaxY,arc)
+       {
+            
+            if((arc>=25&&arc<=50)||(arc>=-75&&arc<=-50))
+            {
+                if(round.value==0)
+                {
+                const point=(100-arc)*3.6;//计算角度,arc1=3.6度
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                const HH=MaxX-RH;//水平方向的半径(如果是圆则与水平方向保持一致)
+                const WW=MaxY-RW;//垂直方向的半径(如果是圆则与垂直方向保持一致)
+                const angle=point*Math.PI/180;//角度换算
+                const nowR=(HH*WW)/Math.sqrt(HH*HH*Math.sin(angle)+WW*WW*Math.cos(angle));//计算点所在的半径长度      
+              
+                const A=HH*Math.sin(angle);//公式
+                const B=WW*Math.cos(angle);//公式
+                const nowX=RH+(HH*WW*Math.cos(angle))/Math.sqrt(A*A+B*B)//公式
+                const nowY=RW-(HH*WW*Math.sin(angle))/Math.sqrt(A*A+B*B)//公式
+                let ctx=c.getContext("2d"); 
+                ctx.moveTo(RH,RW);
+                ctx.lineTo(nowX,nowY);
+               // ctx.quadraticCurveTo(nowX,MaxY,RH,MaxY);
+                //ctx.lineTo(RH-HH,RW);
+               
+                if(arc>=25&&arc<=50)
+                {
+                    ctx.quadraticCurveTo(nowX,MaxY,RH,MaxY);
+                }
+                else{
+                    ctx.quadraticCurveTo(MinX,nowY,MinX,RW);
+                }
+                ctx.stroke();
+                }
+            }
+            else if((arc>=50&&arc<100)||(arc>-100&&arc<=-75))
+            {
+                if(round.value==0)
+                {
+                let ctx=c.getContext("2d"); 
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                ctx.moveTo(RH,MaxY);
+                ctx.quadraticCurveTo(MinX,MaxY,MinX,RW);
+                ctx.stroke();
+                }
+            }
+            else
+            return ;
+        }
+        //对100和0的弧线单独判断
+        function Line(MinX,MinY,MaxX,MaxY,arc)
+        {
+            if(arc!=0&&arc!=100)
+            {
+                if(round.value==0)
+                {
+                let ctx=c.getContext("2d"); 
+                const RH=add(MaxX,MinX)/2;//中心点的X坐标
+                const RW=add(MaxY,MinY)/2;//中心点的Y坐标
+                ctx.moveTo(RH,RW);
+                ctx.lineTo(MaxX,RW);
+                ctx.stroke();
+                }
+            }
+            else
+            return;
+        }
+    </script>
+</body>

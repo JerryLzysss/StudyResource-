@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+</head>
+<body>
+   
+      <!-- 如果不需要描边，可以设置stroke为none -->
+      <!-- stroke的属性由width,linecap,dasharray等等组成 -->
+       <!-- stroke-width定义文本厚度与轮廓 -->
+       <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <g fill="none" stroke="black">
+          <path stroke-width="2" d="M5 20 l215 0" />
+          <path stroke-width="4" d="M5 40 l215 0" />
+          <path stroke-width="6" d="M5 60 l215 0" />
+        </g>
+      </svg>
+      <!-- stroke-linecap表示线段两边的状态,例如round表示圆状 -->
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <g fill="none" stroke="black" stroke-width="6">
+          <path stroke-linecap="butt" d="M5 20 l215 0" />
+          <path stroke-linecap="round" d="M5 40 l215 0" />
+          <path stroke-linecap="square" d="M5 60 l215 0" />
+        </g>
+      </svg>
+         <!-- stroke-dasharray表示虚实线 -->
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <g fill="none" stroke="black" stroke-width="4">
+          <path stroke-dasharray="5,5" d="M5 20 l215 0" />
+          <path stroke-dasharray="10,10" d="M5 40 l215 0" />
+          <path stroke-dasharray="20,10,5,5,5,10" d="M5 60 l215 0" />
+        </g>
+      </svg>
+   <script>
+        
+   </script>
+</body>
