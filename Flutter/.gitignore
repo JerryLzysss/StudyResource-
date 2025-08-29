@@ -1,0 +1,30 @@
+# Flutter SDK (排除整个SDK目录，因为体积巨大且可以从官网下载)
+SDK/
+
+# IDE配置文件
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Flutter构建产物
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+
+# 依赖锁定文件 (可选，建议保留)
+# **/pubspec.lock
+
+# 平台特定文件
+**/ios/Flutter/.last_build_id
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+# 日志和临时文件
+*.log
+*.pyc
+*.swp
+.DS_Store
+.history
