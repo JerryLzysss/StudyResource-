@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="d3/d3.v7.min.js"></script>
+    <style>
+        .demo-box {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .highlight {
+            background-color: #ffeb3b;
+        }
+
+        .circle {
+            fill: steelblue;
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+
+        .circle:hover {
+            fill: #ff6b6b;
+        }
+
+        .text {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>D3.js 选择API 完整示例</h2>
+
+    <!-- 基础选择示例 -->
+    <div class="demo-box">
+        <h3>1. 基础选择</h3>
+        <p>这是一个段落</p>
+        <p>这是另一个段落</p>
+        <div class="container">
+            <span>容器内的span</span>
+        </div>
+    </div>
+
+    <!-- 数据绑定示例 -->
+    <div class="demo-box">
+        <h3>2. 数据绑定与可视化</h3>
+        <svg id="chart" width="400" height="200"></svg>
+    </div>
+
+    <!-- 事件处理示例 -->
+    <div class="demo-box">
+        <h3>3. 事件处理</h3>
+        <button id="addCircle">添加圆圈</button>
+        <button id="removeCircle">移除圆圈</button>
+        <button id="changeColor">改变颜色</button>
+        <svg id="interactive" width="300" height="150"></svg>
+    </div>
+
+    <!-- 本地存储示例 -->
+    <div class="demo-box">
+        <h3>4. 本地存储</h3>
+        <div id="localStorageDemo">
+            <p>点击下面的元素查看本地存储效果</p>
+        </div>
+    </div>
+
+    <script>
+        console.log("=== D3.js 选择API 完整示例 ===");
+
+        // 1. 基础选择操作
+        console.log("\n--- 1. 基础选择操作 ---");
+
+        // 选择单个元素
+        var body = d3.select("body");
+        console.log("选择body元素:", body);
+
+        // 选择所有段落
+        var paragraphs = d3.selectAll("p");
+        console.log("选择所有段落:", paragraphs);
+
+        // 选择特定类名的元素
+        var demoBoxes = d3.selectAll(".demo-box");
+        console.log("选择所有demo-box:", demoBoxes);
+
+        // 链式选择
+        var containerSpans = d3.selectAll(".container").selectAll("span");
+        console.log("链式选择容器内的span:", containerSpans);
+
+        // 2. 数据绑定与可视化
+        console.log("\n--- 2. 数据绑定与可视化 ---");
+
+        var data = [10, 20, 30, 40, 50];
+        var svg = d3.select("#chart");
+
+        // 设置SVG尺寸
+        svg.attr("width", 400).attr("height", 200);
+
+        // 创建比例尺
+        var xScale = d3.scaleBand()
+            .domain(d3.range(data.length))
+            .range([0, 400])
+            .padding(0.1);
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(data)])
+            .range([180, 20]);
+
+        // 绑定数据并创建矩形
+        var bars = svg.selectAll("rect")
+            .data(data);
+
+        bars.enter()
+            .append("rect")
+            .merge(bars)
+            .attr("x", function(d, i) {
+                return xScale(i);
+            })
+            .attr("y", function(d) {
+                return yScale(d);
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) {
+                return 180 - yScale(d);
+            })
+            .attr("fill", "steelblue")
+            .attr("stroke", "white")
+            .attr("stroke-width", 2);
+
+        // 添加标签
+        var labels = svg.selectAll("text")
+            .data(data);
+
+        labels.enter()
+            .append("text")
+            .merge(labels)
+            .attr("class", "text")
+            .attr("x", function(d, i) {
+                return xScale(i) + xScale.bandwidth() / 2;
+            })
+            .attr("y", function(d) {
+                return yScale(d) - 5;
+            })
+            .text(function(d) {
+                return d;
+            });
+
+        // 3. 事件处理
+        console.log("\n--- 3. 事件处理 ---");
+
+        var interactiveSvg = d3.select("#interactive");
+        var circles = [];
+        var colors = ["steelblue", "orange", "green", "red", "purple"];
+        var colorIndex = 0;
+
+        // 添加圆圈按钮
+        d3.select("#addCircle").on("click", function() {
+            var newCircle = {
+                id: circles.length,
+                x: Math.random() * 250 + 25,
+                y: Math.random() * 100 + 25,
+                r: Math.random() * 20 + 10,
+                color: colors[colorIndex % colors.length]
+            };
+            circles.push(newCircle);
+            colorIndex++;
+            updateCircles();
+        });
+
+        // 移除圆圈按钮
+        d3.select("#removeCircle").on("click", function() {
+            if (circles.length > 0) {
+                circles.pop();
+                updateCircles();
+            }
+        });
+
+        // 改变颜色按钮
+        d3.select("#changeColor").on("click", function() {
+            circles.forEach(function(circle) {
+                circle.color = colors[Math.floor(Math.random() * colors.length)];
+            });
+            updateCircles();
+        });
+
+        function updateCircles() {
+            var circleSelection = interactiveSvg.selectAll("circle")
+                .data(circles, function(d) {
+                    return d.id;
+                });
+
+            // 移除多余的元素
+            circleSelection.exit().remove();
+
+            // 添加新元素
+            var newCircles = circleSelection.enter()
+                .append("circle")
+                .attr("class", "circle")
+                .on("click", function(event, d) {
+                    console.log("点击了圆圈:", d);
+                    d3.select(this).style("stroke-width", 5);
+                });
+
+            // 合并并更新所有圆圈
+            circleSelection.merge(newCircles)
+                .transition()
+                .duration(500)
+                .attr("cx", function(d) {
+                    return d.x;
+                })
+                .attr("cy", function(d) {
+                    return d.y;
+                })
+                .attr("r", function(d) {
+                    return d.r;
+                })
+                .attr("fill", function(d) {
+                    return d.color;
+                });
+        }
+
+        // 4. 本地存储 (d3.local)
+        console.log("\n--- 4. 本地存储 ---");
+
+        var localData = d3.local();
+        var localDemo = d3.select("#localStorageDemo");
+
+        // 创建一些可点击的元素
+        var clickableItems = localDemo.selectAll("div")
+            .data(["项目1", "项目2", "项目3"])
+            .enter()
+            .append("div")
+            .style("padding", "5px")
+            .style("margin", "2px")
+            .style("background", "#f0f0f0")
+            .style("cursor", "pointer")
+            .style("border-radius", "3px")
+            .text(function(d) {
+                return d;
+            })
+            .on("click", function(event, d) {
+                // 存储数据到本地
+                localData.set(this, {
+                    name: d,
+                    clickTime: new Date(),
+                    clickCount: (localData.get(this) ? localData.get(this).clickCount + 1 : 1)
+                });
+
+                // 显示存储的数据
+                var storedData = localData.get(this);
+                console.log("本地存储的数据:", storedData);
+
+                // 更新显示
+                d3.select(this)
+                    .style("background", "#e3f2fd")
+                    .text(d + " (点击次数: " + storedData.clickCount + ")");
+            });
+
+        // 5. 选择器过滤
+        console.log("\n--- 5. 选择器过滤 ---");
+
+        // 过滤偶数段落
+        var evenParagraphs = d3.selectAll("p").filter(function(d, i) {
+            return i % 2 === 0;
+        });
+        evenParagraphs.style("background-color", "#e8f5e8");
+        console.log("偶数段落:", evenParagraphs);
+
+        // 6. 选择器方法链
+        console.log("\n--- 6. 选择器方法链 ---");
+
+        d3.selectAll(".demo-box")
+            .style("border-left", "5px solid #2196f3")
+            .each(function(d, i) {
+                console.log("处理demo-box", i, ":", this);
+            });
+
+        // 7. 自定义选择器函数
+        console.log("\n--- 7. 自定义选择器函数 ---");
+
+        function highlightSelection(selection, color) {
+            selection.style("background-color", color || "#ffeb3b");
+        }
+
+        // 使用call方法调用自定义函数
+        d3.selectAll("h3").call(highlightSelection, "#e1f5fe");
+
+        // 8. 选择器排序
+        console.log("\n--- 8. 选择器排序 ---");
+
+        var sortedParagraphs = d3.selectAll("p")
+            .sort(function(a, b) {
+                return d3.select(a).text().localeCompare(d3.select(b).text());
+            });
+        console.log("排序后的段落:", sortedParagraphs);
+
+        console.log("\n=== 所有示例完成 ===");
+    </script>
+</body>
+
+</html>

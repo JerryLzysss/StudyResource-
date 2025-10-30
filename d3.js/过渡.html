@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="/d3/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <h3>Simple transitions</h3>
+    <script>
+        var t = d3.transition()
+            .duration(2000);
+        d3.select("body")
+            .transition(t)
+            .style("background-color", "lightblue")
+    </script>
+</body>
+
+</html>
