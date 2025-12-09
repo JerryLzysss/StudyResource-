@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="d3/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="list">
+        <li></li>
+        <li></li>
+    </ul>
+
+    <input type="button" name="remove" value="Remove value" onclick="javascript:remove()" />
+
+    <script>
+        // 数据连接使我们能够根据现有 HTML 文档中的数据集注入、修改和删除元素(HTML 元素以及嵌入的 SVG 元素)。默认情况下，数据集中的每个数据项都对应文档中的一个元素(图形)。
+        // 随着数据集的变化，相应的元素也可以轻松操作。数据连接在我们的数据和文档的图形元素之间建立了密切的关系。数据连接使基于数据集的元素操作变得非常简单和容易。
+        const data = [10, 20, 30, 25, 15];
+        d3.select("#list").selectAll("li")
+            //.data() 方法用于将数据集绑定到所选元素。
+            //.enter() 方法用于在所选元素的末尾添加一个新元素。
+            .data(data)
+            .text(function(d) {
+                return "This is pre-existing element and the value is " + d;
+            })
+            .enter()
+            .append("li")
+            .text(function(d) {
+                return "This is dynamically created element and the value is " + d;
+            });
+
+        function remove() {
+            //pop() 方法用于删除数组的最后一个元素，并返回该元素的值。
+            data.pop();
+            d3.selectAll("li")
+                .data(data)
+                //称为 exit() 方法，用于处理从数据集中动态删除的数据。
+                .exit()
+                //remove() 方法用于从 DOM 中删除所选元素。
+                .remove()
+        }
+    </script>
+</body>
+
+</html>

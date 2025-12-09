@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+    <div>
+        Hello Div!
+    </div>
+    <div id="div">
+        Hello id!
+    </div>
+    <div class="class">
+        Hello Class!
+    </div>
+    <div id="div2">
+        Hello div2!
+    </div>
+    <div class="class3">Hello allClass!</div>
+    <div class="class3">Hello allClass!</div>
+    <div class="class3">Hello allClass!</div>
+    <script>
+        //select()方法根据CSS选择器选择HTML元素
+        //text() 方法用于设置所选/附加元素的内容。
+        console.log(d3.select("div").text());
+        console.log(d3.select("#div").text());
+        console.log(d3.select(".class").text());
+        //append() 方法用于在所选元素的末尾添加一个新元素。
+        d3.select("div").append("span").text("Hello Append!");
+        //html() 方法用于设置所选/附加元素的 html 内容。
+        d3.select(".class").html("<p>GoodBye Class!</p>");
+        //attr() 方法用于设置所选/附加元素的属性。
+        d3.select(".class").attr("style", "color: red;");
+        //style() 方法用于设置所选/附加元素的样式属性。
+        d3.select("#div").style("color", "blue");
+        //classed() 方法用于设置所选/附加元素的 class 属性。
+        console.log(d3.select("#div2").classed("class"));
+        d3.select("#div2").classed("class", true);
+        console.log(d3.select("#div2").classed("class"));
+        //selectAll() 方法用于选择所有匹配的元素。
+        d3.selectAll(".class3").style("color", "green");
+    </script>
+</body>
+
+</html>

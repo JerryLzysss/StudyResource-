@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="d3/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <h3>D3 collection API</h3>
+    <div id="container"></div>
+    <script>
+        var year = {
+            "jan": 1,
+            "Feb": 2,
+            "mar": 3,
+            "apr": 4
+        };
+        // Object.keys() 方法用于返回对象的键 (D3 v7中已移除d3.keys)
+        console.log("对象的键:", Object.keys(year));
+        // Object.values() 方法用于返回对象的值 (D3 v7中已移除d3.values)
+        console.log("对象的值:", Object.values(year));
+        // Object.entries() 方法用于返回对象的键和值 (D3 v7中已移除d3.entries)
+        console.log("对象的键值对:", Object.entries(year));
+        // 使用原生Map替代d3.map (D3 v7中已移除d3.map)
+        var monthData = [{
+            name: "jan"
+        }, {
+            name: "feb"
+        }];
+
+        var month = new Map();
+        monthData.forEach(function(d) {
+            month.set(d.name, d);
+        });
+
+        // get() 方法用于返回对象的键和值。
+        console.log("获取jan:", month.get("jan")); // {"name": "jan"}
+        // has() 方法用于返回对象是否包含某个键。
+        console.log("获取apr:", month.get("apr")); // undefined
+        console.log("是否包含feb:", month.has("feb")); // true
+
+        // 使用原生Map替代d3.map
+        var map = new Map();
+        map.set("fruit", "mango");
+        // get() 方法用于返回对象的值。
+        console.log("获取fruit:", map.get("fruit")); // mango
+        // delete() 方法用于删除对象的键和值。
+        console.log("删除fruit:", map.delete("fruit")); // remove key and return true.
+        // size 属性用于返回对象的键值对数量。
+        console.log("Map大小:", map.size); // size is 0 because key removed.
+        // 检查Map是否为空
+        console.log("Map是否为空:", map.size === 0); // true
+
+        // 使用原生Set替代d3.set (D3 v7中已移除d3.set)
+        var fruits = new Set();
+        fruits.add("mango");
+        fruits.add("apple");
+        fruits.add("orange");
+
+        // has() 方法用于返回对象是否包含某个键。
+        console.log("是否包含grapes:", fruits.has("grapes")); // return false.
+        // delete() 方法用于删除对象的键和值。
+        console.log("删除apple:", fruits.delete("apple")); //true
+        // size 属性用于返回对象键值对数量。
+        console.log("Set大小:", fruits.size); // size is 2
+        // 检查Set是否为空
+        console.log("Set是否为空:", fruits.size === 0); // false
+
+        var data = [{
+                "color": "red",
+                "key": 1
+            },
+            {
+                "color": "green",
+                "key": 2
+            },
+            {
+                "color": "blue",
+                "key": 75
+            }
+        ]
+
+        // 使用d3.group替代d3.nest (D3 v7中已移除d3.nest)
+        // d3.group() − 此方法用于将数组按指定的键函数分组。
+        // d3.rollup() − 此方法用于将数组按指定的键函数分组并应用聚合函数。
+
+        // 使用d3.group按颜色分组
+        var grouped = d3.group(data, function(d) {
+            return d.color;
+        });
+        console.log("按颜色分组:", grouped);
+
+        // 转换为类似nest.entries的格式
+        var nestEntries = Array.from(grouped.entries()).map(function([key, values]) {
+            return {
+                key: key,
+                values: values
+            };
+        });
+        console.log("类似nest.entries的格式:", nestEntries);
+
+        // 过滤红色组
+        var filter = nestEntries.filter(function(d) {
+            return d.key === 'red';
+        });
+        console.log("过滤红色组:", filter);
+
+        // 使用d3.rollup进行聚合操作示例
+        var rolled = d3.rollup(data,
+            function(v) {
+                return v.length;
+            }, // 聚合函数：计算每组数量
+            function(d) {
+                return d.color;
+            } // 键函数：按颜色分组
+        );
+        console.log("聚合结果（每组数量）:", rolled);
+    </script>
+</body>
+
+</html>

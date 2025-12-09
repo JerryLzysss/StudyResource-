@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+
+    <!-- 
+过渡已安排
+过渡在创建时已安排。当我们调用 selection.transition 时，我们正在安排过渡。这也是我们调用 attr()、style() 和其他过渡方法来定义结束关键帧的时候。
+过渡开始
+过渡根据其延迟开始，该延迟是在安排过渡时指定的。如果没有指定延迟，则转换会尽快开始，通常是几毫秒后。
+如果转换有延迟，则应仅在转换开始时设置起始值。我们可以通过监听开始事件来做到这一点 −
+过渡运行
+过渡运行时，它会反复调用，其值范围从 0 到 1。除了延迟和持续时间，过渡还具有缓和功能来控制时间。缓和功能会扭曲时间，例如慢入和慢出。某些缓和功能可能会暂时给出大于 1 或小于 0 的 t 值。
+过渡结束
+过渡结束时间始终正好是 1，因此结束值恰好设置在过渡结束时。过渡的结束基于其延迟和持续时间的总和。过渡结束时，将分派结束事件。 -->
+
+    <h3 class="transition">Simple transitions</h3>
+    <h3 class="duration">Simple Durations</h3>
+    <h3 class="delay">Simple Delay</h3>
+    <script>
+        d3.select(".transition").transition().style("font-size", "25px").duration(2000);
+        d3.select('.duration').transition().style("font-size", "25px").duration(2000);
+        d3.select('.delay').transition().style("font-size", "25px").delay(2000).duration(100);
+    </script>
+</body>
+
+</html>

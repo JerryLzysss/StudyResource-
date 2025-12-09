@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="/d3/d3.v7.min.js"></script>
+    <style>
+        .country {
+            fill: #ccc;
+            stroke: #333;
+            stroke-width: 0.5px;
+        }
+
+        .country:hover {
+            fill: #ff6b6b;
+        }
+
+        .graticule {
+            fill: none;
+            stroke: #777;
+            stroke-width: 0.5px;
+            stroke-opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>D3.js 地理投影示例</h2>
+    <div id="map-container"></div>
+
+    <script>
+        // d3.geo.path() 路径生成器函数允许我们选择要使用哪个地图投影来从地理坐标转换为笛卡尔坐标
+        var width = 800
+        var height = 600
+
+        // 创建SVG容器
+        var svg = d3.select("#map-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 定义不同的投影
+        // 正交投影是一种方位投影，适合显示单个半球；透视点在无穷远处。
+        var orthographic = d3.geoOrthographic()
+            .scale(200)
+            .translate([width / 2, height / 2])
+            .clipAngle(90);
+
+        // 等距矩形是最简单的地理投影。恒等函数。它既不是等面积的也不是保角的，但有时用于栅格数据。
+        var equirectangular = d3.geoEquirectangular()
+            .scale(120)
+            .translate([width / 2, height / 2]);
+
+        // 准直投影是一种将大圆投影为直线的方位投影。
+        var gnomonic = d3.geoGnomonic()
+            .scale(100)
+            .translate([width / 2, height / 2])
+            .clipAngle(60);
+
+        // 球面墨卡托投影通常由平铺地图库使用。
+        var mercator = d3.geoMercator()
+            .scale(100)
+            .translate([width / 2, height / 2]);
+
+        // 横轴墨卡托投影。
+        var transverseMercator = d3.geoTransverseMercator()
+            .scale(100)
+            .rotate([100, 0, 0])
+            .translate([width / 2, height / 2])
+            .clipAngle(45);
+
+        // 创建路径生成器
+        var path = d3.geoPath()
+            .projection(orthographic); // 默认使用正射投影
+
+        // 创建经纬网
+        var graticule = d3.geoGraticule();
+
+        // 绘制经纬网
+        svg.append("path")
+            .datum(graticule)
+            .attr("class", "graticule")
+            .attr("d", path);
+
+        // 加载世界地图数据
+        d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+            .then(function(world) {
+                // 绘制国家边界
+                svg.selectAll(".country")
+                    .data(world.features)
+                    .enter()
+                    .append("path")
+                    .attr("class", "country")
+                    .attr("d", path)
+                    .on("mouseover", function(event, d) {
+                        d3.select(this).style("fill", "#ff6b6b");
+                    })
+                    .on("mouseout", function(event, d) {
+                        d3.select(this).style("fill", "#ccc");
+                    });
+            })
+            .catch(function(error) {
+                console.log("加载地图数据失败:", error);
+                // 如果无法加载数据，创建一个简单的示例
+                svg.append("text")
+                    .attr("x", width / 2)
+                    .attr("y", height / 2)
+                    .attr("text-anchor", "middle")
+                    .text("无法加载地图数据，请检查网络连接");
+            });
+
+        // 添加投影切换按钮
+        var projections = {
+            "正射投影": orthographic,
+            "等距圆柱投影": equirectangular,
+            "心射投影": gnomonic,
+            "墨卡托投影": mercator,
+            "横轴墨卡托投影": transverseMercator
+        };
+
+        var buttonContainer = d3.select("body")
+            .insert("div", "#map-container")
+            .style("margin-bottom", "10px");
+
+        Object.keys(projections).forEach(function(name) {
+            buttonContainer.append("button")
+                .text(name)
+                .style("margin-right", "5px")
+                .style("padding", "5px 10px")
+                .on("click", function() {
+                    // 更新路径生成器的投影
+                    path.projection(projections[name]);
+
+                    // 重新绘制经纬网
+                    svg.select(".graticule")
+                        .attr("d", path);
+
+                    // 重新绘制国家
+                    svg.selectAll(".country")
+                        .attr("d", path);
+                });
+        });
+    </script>
+</body>
+
+</html>
