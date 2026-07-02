@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS windowTime</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS windowTime</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>windowTime 将源 Observable 的值按固定时间间隔分割为多个窗口 Observable。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">windowTime&lt;T&gt;(
+  windowTimeSpan: number,
+  windowCreationInterval?: number,
+  maxWindowSize?: number,
+  scheduler?: SchedulerLike
+): OperatorFunction&lt;T, Observable&lt;T&gt;&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>windowTimeSpan</strong>：每个窗口的持续时间（毫秒）</li>
+    <li><strong>windowCreationInterval</strong>（可选）：创建新窗口的间隔（滑动窗口）</li>
+    <li><strong>maxWindowSize</strong>（可选）：每个窗口的最大值数量</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>OperatorFunction</code>，按时间分窗。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { interval } from 'rxjs';
+import { windowTime, take, mergeMap, toArray } from 'rxjs/operators';
+
+interval(100).pipe(
+  windowTime(500),
+  take(3),
+  mergeMap(w => w.pipe(toArray()))
+).subscribe(console.log);
+// 每 500ms 一个窗口</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runWindowTime()">windowTime(600)</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval } = rxjs;
+    const { windowTime, take, mergeMap, toArray } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    let idx = 0;
+    function runWindowTime() {
+      idx = 0;
+      log('=== interval(100).pipe(windowTime(600)) ===');
+      interval(100).pipe(windowTime(600), take(3), mergeMap(w => w.pipe(toArray()))).subscribe(arr => {
+        idx++; log('窗口' + idx + ': [' + arr.join(', ') + ']');
+      });
+    }
+    log('页面已加载，windowTime 按时间间隔分窗');
+  </script>
+</body>
+</html>

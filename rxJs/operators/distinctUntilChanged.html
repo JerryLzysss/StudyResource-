@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS distinctUntilChanged</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS distinctUntilChanged</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>distinctUntilChanged 只有当前值与上一个值不同时才发出，用于过滤连续重复的值。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">distinctUntilChanged&lt;T, K&gt;(
+  compare?: (previous: K, current: K) => boolean,
+  keySelector?: (value: T) => K
+): MonoTypeOperatorFunction&lt;T&gt;</div>
+
+  <h2>描述</h2>
+  <p>distinctUntilChanged 比较当前值与上一个发出的值。如果相同则忽略，不同则发出。默认使用 === 比较。</p>
+  <p>与 distinct 不同，distinctUntilChanged 只比较相邻的值。例如序列 [1,1,2,2,1] 会输出 [1,2,1]。可选的 compare 和 keySelector 用于自定义比较逻辑。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
+
+of(1, 1, 2, 2, 3, 1, 2, 3).pipe(
+  distinctUntilChanged()
+).subscribe(x => console.log(x));
+// 输出: 1, 2, 3, 1, 2, 3</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 distinctUntilChanged：</p>
+    <button onclick="runBasic()">过滤连续重复</button>
+    <button onclick="runCompare()">对比无过滤</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { distinctUntilChanged } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runBasic() {
+      log('=== distinctUntilChanged 过滤连续重复 ===');
+      of(1, 1, 2, 2, 3, 1, 2, 3).pipe(distinctUntilChanged()).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runCompare() {
+      log('=== 无过滤（原始值）===');
+      of(1, 1, 2, 2, 3, 1, 2, 3).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 distinctUntilChanged');
+  </script>
+</body>
+</html>

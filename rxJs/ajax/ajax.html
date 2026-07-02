@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS ajax</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS ajax</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>Rx 对象上有一个 ajax 运算符。它使用请求对象（网址、标头等）或网址字符串创建 Ajax 请求的可观察对象。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">const ajax: AjaxCreationMethod;</div>
+
+  <h2>描述</h2>
+  <p>它使用以下请求对象创建 Ajax 请求的可观察对象：网址、标头等，或直接传入网址字符串。成功时发出 <code>AjaxResponse</code>，失败时抛出 <code>AjaxError</code>。</p>
+
+  <h2>使用 ajax() 来获取从 API 返回的响应对象</h2>
+  <div class="code-box">import { ajax } from 'rxjs/ajax';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+const obs$ = ajax(`https://api.github.com/users?per_page=5`).pipe(
+  map(userResponse => console.log('用户: ', userResponse)),
+  catchError(error => {
+    console.log('错误: ', error);
+    return of(error);
+  })
+);</div>
+
+  <h2>使用 ajax.getJSON() 从 API 获取数据</h2>
+  <div class="code-box">import { ajax } from 'rxjs/ajax';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+const obs$ = ajax.getJSON(`https://api.github.com/users?per_page=5`).pipe(
+  map(userResponse => console.log('用户: ', userResponse)),
+  catchError(error => {
+    console.log('错误: ', error);
+    return of(error);
+  })
+);</div>
+
+  <h2>将 ajax() 与对象一起用作参数，并将方法 POST 延迟两秒钟</h2>
+  <div class="code-box">import { ajax } from 'rxjs/ajax';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+const users = ajax({
+  url: 'https://httpbin.org/delay/2',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'rxjs-custom-header': 'Rxjs'
+  },
+  body: {
+    rxjs: '你好世界！'
+  }
+}).pipe(
+  map(response => console.log('响应: ', response)),
+  catchError(error => {
+    console.log('错误: ', error);
+    return of(error);
+  })
+);</div>
+
+  <h2>使用 ajax() 获取从请求返回的错误对象</h2>
+  <div class="code-box">import { ajax } from 'rxjs/ajax';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+const obs$ = ajax(`https://api.github.com/404`).pipe(
+  map(userResponse => console.log('用户: ', userResponse)),
+  catchError(error => {
+    console.log('错误: ', error);
+    return of(error);
+  })
+);</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>AjaxError</code></li>
+    <li><code>AjaxRequest</code></li>
+    <li><code>AjaxResponse</code></li>
+    <li><code>AjaxTimeoutError</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 ajax：</p>
+    <button onclick="runAjax()">ajax 获取响应</button>
+    <button onclick="runGetJSON()">ajax.getJSON</button>
+    <button onclick="runPost()">POST 请求</button>
+    <button onclick="runError()">404 错误</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { ajax } = rxjs.ajax;
+    const { map, catchError } = rxjs.operators;
+    const { of } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runAjax() {
+      log('=== ajax 获取响应对象 ===');
+      ajax('https://api.github.com/users?per_page=3').pipe(
+        map(res => {
+          log('status: ' + res.status);
+          log('response 类型: ' + (Array.isArray(res.response) ? 'Array' : typeof res.response));
+          log('用户数: ' + (res.response ? res.response.length : 0));
+        }),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runGetJSON() {
+      log('=== ajax.getJSON ===');
+      ajax.getJSON('https://api.github.com/users?per_page=2').pipe(
+        map(data => {
+          log('getJSON 返回数组，长度: ' + data.length);
+          log('第一个用户: ' + (data[0] ? data[0].login : 'N/A'));
+        }),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runPost() {
+      log('=== POST 请求（httpbin.org/post）===');
+      ajax({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'rxjs-custom-header': 'Rxjs' },
+        body: { rxjs: '你好世界！' }
+      }).pipe(
+        map(res => {
+          log('status: ' + res.status);
+          log('服务器收到的 body: ' + JSON.stringify(res.response.json));
+        }),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runError() {
+      log('=== 404 错误示例 ===');
+      ajax('https://api.github.com/404').pipe(
+        map(res => log('users: ' + JSON.stringify(res.response))),
+        catchError(err => {
+          log('捕获 AjaxError: ' + err.name);
+          log('status: ' + err.status);
+          log('message: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    log('页面已加载，点击按钮演示 ajax');
+  </script>
+</body>
+</html>

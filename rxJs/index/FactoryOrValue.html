@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS FactoryOrValue</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS FactoryOrValue</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>FactoryOrValue 是一个类型别名，表示「值本身」或「返回该值的工厂函数」，常用于需要延迟求值或灵活传参的 API。
+  </div>
+
+  <h2>类型别名</h2>
+  <div class="code-box">type FactoryOrValue&lt;T&gt; = T | (() =&gt; T);</div>
+
+  <h2>描述</h2>
+  <p>当 API 接受 <code>FactoryOrValue&lt;T&gt;</code> 时，你可以直接传入类型为 <code>T</code> 的值，也可以传入无参函数 <code>() =&gt; T</code>。传入工厂函数时，通常会在需要时才调用以获取实际值，从而实现惰性创建或每次获取新实例。</p>
+  <p>典型场景包括 <code>iif</code> 的条件分支、某些运算符的可选配置，以及需要在订阅时才创建 Subject 的多播场景。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">// 直接传值
+const value: FactoryOrValue&lt;number&gt; = 42;
+
+// 传工厂函数（延迟求值）
+const factory: FactoryOrValue&lt;number&gt; = () => Math.random();
+
+function resolve&lt;T&gt;(input: FactoryOrValue&lt;T&gt;): T {
+  return typeof input === 'function' ? input() : input;
+}
+
+console.log(resolve(value));   // 42
+console.log(resolve(factory)); // 随机数</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>iif</code></li>
+    <li><code>defer</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>演示值与工厂函数两种形式：</p>
+    <button onclick="runValue()">解析直接值</button>
+    <button onclick="runFactory()">解析工厂函数</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function resolve(input) {
+      return typeof input === 'function' ? input() : input;
+    }
+
+    function runValue() {
+      log('=== FactoryOrValue: 直接值 ===');
+      const input = 100;
+      log(`resolve(100) = ${resolve(input)}`);
+    }
+
+    function runFactory() {
+      log('=== FactoryOrValue: 工厂函数 ===');
+      const input = () => Math.floor(Math.random() * 100);
+      log(`第1次: ${resolve(input)}`);
+      log(`第2次: ${resolve(input)}（每次调用工厂）`);
+    }
+
+    log('页面已加载，FactoryOrValue = T | (() =&gt; T)');
+  </script>
+</body>
+</html>

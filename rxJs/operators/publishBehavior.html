@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS publishBehavior</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS publishBehavior</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>publishBehavior 使用 BehaviorSubject 进行 multicast，新订阅者会立即收到当前最新值。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">publishBehavior&lt;T&gt;(initialValue: T): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>initialValue</strong>：BehaviorSubject 的初始值</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 ConnectableObservable，等价于 <code>multicast(new BehaviorSubject(initialValue))</code>。</p>
+  <h2>描述</h2>
+  <p>适用于需要共享状态且晚到订阅者需要获取最新值的场景，如当前用户信息、主题设置等。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { interval } from 'rxjs';
+import { publishBehavior } from 'rxjs/operators';
+
+const shared = interval(1000).pipe(
+  publishBehavior(0)
+);
+
+shared.subscribe(v => console.log('A:', v));
+setTimeout(() => shared.subscribe(v => console.log('B:', v)), 2500);
+shared.connect();</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runPublishBehavior()">publishBehavior</button>
+    <button onclick="runLateSub()">延迟订阅获取最新值</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval } = rxjs;
+    const { publishBehavior, take } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runPublishBehavior() {
+      log('=== publishBehavior(0) ===');
+      const shared = interval(500).pipe(publishBehavior(0), take(4));
+      shared.subscribe(v => log('A: ' + v));
+      shared.connect();
+    }
+    function runLateSub() {
+      log('=== 延迟订阅获取最新值 ===');
+      const shared = interval(400).pipe(publishBehavior(-1), take(5));
+      shared.subscribe(v => log('先订阅 A: ' + v));
+      setTimeout(() => {
+        log('-- 1.2s 后 B 订阅 --');
+        shared.subscribe(v => log('晚到 B: ' + v));
+      }, 1200);
+      shared.connect();
+    }
+    log('页面已加载，publishBehavior 使用 BehaviorSubject 共享');
+  </script>
+</body>
+</html>

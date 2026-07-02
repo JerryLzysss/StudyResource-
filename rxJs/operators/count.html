@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS count</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS count</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>count 统计源 Observable 发出的值的数量，在源完成时发出总计数。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">count&lt;T&gt;(predicate?: (value: T, index: number) => boolean): OperatorFunction&lt;T, number&gt;</div>
+
+  <h2>描述</h2>
+  <p>count 运算符订阅源 Observable，统计其发出的 next 通知数量。当源 Observable 完成时，发出一个包含总数的 single 值，然后完成。</p>
+  <p>可选的 predicate 函数用于过滤：只有满足条件的值才会被计入总数。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { count } from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5).pipe(
+  count()
+).subscribe(x => console.log(x));
+// 输出: 5
+
+of(1, 2, 3, 4, 5).pipe(
+  count(val => val % 2 === 0)
+).subscribe(x => console.log(x));
+// 输出: 2（偶数个数）</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 count：</p>
+    <button onclick="runTotal()">统计总数</button>
+    <button onclick="runPredicate()">条件计数</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { count } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runTotal() {
+      log('=== count 统计总数 ===');
+      of(1, 2, 3, 4, 5).pipe(count()).subscribe({
+        next: n => log('总数: ' + n),
+        complete: () => log('complete')
+      });
+    }
+
+    function runPredicate() {
+      log('=== count 统计偶数个数 ===');
+      of(1, 2, 3, 4, 5, 6).pipe(
+        count(val => val % 2 === 0)
+      ).subscribe({
+        next: n => log('偶数个数: ' + n),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 count');
+  </script>
+</body>
+</html>

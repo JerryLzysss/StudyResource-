@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS CDN 示例</title>
+</head>
+<body>
+  <h1>RxJS CDN 示例</h1>
+  <p>打开浏览器控制台（F12 → Console）查看输出。</p>
+
+  <!-- 通过 CDN 引入 RxJS -->
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    // 从全局 rxjs 对象中解构需要的 API
+    const { of, interval } = rxjs;
+    const { map, take } = rxjs.operators;
+
+    // 简单示例：对一组数字 *2 后输出
+    of(1, 2, 3, 4)
+      .pipe(
+        map(x => x * 2)
+      )
+      .subscribe(value => {
+        console.log('of 示例输出:', value);
+      });
+
+    // 计时器示例：每秒输出一次，共输出 5 次
+    interval(1000)
+      .pipe(
+        take(5),
+        map(i => `第 ${i + 1} 次触发`)
+      )
+      .subscribe(text => {
+        console.log('interval 示例输出:', text);
+      });
+  </script>
+</body>
+</html>

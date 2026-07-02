@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS iif</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS iif</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>iif 在订阅时检查布尔条件，根据结果选择订阅 trueResult 或 falseResult 两个 Observable 源之一，充当条件分支的代理。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">iif&lt;T, F&gt;(
+  condition: () =&gt; boolean,
+  trueResult: ObservableInput&lt;T&gt;,
+  falseResult: ObservableInput&lt;F&gt;
+): Observable&lt;T | F&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>condition</strong>：返回 boolean 的函数，决定订阅哪个 Observable</li>
+    <li><strong>trueResult</strong>：条件为 true 时订阅的 Observable</li>
+    <li><strong>falseResult</strong>：条件为 false 时订阅的 Observable</li>
+  </ul>
+
+  <h2>描述</h2>
+  <p><code>iif</code> 接受一个返回布尔值的 condition 函数，以及 trueResult 和 falseResult 两个源，返回一个 Observable。在订阅时刻，condition 函数被调用：若结果为 true，则订阅 trueResult；否则订阅 falseResult。</p>
+  <p>若需要在两个以上 Observable 之间选择，请查看 <code>defer</code> 创建方法。实际上 iif 内部基于 defer 实现，仅为方便和可读性而存在。</p>
+  <p>注意：作为参数传入的 Observable 表达式会被 eagerly 求值，但只会订阅被选中的那个分支。</p>
+
+  <h2>例子</h2>
+  <h3>运行时切换订阅的 Observable</h3>
+  <div class="code-box">import { iif, of } from 'rxjs';
+
+let subscribeToFirst;
+const firstOrSecond = iif(
+  () => subscribeToFirst,
+  of('first'),
+  of('second')
+);
+
+subscribeToFirst = true;
+firstOrSecond.subscribe(value => console.log(value));
+// 输出： 'first'
+
+subscribeToFirst = false;
+firstOrSecond.subscribe(value => console.log(value));
+// 输出： 'second'</div>
+
+  <h3>控制对 Observable 的访问</h3>
+  <div class="code-box">import { iif, of, EMPTY } from 'rxjs';
+
+let accessGranted;
+const observableIfYouHaveAccess = iif(
+  () => accessGranted,
+  of('It seems you have an access...'),
+  EMPTY
+);
+
+accessGranted = true;
+observableIfYouHaveAccess.subscribe({
+  next: value => console.log(value),
+  complete: () => console.log('结束')
+});
+// 输出： 'It seems you have an access...' / 'The end'</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>defer</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 iif 条件分支：</p>
+    <button onclick="runTrue()">条件为 true</button>
+    <button onclick="runFalse()">条件为 false</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { iif, of } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runTrue() {
+      log('=== condition = true ===');
+      iif(() => true, of('真分支'), of('假分支')).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runFalse() {
+      log('=== condition = false ===');
+      iif(() => false, of('真分支'), of('假分支')).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，iif 在订阅时根据条件选择 Observable');
+  </script>
+</body>
+</html>

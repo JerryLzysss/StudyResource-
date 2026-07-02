@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS Notification</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS Notification</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>Notification 代表 Observable 可能发出的推送事件或值，并用元数据标注其类型（<code>next</code>、<code>error</code> 或 <code>complete</code>）。常用于 materialize、dematerialize 等操作符。
+
+  </div>
+
+
+
+  <h2>类声明</h2>
+
+  <div class="code-box">class Notification&lt;T&gt; {
+
+  static createNext&lt;T&gt;(value: T): Notification&lt;T&gt;
+
+  static createError(err?: any): Notification&lt;never&gt; &amp; ErrorNotification
+
+  static createComplete(): Notification&lt;never&gt; &amp; CompleteNotification
+
+  constructor(kind: 'N' | 'E' | 'C', value?: T, error?: any)
+
+  observe(observer: PartialObserver&lt;T&gt;): void
+
+  do(next: (value: T) =&gt; void, error?: (err: any) =&gt; void, complete?: () =&gt; void): void
+
+  accept(nextOrObserver: PartialObserver&lt;T&gt; | ((value: T) =&gt; void), error?, complete?): void
+
+  toObservable(): Observable&lt;T&gt;
+
+}</div>
+
+
+
+  <h2>属性</h2>
+
+  <table>
+
+    <tr><th>属性</th><th>类型</th><th>说明</th></tr>
+
+    <tr><td><code>kind</code></td><td><code>'N' | 'E' | 'C'</code></td><td>通知类型：Next / Error / Complete</td></tr>
+
+    <tr><td><code>value</code></td><td><code>T</code></td><td>next 类型的值</td></tr>
+
+    <tr><td><code>error</code></td><td><code>any</code></td><td>error 类型的错误</td></tr>
+
+    <tr><td><code>hasValue</code></td><td><code>boolean</code></td><td>是否为 next 类型（kind === 'N'）</td></tr>
+
+  </table>
+
+
+
+  <h2>描述</h2>
+
+  <p>Notification 将 next、error、complete 三种通知包装为可传递的对象。配合 <code>materialize</code> 可将 Observable 的所有通知转为 next 流；<code>dematerialize</code> 则反向还原。</p>
+
+  <p>推荐使用字符串字面量 <code>'N'</code>、<code>'E'</code>、<code>'C'</code> 表示类型，而非已弃用的 NotificationKind 枚举。</p>
+
+
+
+  <h2>例子</h2>
+
+  <h3>materialize 包装通知</h3>
+
+  <div class="code-box">import { of } from 'rxjs';
+
+import { materialize, map } from 'rxjs/operators';
+
+
+
+const letters = of('a', 'b', 13, 'd');
+
+const upperCase = letters.pipe(map(x => x.toUpperCase()));
+
+const materialized = upperCase.pipe(materialize());
+
+materialized.subscribe(x => console.log(x));
+
+// Notification { kind: 'N', value: 'A', ... }
+
+// Notification { kind: 'N', value: 'B', ... }
+
+// Notification { kind: 'E', error: TypeError, ... }</div>
+
+
+
+  <h3>dematerialize 还原通知</h3>
+
+  <div class="code-box">import { of, Notification } from 'rxjs';
+
+import { dematerialize } from 'rxjs/operators';
+
+
+
+const notifA = Notification.createNext('A');
+
+const notifB = Notification.createNext('B');
+
+of(notifA, notifB).pipe(dematerialize()).subscribe(console.log);
+
+// A, B</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>materialize</code></li>
+
+    <li><code>dematerialize</code></li>
+
+    <li><code>observeOn</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 Notification：</p>
+
+    <button onclick="runCreateNext()">createNext</button>
+
+    <button onclick="runMaterialize()">materialize</button>
+
+    <button onclick="runDematerialize()">dematerialize</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { of, Notification } = rxjs;
+
+    const { materialize, dematerialize, map } = rxjs.operators;
+
+
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runCreateNext() {
+
+      log('=== Notification.createNext ===');
+
+      const n = Notification.createNext('你好');
+
+      log(`kind=${n.kind}, value=${n.value}, hasValue=${n.hasValue}`);
+
+      n.do(v => log('do next: ' + v));
+
+    }
+
+
+
+    function runMaterialize() {
+
+      log('=== materialize ===');
+
+      of(1, 2).pipe(
+
+        materialize()
+
+      ).subscribe(n => {
+
+        log(`Notification kind=${n.kind} value=${n.value}`);
+
+      });
+
+    }
+
+
+
+    function runDematerialize() {
+
+      log('=== dematerialize ===');
+
+      of(
+
+        Notification.createNext('A'),
+
+        Notification.createNext('B'),
+
+        Notification.createComplete()
+
+      ).pipe(dematerialize()).subscribe({
+
+        next: v => log('next: ' + v),
+
+        complete: () => log('complete')
+
+      });
+
+    }
+
+
+
+    log('页面已加载，Notification = 包装 next/error/complete 的元数据对象');
+
+  </script>
+
+</body>
+
+</html>
+
+

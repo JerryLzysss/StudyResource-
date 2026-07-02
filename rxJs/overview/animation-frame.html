@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS 动画帧调度器</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; border-left: 4px solid #e91e63; padding-left: 10px; }
+    h3 { color: #666; margin-top: 20px; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .animation-demo {
+      background-color: #fff;
+      border: 2px solid #e91e63;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    .anim-box {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      border-radius: 8px;
+      margin: 20px auto;
+      position: relative;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul {
+      line-height: 1.8;
+    }
+    .concept-box {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #e91e63;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .fps-counter {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e91e63;
+      margin: 10px 0;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e91e63, #f06292);
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+  <h1>RxJS 动画帧调度器</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>animationFrameScheduler 是 RxJS 提供的调度器之一，它使用浏览器的 <code>requestAnimationFrame</code> API 来调度任务。任务将在下一次浏览器重绘之前执行，非常适合创建流畅的浏览器动画。
+  </div>
+
+  <h2>什么是调度程序？</h2>
+  <p>调度程序控制何时开始订阅以及何时传递通知。它由三个部分组成：</p>
+  <ul>
+    <li><strong>数据结构：</strong>知道如何根据优先级或其他条件存储和排队任务</li>
+    <li><strong>执行上下文：</strong>表示执行任务的位置和时间（例如立即执行、setTimeout、requestAnimationFrame 等）</li>
+    <li><strong>虚拟时钟：</strong>通过 <code>now()</code> 方法提供"时间"的概念</li>
+  </ul>
+
+  <div class="concept-box">
+    <strong>调度程序使您可以定义 Observable 在哪个执行上下文中将通知传递给其 Observer。</strong>
+  </div>
+
+  <h2>animationFrameScheduler 的特点</h2>
+  <table>
+    <tr>
+      <th>特性</th>
+      <th>说明</th>
+    </tr>
+    <tr>
+      <td>执行时机</td>
+      <td>在下一次浏览器内容重绘之前执行</td>
+    </tr>
+    <tr>
+      <td>API 基础</td>
+      <td>基于 <code>requestAnimationFrame</code></td>
+    </tr>
+    <tr>
+      <td>刷新率同步</td>
+      <td>自动与显示器刷新率同步（通常 60fps）</td>
+    </tr>
+    <tr>
+      <td>节能特性</td>
+      <td>页面不可见时自动暂停，节省 CPU/GPU 资源</td>
+    </tr>
+    <tr>
+      <td>适用场景</td>
+      <td>流畅的浏览器动画、视觉效果</td>
+    </tr>
+  </table>
+
+  <h2>与其他调度器的对比</h2>
+  <table>
+    <tr>
+      <th>调度器</th>
+      <th>执行机制</th>
+      <th>适用场景</th>
+    </tr>
+    <tr>
+      <td>null / undefined</td>
+      <td>同步执行</td>
+      <td>恒定时间操作</td>
+    </tr>
+    <tr>
+      <td>queueScheduler</td>
+      <td>当前事件帧队列</td>
+      <td>迭代操作</td>
+    </tr>
+    <tr>
+      <td>asapScheduler</td>
+      <td>微任务队列 (Promise)</td>
+      <td>异步转换</td>
+    </tr>
+    <tr>
+      <td>asyncScheduler</td>
+      <td>setTimeout/setInterval</td>
+      <td>基于时间的操作</td>
+    </tr>
+    <tr>
+      <td><strong>animationFrameScheduler</strong></td>
+      <td><strong>requestAnimationFrame</strong></td>
+      <td><strong>流畅动画</strong></td>
+    </tr>
+  </table>
+
+  <h2>基本使用示例</h2>
+
+  <h3>1. 使用 observeOn 控制通知传递</h3>
+  <div class="code-box">import { Observable, animationFrameScheduler } from 'rxjs';
+import { observeOn } from 'rxjs/operators';
+
+const observable = new Observable((observer) => {
+  observer.next(1);
+  observer.next(2);
+  observer.next(3);
+  observer.complete();
+}).pipe(
+  observeOn(animationFrameScheduler)
+);
+
+console.log('订阅前');
+observable.subscribe({
+  next(x) { console.log('收到值 ' + x); },
+  complete() { console.log('完成'); }
+});
+console.log('订阅后');
+
+// 输出顺序:
+// 订阅前
+// 订阅后
+// 收到值 1
+// 收到值 2
+// 收到值 3
+// 完成</div>
+
+  <h3>2. 使用 subscribeOn 控制订阅时机</h3>
+  <div class="code-box">import { of, animationFrameScheduler } from 'rxjs';
+import { subscribeOn } from 'rxjs/operators';
+
+const observable = of(1, 2, 3).pipe(
+  subscribeOn(animationFrameScheduler)
+);
+
+console.log('订阅前');
+observable.subscribe(x => console.log('值: ' + x));
+console.log('订阅后');
+
+// 输出顺序:
+// 订阅前
+// 订阅后
+// 值: 1
+// 值: 2
+// 值: 3</div>
+
+  <h3>3. 创建动画序列</h3>
+  <div class="code-box">import { interval, animationFrameScheduler } from 'rxjs';
+import { take, map } from 'rxjs/operators';
+
+// 使用 animationFrameScheduler 创建流畅动画
+const animation$ = interval(0, animationFrameScheduler).pipe(
+  take(60), // 运行 60 帧（约 1 秒）
+  map(frame => frame / 60) // 进度从 0 到 1
+);
+
+const element = document.getElementById('box');
+
+animation$.subscribe(progress => {
+  // 使用 requestAnimationFrame 的流畅动画
+  element.style.transform = `translateX(${progress * 300}px)`;
+});</div>
+
+  <h2>动画实战示例</h2>
+
+  <h3>平滑滚动动画</h3>
+  <div class="code-box">import { interval, animationFrameScheduler } from 'rxjs';
+import { takeWhile, map } from 'rxjs/operators';
+
+// 平滑滚动到页面顶部
+function smoothScrollToTop() {
+  const startY = window.scrollY;
+  const duration = 500; // 500ms
+  const startTime = performance.now();
+
+  return interval(0, animationFrameScheduler).pipe(
+    map(() => performance.now() - startTime),
+    takeWhile(elapsed => elapsed < duration),
+    map(elapsed => {
+      const progress = elapsed / duration;
+      // 使用缓动函数
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      return startY * (1 - easeProgress);
+    })
+  ).subscribe(y => window.scrollTo(0, y));
+}</div>
+
+  <h3>进度条动画</h3>
+  <div class="code-box">import { of, animationFrameScheduler } from 'rxjs';
+import { delayWhen, observeOn, map } from 'rxjs/operators';
+
+// 模拟文件上传进度
+function uploadWithProgress(files) {
+  let uploaded = 0;
+  
+  return of(...files).pipe(
+    delayWhen(() => interval(100 + Math.random() * 400)),
+    map(file => {
+      uploaded++;
+      return {
+        file,
+        progress: (uploaded / files.length) * 100
+      };
+    })
+  );
+}
+
+// 使用 animationFrameScheduler 更新进度条
+uploadWithProgress(files).pipe(
+  observeOn(animationFrameScheduler)
+).subscribe(({ progress }) => {
+  progressBar.style.width = `${progress}%`;
+});</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮运行动画帧调度器示例：</p>
+    <button onclick="runBasicExample()">基础示例</button>
+    <button onclick="runSmoothAnimation()">流畅动画对比</button>
+    <button onclick="runProgressAnimation()">进度条动画</button>
+    <button onclick="runFpsAnimation()">FPS 对比演示</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <h3>动画效果演示区</h3>
+  <div class="animation-demo">
+    <div class="fps-counter" id="fpsDisplay">FPS: --</div>
+    <div class="anim-box" id="animBox"></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div>
+      <button onclick="startSetTimeoutAnim()" id="btnTimeout">setTimeout 动画</button>
+      <button onclick="startRafAnim()" id="btnRaf">requestAnimationFrame 动画</button>
+      <button onclick="startRxAnim()" id="btnRx">RxJS animationFrame 动画</button>
+      <button onclick="stopAnimation()" id="btnStop" disabled>停止动画</button>
+    </div>
+  </div>
+
+  <!-- 通过 CDN 引入 RxJS -->
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { Observable, interval, of, fromEvent, animationFrameScheduler, asyncScheduler } = rxjs;
+    const { observeOn, subscribeOn, take, map, takeWhile, delayWhen } = rxjs.operators;
+
+    const output = document.getElementById('output');
+    const animBox = document.getElementById('animBox');
+    const progressFill = document.getElementById('progressFill');
+    const fpsDisplay = document.getElementById('fpsDisplay');
+    let animationId = null;
+    let subscriptions = [];
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+      stopAnimation();
+    }
+
+    function stopAnimation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      subscriptions.forEach(sub => sub.unsubscribe());
+      subscriptions = [];
+      
+      document.getElementById('btnTimeout').disabled = false;
+      document.getElementById('btnRaf').disabled = false;
+      document.getElementById('btnRx').disabled = false;
+      document.getElementById('btnStop').disabled = true;
+      
+      animBox.style.transform = 'translateX(0)';
+      progressFill.style.width = '0%';
+      fpsDisplay.textContent = 'FPS: --';
+    }
+
+    // 基础示例
+    function runBasicExample() {
+      log('=== animationFrameScheduler 基础示例 ===');
+      
+      const observable = new Observable((observer) => {
+        log('Observable 内部：准备发射值');
+        observer.next(1);
+        observer.next(2);
+        observer.next(3);
+        observer.complete();
+      }).pipe(
+        observeOn(animationFrameScheduler)
+      );
+
+      log('订阅前');
+      const sub = observable.subscribe({
+        next(x) { log('收到值: ' + x); },
+        complete() { log('完成\n'); }
+      });
+      subscriptions.push(sub);
+      log('订阅后（值会在下一帧传递）');
+    }
+
+    // 流畅动画对比
+    function runSmoothAnimation() {
+      log('=== setTimeout vs animationFrame 对比 ===');
+      log('setTimeout 16ms 尝试达到 60fps，但不与显示器刷新同步');
+      log('animationFrameScheduler 与显示器刷新率完美同步');
+      log('请点击下方按钮查看实际动画效果\n');
+    }
+
+    // 进度条动画
+    function runProgressAnimation() {
+      log('=== 进度条动画示例 ===');
+      stopAnimation();
+      
+      document.getElementById('btnStop').disabled = false;
+      
+      const startTime = performance.now();
+      const duration = 2000; // 2秒
+
+      const sub = interval(0, animationFrameScheduler).pipe(
+        map(() => performance.now() - startTime),
+        takeWhile(elapsed => elapsed < duration),
+        map(elapsed => (elapsed / duration) * 100)
+      ).subscribe({
+        next: progress => {
+          progressFill.style.width = progress + '%';
+          if (Math.round(progress) % 20 === 0) {
+            log('进度: ' + Math.round(progress) + '%');
+          }
+        },
+        complete: () => {
+          log('进度完成!\n');
+          document.getElementById('btnStop').disabled = true;
+        }
+      });
+      
+      subscriptions.push(sub);
+    }
+
+    // FPS 对比演示
+    function runFpsAnimation() {
+      log('=== FPS 对比演示 ===');
+      log('animationFrameScheduler 自动适应显示器刷新率（60Hz/120Hz/144Hz）');
+      log('页面不可见时自动暂停，节省资源\n');
+    }
+
+    // setTimeout 动画
+    function startSetTimeoutAnim() {
+      stopAnimation();
+      log('=== 使用 setTimeout 的动画 ===');
+      
+      document.getElementById('btnTimeout').disabled = true;
+      document.getElementById('btnRaf').disabled = true;
+      document.getElementById('btnRx').disabled = true;
+      document.getElementById('btnStop').disabled = false;
+      
+      let progress = 0;
+      const step = 1;
+      let lastTime = performance.now();
+      let frameCount = 0;
+      
+      function animate() {
+        progress += step;
+        frameCount++;
+        
+        const currentTime = performance.now();
+        if (currentTime - lastTime >= 1000) {
+          fpsDisplay.textContent = 'FPS: ' + frameCount + ' (setTimeout)';
+          frameCount = 0;
+          lastTime = currentTime;
+        }
+        
+        animBox.style.transform = 'translateX(' + (progress * 3) + 'px)';
+        progressFill.style.width = progress + '%';
+        
+        if (progress < 100) {
+          setTimeout(animate, 16);
+        } else {
+          log('setTimeout 动画完成\n');
+          document.getElementById('btnStop').disabled = true;
+          document.getElementById('btnTimeout').disabled = false;
+          document.getElementById('btnRaf').disabled = false;
+          document.getElementById('btnRx').disabled = false;
+        }
+      }
+      
+      animate();
+    }
+
+    // requestAnimationFrame 动画
+    function startRafAnim() {
+      stopAnimation();
+      log('=== 使用 requestAnimationFrame 的动画 ===');
+      
+      document.getElementById('btnTimeout').disabled = true;
+      document.getElementById('btnRaf').disabled = true;
+      document.getElementById('btnRx').disabled = true;
+      document.getElementById('btnStop').disabled = false;
+      
+      let progress = 0;
+      const step = 1;
+      let lastTime = performance.now();
+      let frameCount = 0;
+      
+      function animate() {
+        progress += step;
+        frameCount++;
+        
+        const currentTime = performance.now();
+        if (currentTime - lastTime >= 1000) {
+          fpsDisplay.textContent = 'FPS: ' + frameCount + ' (RAF)';
+          frameCount = 0;
+          lastTime = currentTime;
+        }
+        
+        animBox.style.transform = 'translateX(' + (progress * 3) + 'px)';
+        progressFill.style.width = progress + '%';
+        
+        if (progress < 100) {
+          animationId = requestAnimationFrame(animate);
+        } else {
+          log('RAF 动画完成\n');
+          document.getElementById('btnStop').disabled = true;
+          document.getElementById('btnTimeout').disabled = false;
+          document.getElementById('btnRaf').disabled = false;
+          document.getElementById('btnRx').disabled = false;
+        }
+      }
+      
+      animationId = requestAnimationFrame(animate);
+    }
+
+    // RxJS animationFrame 动画
+    function startRxAnim() {
+      stopAnimation();
+      log('=== 使用 RxJS animationFrameScheduler 的动画 ===');
+      
+      document.getElementById('btnTimeout').disabled = true;
+      document.getElementById('btnRaf').disabled = true;
+      document.getElementById('btnRx').disabled = true;
+      document.getElementById('btnStop').disabled = false;
+      
+      let lastTime = performance.now();
+      let frameCount = 0;
+      
+      const sub = interval(0, animationFrameScheduler).pipe(
+        take(100)
+      ).subscribe({
+        next: function(frame) {
+          frameCount++;
+          
+          const currentTime = performance.now();
+          if (currentTime - lastTime >= 1000) {
+            fpsDisplay.textContent = 'FPS: ' + frameCount + ' (RxJS)';
+            frameCount = 0;
+            lastTime = currentTime;
+          }
+          
+          animBox.style.transform = 'translateX(' + (frame * 3) + 'px)';
+          progressFill.style.width = frame + '%';
+        },
+        complete: function() {
+          log('RxJS 动画完成\n');
+          document.getElementById('btnStop').disabled = true;
+          document.getElementById('btnTimeout').disabled = false;
+          document.getElementById('btnRaf').disabled = false;
+          document.getElementById('btnRx').disabled = false;
+        }
+      });
+      
+      subscriptions.push(sub);
+    }
+
+    // 页面加载时显示欢迎信息
+    log('页面已加载，点击上方按钮运行 animationFrameScheduler 示例');
+    log('animationFrameScheduler = 基于 requestAnimationFrame 的调度器');
+    log('特性：与显示器刷新率同步、页面不可见时自动暂停、节省资源\n');
+  </script>
+</body>
+</html>

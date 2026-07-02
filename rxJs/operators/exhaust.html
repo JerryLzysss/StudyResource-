@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS exhaust</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS exhaust（exhaustAll）</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>exhaust（现名 exhaustAll）用于高阶 Observable，在当前内部 Observable 未完成时忽略源发出的新内部 Observable，等当前完成后才订阅下一个。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">exhaustAll(): OperatorFunction&lt;ObservableInput&lt;T&gt;, T&gt;
+
+// RxJS 7+ 中 exhaust 是 exhaustAll 的别名</div>
+
+  <h2>描述</h2>
+  <p>exhaustAll 订阅源 Observable 发出的内部 Observable。如果当前有内部 Observable 正在执行，则忽略源新发出的内部 Observable。只有当当前内部 Observable 完成后，才会订阅源下一个发出的内部 Observable。</p>
+  <p>与 concatAll 不同，exhaustAll 不会排队等待，而是直接丢弃被忽略的 Observable。与 mergeAll 不同，它不会并发执行多个内部 Observable。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { interval, of } from 'rxjs';
+import { exhaustAll, map, take } from 'rxjs/operators';
+
+const source = interval(1000).pipe(
+  take(5),
+  map(i => of(i, i + 0.1).pipe(
+    // 模拟较慢的内部 Observable
+  ))
+);
+
+// 当前内部 Observable 未完成时，新的会被忽略</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 exhaustAll：</p>
+    <button onclick="runExhaust()">忽略进行中的内部流</button>
+    <button onclick="runCompare()">对比 concatAll</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, interval } = rxjs;
+    const { exhaustAll, concatAll, map, take, delay } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runExhaust() {
+      log('=== exhaustAll：内部流进行中时忽略新的 ===');
+      interval(500).pipe(
+        take(4),
+        map(i => interval(200).pipe(take(3), map(v => `组${i}-值${v}`))),
+        exhaustAll()
+      ).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runCompare() {
+      log('=== concatAll 对比：全部顺序输出 ===');
+      of(
+        of('A1', 'A2'),
+        of('B1', 'B2'),
+        of('C1', 'C2')
+      ).pipe(concatAll()).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 exhaustAll');
+  </script>
+</body>
+</html>

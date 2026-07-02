@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS ObjectUnsubscribedError</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS ObjectUnsubscribedError</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>ObjectUnsubscribedError 是在已取消订阅（unsubscribed）的对象上执行操作时抛出的错误，常见于对已 <code>unsubscribe()</code> 的 Subject 再次调用 <code>next</code>。
+
+  </div>
+
+
+
+  <h2>接口</h2>
+
+  <div class="code-box">interface ObjectUnsubscribedError extends Error { }</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>当 Subject 或其他可订阅对象已经关闭（closed）后，若仍尝试向其推送值或订阅，RxJS 会抛出 ObjectUnsubscribedError。这是 RxJS 的安全机制，防止向已销毁的订阅者发送数据。</p>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { Subject } from 'rxjs';
+
+
+
+const subject = new Subject();
+
+const sub = subject.subscribe(v => console.log(v));
+
+
+
+sub.unsubscribe();
+
+subject.next(1); // 抛出 ObjectUnsubscribedError</div>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 ObjectUnsubscribedError：</p>
+
+    <button onclick="runSubjectError()">Subject 取消订阅后 next</button>
+
+    <button onclick="runSubjectNormal()">正常 Subject 用法</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { Subject } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runSubjectError() {
+
+      log('=== Subject 取消订阅后 next ===');
+
+      const subject = new Subject();
+
+      const sub = subject.subscribe({
+
+        next: v => log(`next: ${v}`),
+
+        error: err => log(`error: ${err.name} - ${err.message}`)
+
+      });
+
+      sub.unsubscribe();
+
+      try {
+
+        subject.next(1);
+
+      } catch (err) {
+
+        log(`捕获: ${err.name} - ${err.message}`);
+
+      }
+
+    }
+
+
+
+    function runSubjectNormal() {
+
+      log('=== 正常 Subject 用法 ===');
+
+      const subject = new Subject();
+
+      subject.subscribe(v => log(`next: ${v}`));
+
+      subject.next('你好');
+
+      subject.complete();
+
+      log('complete');
+
+    }
+
+
+
+    log('页面已加载，ObjectUnsubscribedError = 对象已取消订阅时的错误');
+
+  </script>
+
+</body>
+
+</html>
+
+

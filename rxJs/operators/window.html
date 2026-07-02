@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS window</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS window</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>window 将源 Observable 的值分割为多个窗口 Observable，每个窗口在 windowBoundaries 发出值时开启新窗口。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">window&lt;T&gt;(windowBoundaries: Observable&lt;any&gt;): OperatorFunction&lt;T, Observable&lt;T&gt;&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>windowBoundaries</strong>：发出值时关闭当前窗口并开启新窗口的 Observable</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>OperatorFunction</code>，发出 Observable 的 Observable（窗口）。</p>
+  <h2>描述</h2>
+  <p>window 是分组的高级形式，每个窗口是一个独立的 Observable，可单独订阅和处理。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { interval, timer } from 'rxjs';
+import { window, take, mergeMap, toArray } from 'rxjs/operators';
+
+interval(200).pipe(
+  window(timer(0, 1000)),
+  take(3),
+  mergeMap(w => w.pipe(toArray()))
+).subscribe(console.log);
+// 每秒一个窗口: [0,1,2,3,4], [5,6,7,8,9], ...</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runWindow()">window 分窗</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, timer } = rxjs;
+    const { window, take, mergeMap, toArray } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    let winIdx = 0;
+    function runWindow() {
+      winIdx = 0;
+      log('=== interval(150).pipe(window(timer(0,800))) ===');
+      interval(150).pipe(
+        window(timer(0, 800)),
+        take(3),
+        mergeMap(w => w.pipe(toArray()))
+      ).subscribe(arr => { winIdx++; log('窗口' + winIdx + ': [' + arr.join(', ') + ']'); });
+    }
+    log('页面已加载，window 将源分割为多个窗口 Observable');
+  </script>
+</body>
+</html>

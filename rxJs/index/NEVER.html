@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS NEVER</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS NEVER</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>NEVER 是一个常量 Observable，不向观察者发出任何 next 值，也不触发 error 或 complete 通知。应使用 <code>NEVER</code> 常量，而非已弃用的 <code>never()</code> 函数。
+
+  </div>
+
+
+
+  <h2>声明</h2>
+
+  <div class="code-box">const NEVER: Observable&lt;never&gt;;</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>NEVER 创建的 Observable 既不发出值，也不发出错误或完成通知。可用于测试，或与其他 Observable 组合。</p>
+
+  <p>由于从不发出 complete 通知，订阅 NEVER 不会自动清理，需要手动调用 <code>unsubscribe()</code>。</p>
+
+  <p>与 EMPTY 的区别：EMPTY 立即 complete；NEVER 永不 complete 也永不发出值。</p>
+
+
+
+  <h2>例子</h2>
+
+  <h3>发出 7，然后不再发出任何值（连 complete 也没有）</h3>
+
+  <div class="code-box">import { NEVER } from 'rxjs';
+
+import { startWith } from 'rxjs/operators';
+
+
+
+function info() {
+
+  console.log('不会被调用');
+
+}
+
+
+
+const result = NEVER.pipe(startWith(7));
+
+result.subscribe(x => console.log(x), info, info);
+
+// 输出: 7（之后 info 不会被调用）</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>EMPTY</code></li>
+
+    <li><code>of</code></li>
+
+    <li><code>throwError</code></li>
+
+    <li><code>Observable</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>NEVER 永不发出值，也永不 complete：</p>
+
+    <button onclick="runNeverDemo()">订阅 NEVER</button>
+
+    <button onclick="runNeverWithStartWith()">NEVER + startWith(7)</button>
+
+    <button onclick="runNeverVsEmpty()">对比 EMPTY</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { NEVER, EMPTY } = rxjs;
+
+    const { startWith } = rxjs.operators;
+
+
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runNeverDemo() {
+
+      log('=== 订阅 NEVER ===');
+
+      let completed = false;
+
+      NEVER.subscribe({
+
+        next: v => log(`next: ${v}`),
+
+        error: e => log(`error: ${e}`),
+
+        complete: () => { completed = true; log('complete'); }
+
+      });
+
+      setTimeout(() => {
+
+        log(completed ? '已 complete' : '3 秒后仍未 complete（符合预期）');
+
+      }, 3000);
+
+    }
+
+
+
+    function runNeverWithStartWith() {
+
+      log('=== NEVER.pipe(startWith(7)) ===');
+
+      NEVER.pipe(startWith(7)).subscribe({
+
+        next: v => log(`next: ${v}`),
+
+        complete: () => log('complete（不会被调用）')
+
+      });
+
+      log('只输出 7，之后无 complete');
+
+    }
+
+
+
+    function runNeverVsEmpty() {
+
+      log('=== EMPTY vs NEVER ===');
+
+      EMPTY.subscribe({ complete: () => log('EMPTY: 立即 complete') });
+
+      NEVER.subscribe({ complete: () => log('NEVER: complete（不会出现）') });
+
+      log('EMPTY 立即完成；NEVER 永不完成');
+
+    }
+
+
+
+    log('页面已加载，NEVER = 永不发出、永不 complete 的 Observable');
+
+  </script>
+
+</body>
+
+</html>
+
+

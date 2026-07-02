@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS merge</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS merge（创建函数）</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>merge 是 index 中的创建函数（非 operators 里已弃用的 merge 运算符），将多个 Observable 的值合并到一个输出 Observable 中同时发出。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">merge&lt;T, R&gt;(...observables: any[]): Observable&lt;R&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>observables</strong>：要合并在一起的输入 Observable</li>
+    <li><strong>concurrent</strong>（可选）：同时运行的最大 Observable 数量</li>
+    <li><strong>scheduler</strong>（可选）：SchedulerLike 调度器</li>
+  </ul>
+
+  <h2>描述</h2>
+  <p>通过将多个 Observable 的值混合到一个 Observable 中，将其平展在一起。</p>
+  <p><code>merge</code> 订阅每个给定的输入 Observable（作为参数），并简单地将所有值从所有输入 Observable 转发（不进行任何转换）到输出 Observable。仅当所有输入 Observable 完成后，输出 Observable 才完成。输入 Observable 传递的任何错误将立即在输出 Observable 上发出。</p>
+
+  <h2>例子</h2>
+  <h3>合并两个 Observable：1s 间隔和点击</h3>
+  <div class="code-box">import { merge, fromEvent, interval } from 'rxjs';
+
+const clicks = fromEvent(document, 'click');
+const timer = interval(1000);
+const clicksOrTimer = merge(clicks, timer);
+clicksOrTimer.subscribe(x => console.log(x));
+
+// timer 每秒发出递增数字
+// clicks 每次点击 document 时记录 MouseEvent
+// 合并后两者的事件按发生顺序交错输出</div>
+
+  <h3>合并 3 个 Observable，但只有 2 个同时运行</h3>
+  <div class="code-box">import { merge, interval } from 'rxjs';
+import { take } from 'rxjs/operators';
+
+const timer1 = interval(1000).pipe(take(10));
+const timer2 = interval(2000).pipe(take(6));
+const timer3 = interval(500).pipe(take(10));
+const concurrent = 2;
+const merged = merge(timer1, timer2, timer3, concurrent);
+merged.subscribe(x => console.log(x));</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>mergeAll</code>（operators）</li>
+    <li><code>mergeMap</code>（operators）</li>
+    <li><code>mergeMapTo</code>（operators）</li>
+    <li><code>mergeScan</code>（operators）</li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 merge 创建函数：</p>
+    <button onclick="runMergeOf()">合并 of 序列</button>
+    <button onclick="runMergeInterval()">合并定时器</button>
+    <button onclick="stopDemo()">停止</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { merge, of, interval } = rxjs;
+    const { take, map } = rxjs.operators;
+    const output = document.getElementById('output');
+    let demoSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function stopDemo() {
+      if (demoSub) {
+        demoSub.unsubscribe();
+        demoSub = null;
+        log('已停止');
+      }
+    }
+
+    function runMergeOf() {
+      stopDemo();
+      log('=== merge(of("A"), of("B"), of("C")) ===');
+      demoSub = merge(of('A'), of('B'), of('C')).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runMergeInterval() {
+      stopDemo();
+      log('=== merge 两个 interval（各 take 3）===');
+      const t1 = interval(300).pipe(take(3), map(v => 'fast-' + v));
+      const t2 = interval(500).pipe(take(3), map(v => 'slow-' + v));
+      demoSub = merge(t1, t2).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，merge 将多个 Observable 合并为一个');
+  </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS CompletionObserver</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS CompletionObserver</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>CompletionObserver 是 PartialObserver 的一种，必须提供 <code>complete</code> 回调，用于处理 Observable 正常完成时的通知。
+  </div>
+
+  <h2>接口</h2>
+  <div class="code-box">interface CompletionObserver&lt;T&gt; {
+  closed?: boolean
+  next?: (value: T) =&gt; void
+  error?: (err: any) =&gt; void
+  complete: () =&gt; void
+}</div>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th></tr>
+    <tr><td><code>closed</code></td><td><code>boolean</code></td></tr>
+    <tr><td><code>next</code></td><td><code>(value: T) =&gt; void</code>（可选）</td></tr>
+    <tr><td><code>error</code></td><td><code>(err: any) =&gt; void</code>（可选）</td></tr>
+    <tr><td><code>complete</code></td><td><code>() =&gt; void</code>（必需）</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>CompletionObserver 与 NextObserver、ErrorObserver 共同组成 <code>PartialObserver&lt;T&gt;</code>。当 Observable 正常完成（未出错）时，会调用 complete 回调。若只提供 complete 而不提供 next，则不会处理中间发出的值。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+
+const completionObserver = {
+  complete: () => console.log('Observable 已完成')
+};
+
+of(1, 2, 3).subscribe(completionObserver);
+// 输出: Observable 已完成（next 未提供，不打印 1,2,3）</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>NextObserver</code></li>
+    <li><code>ErrorObserver</code></li>
+    <li><code>PartialObserver</code></li>
+    <li><code>Observer</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>使用 CompletionObserver 监听完成事件：</p>
+    <button onclick="runCompletionOnly()">仅 complete 回调</button>
+    <button onclick="runWithNext()">complete + next</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runCompletionOnly() {
+      log('=== CompletionObserver（仅 complete）===');
+      of(1, 2, 3).subscribe({
+        complete: () => log('complete!（未提供 next，忽略 1,2,3）')
+      });
+    }
+
+    function runWithNext() {
+      log('=== complete + next ===');
+      of('A', 'B', 'C').subscribe({
+        next: v => log(`next: ${v}`),
+        complete: () => log('完成！')
+      });
+    }
+
+    log('页面已加载，CompletionObserver = 必须包含 complete 回调的观察者');
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS CombineAll</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS CombineAll</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>CombineAll 用于处理高阶 Observable。它等待源 Observable 完成，收集所有内部 Observable，然后像 combineLatest 一样合并它们的最新值。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">combineAll(): OperatorFunction&lt;ObservableInput&lt;T&gt;, T[]&gt;</div>
+
+  <h2>描述</h2>
+  <p>当源 Observable 发出内部 Observable 时，CombineAll 会缓存这些内部 Observable，但<strong>不会立即订阅</strong>它们。只有当源 Observable 完成（complete）后，才会对所有收集到的内部 Observable 应用 combineLatest 行为。</p>
+  <p>每当任意一个内部 Observable 发出新值时，CombineAll 会发出一个数组，包含每个内部 Observable 的最新值。典型场景：用户连续点击多次，每次点击产生一个 interval 流，等所有点击结束后，再组合这些 interval 的最新值。</p>
+
+  <h2>与 combineLatest 的区别</h2>
+  <ul>
+    <li><code>combineLatest</code>：静态创建函数，直接组合多个已知 Observable</li>
+    <li><code>combineAll</code>：实例运算符，处理 Observable 的 Observable，等源完成后再组合</li>
+  </ul>
+
+  <h2>例子</h2>
+  <div class="code-box">import { fromEvent, interval } from 'rxjs';
+import { map, combineAll, take } from 'rxjs/operators';
+
+const clicks = fromEvent(document, 'click');
+const result = clicks.pipe(
+  take(2),
+  map(() => interval(1000)),
+  combineAll()
+);
+
+result.subscribe(x => console.log(x));
+
+// 点击两次后，源完成，开始组合两个 interval
+// 输出: [0, 0], [1, 0], [1, 1], [2, 1], ...</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 CombineAll：</p>
+    <button onclick="runBasic()">基本用法</button>
+    <button onclick="runCompare()">对比 concatAll</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, interval } = rxjs;
+    const { combineAll, concatAll, take, map, delay } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runBasic() {
+      log('=== CombineAll 基本用法 ===');
+      log('源发出 3 个 interval，源完成后组合最新值');
+
+      of(
+        interval(300).pipe(take(3), map(v => 'A' + v)),
+        interval(500).pipe(take(3), map(v => 'B' + v)),
+        interval(700).pipe(take(3), map(v => 'C' + v))
+      ).pipe(combineAll()).subscribe({
+        next: arr => log('组合: [' + arr.join(', ') + ']'),
+        complete: () => log('complete\n')
+      });
+    }
+
+    function runCompare() {
+      log('=== CombineAll vs concatAll ===');
+      log('concatAll: 顺序展开，输出 A0 A1 B0 B1');
+      of(
+        of('A0', 'A1'),
+        of('B0', 'B1')
+      ).pipe(concatAll()).subscribe({
+        next: v => log('concatAll: ' + v),
+        complete: () => {
+          log('---');
+          log('combineAll: 等源完成后组合，输出 [A1, B1]');
+          of(of('A0', 'A1'), of('B0', 'B1')).pipe(combineAll()).subscribe({
+            next: arr => log('combineAll: [' + arr.join(', ') + ']')
+          });
+        }
+      });
+    }
+
+    log('页面已加载，点击按钮演示 CombineAll');
+  </script>
+</body>
+</html>

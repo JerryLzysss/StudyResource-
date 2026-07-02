@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS concat</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS concat</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>concat 按顺序连接多个 Observable，先订阅第一个并发出其全部值，待其完成后才订阅下一个，依次类推。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">concat(...observables: ObservableInput[]): Observable&lt;unknown&gt;</div>
+
+  <h2>描述</h2>
+  <p>concat 将多个 Observable 按顺序连接在一起，通过依次订阅它们并将结果合并到输出 Observable 中。可以传递 Observable 数组，也可以直接作为参数传入。传递空数组将导致 Observable 立即完成。</p>
+  <p>concat 将订阅第一个输入 Observable 并发出其所有值，不会以任何方式改变它们。当该 Observable 完成时，它将订阅下一个传入的 Observable 并再次发出其值。此过程重复，直到运算符用完所有 Observable。当最后一个输入 Observable 完成时，concat 也将完成。</p>
+  <p>在任何给定时刻，只有传递给 concat 的一个 Observable 会发出值。如果希望并发发出值，请使用 <code>merge</code>。</p>
+  <p>注意：如果某个输入 Observable 永不完成，concat 也永远不会完成，其后的 Observable 将永远不会被订阅。如果链中任何 Observable 出错，concat 将立即出错。</p>
+
+  <h2>例子</h2>
+  <h3>按顺序连接多个 Observable</h3>
+  <div class="code-box">import { concat, of } from 'rxjs';
+
+concat(
+  of(1, 2, 3),
+  of(4, 5, 6),
+  of(7, 8, 9)
+).subscribe(console.log);
+
+// 输出: 1, 2, 3, 4, 5, 6, 7, 8, 9</div>
+
+  <h3>与 throwError 组合</h3>
+  <div class="code-box">import { concat, of, throwError } from 'rxjs';
+
+const result = concat(of(7), throwError(() => new Error('oops!')));
+result.subscribe(
+  x => console.log(x),
+  e => console.error(e)
+);
+
+// 输出:
+// 7
+// Error: oops!</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 concat：</p>
+    <button onclick="runSequential()">顺序连接</button>
+    <button onclick="runWithError()">遇错终止</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { concat, of, throwError, timer } = rxjs;
+    const { map, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runSequential() {
+      log('=== 顺序连接三个 Observable ===');
+      concat(
+        of('A', 'B'),
+        of(1, 2),
+        of('X', 'Y')
+      ).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runWithError() {
+      log('=== concat 遇错终止 ===');
+      concat(
+        of(1, 2, 3),
+        throwError(() => new Error('第二个源出错')),
+        of(4, 5)
+      ).subscribe({
+        next: v => log('next: ' + v),
+        error: e => log('error: ' + e.message),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 concat');
+  </script>
+</body>
+</html>

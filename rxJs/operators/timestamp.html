@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS timestamp</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS timestamp</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>timestamp 将每个源值包装为 Timestamp 对象，包含 value 和 timestamp（自 epoch 起的毫秒数）。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">timestamp&lt;T&gt;(scheduler?: SchedulerLike): OperatorFunction&lt;T, Timestamp&lt;T&gt;&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>scheduler</strong>（可选）：Scheduler，默认 asyncScheduler</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>OperatorFunction</code>，发出 <code>{ value, timestamp }</code> 对象。</p>
+  <h2>描述</h2>
+  <p>常用于日志记录、事件追踪、审计等需要知道值发出时间的场景。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { timestamp } from 'rxjs/operators';
+
+of('event1', 'event2').pipe(
+  timestamp()
+).subscribe(console.log);
+// { value: 'event1', timestamp: 1234567890123 }
+// { value: 'event2', timestamp: 1234567890124 }</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runTimestamp()">timestamp</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, interval } = rxjs;
+    const { timestamp, take } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runTimestamp() {
+      log('=== interval(300).pipe(timestamp()) ===');
+      interval(300).pipe(timestamp(), take(3)).subscribe(t => {
+        const time = new Date(t.timestamp).toLocaleTimeString();
+        log('value=' + t.value + ', time=' + time);
+      });
+    }
+    log('页面已加载，timestamp 为每个值添加时间戳');
+  </script>
+</body>
+</html>

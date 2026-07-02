@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS zip</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS zip</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>zip 是一个创建函数，将多个 Observable 按索引配对组合，等待每个源各发出一个值后将它们作为数组（或通过投影函数处理后）发出。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">zip(...sources: ObservableInput[]): Observable
+zip(...sources: ObservableInput[], resultSelector: (...values) => R): Observable&lt;R&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>...sources</code></td><td>要组合的一个或多个 Observable 输入源</td></tr>
+    <tr><td><code>resultSelector</code></td><td>可选。将各源的值合并为单个结果的投影函数</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>zip 订阅所有传入的 Observable，等待每个源都发出一个值后，将这些值按索引配对发出。只要所有源 Observable 都还有值可发，zip 就会继续。任一源完成时，zip 也会完成。</p>
+  <p>注意：管道中的 <code>zip</code> 运算符已弃用，请改用 <code>zipWith</code>。此处介绍的是 index 目录下的创建函数 <code>zip(...sources)</code>。</p>
+
+  <h2>例子</h2>
+  <h3>将两个 Observable 按索引配对</h3>
+  <div class="code-box">import { zip, of } from 'rxjs';
+
+zip(of(1, 2, 3), of('a', 'b', 'c')).subscribe(console.log);
+
+// 输出：
+// [1, 'a']
+// [2, 'b']
+// [3, 'c']</div>
+
+  <h3>使用投影函数</h3>
+  <div class="code-box">import { zip, of } from 'rxjs';
+
+zip(
+  of(1, 2),
+  of('a', 'b'),
+  (n, s) => n + s
+).subscribe(console.log);
+
+// 输出：
+// '1a'
+// '2b'</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>combineLatest</code></li>
+    <li><code>forkJoin</code></li>
+    <li><code>zipWith</code>（管道运算符）</li>
+    <li><code>zipAll</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 zip 创建函数：</p>
+    <button onclick="runBasic()">基本 zip</button>
+    <button onclick="runSelector()">带投影函数</button>
+    <button onclick="runTimer()">timer 组合</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { zip, of, timer } = rxjs;
+    const { take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runBasic() {
+      log('=== zip(of(1,2,3), of("a","b","c")) ===');
+      zip(of(1, 2, 3), of('a', 'b', 'c')).subscribe({
+        next: arr => log('next: [' + arr.join(', ') + ']'),
+        complete: () => log('complete')
+      });
+    }
+
+    function runSelector() {
+      log('=== zip + resultSelector ===');
+      zip(of(1, 2), of('a', 'b'), (n, s) => n + s).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runTimer() {
+      log('=== zip(timer(0,300), timer(100,300)).pipe(take(3)) ===');
+      zip(
+        timer(0, 300).pipe(take(3)),
+        timer(100, 300).pipe(take(3))
+      ).subscribe({
+        next: arr => log('next: [' + arr.join(', ') + ']'),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，zip 按索引配对多个 Observable 的值');
+  </script>
+</body>
+</html>

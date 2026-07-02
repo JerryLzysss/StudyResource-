@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS observeOn</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS observeOn</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>observeOn 使用指定的 Scheduler 重新调度 Observable 的通知（next/error/complete），控制观察者在哪个执行上下文接收值。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">observeOn&lt;T&gt;(scheduler: SchedulerLike, delay?: number): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>scheduler</strong>：SchedulerLike，如 asyncScheduler、asapScheduler、queueScheduler</li>
+    <li><strong>delay</strong>（可选）：每次通知之间的最小延迟（毫秒）</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>MonoTypeOperatorFunction</code>，通知会在指定 Scheduler 上异步投递给观察者。</p>
+  <h2>描述</h2>
+  <p>observeOn 只影响通知的投递时机，不改变源 Observable 的订阅时机（订阅时机由 subscribeOn 控制）。</p>
+  <p>常用于将计算结果切换到 UI 线程，或避免在特定 Scheduler 上阻塞。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { of, asyncScheduler } from 'rxjs';
+import { observeOn } from 'rxjs/operators';
+
+of(1, 2, 3).pipe(
+  observeOn(asyncScheduler)
+).subscribe(v => console.log(v));
+// 通知在 asyncScheduler 上异步投递</div>
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>subscribeOn</code> — 控制订阅发生的 Scheduler</li>
+  </ul>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runObserveOn()">observeOn(asyncScheduler)</button>
+    <button onclick="runSync()">同步对比</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, asyncScheduler } = rxjs;
+    const { observeOn } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runObserveOn() {
+      log('=== observeOn(asyncScheduler) ===');
+      log('订阅（同步）');
+      of(1, 2, 3).pipe(observeOn(asyncScheduler)).subscribe({
+        next: v => log('next: ' + v + ' (异步投递)'),
+        complete: () => log('complete (异步投递)')
+      });
+      log('subscribe 返回（通知尚未投递）');
+    }
+    function runSync() {
+      log('=== 无 observeOn（同步通知）===');
+      of('a', 'b', 'c').subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+    log('页面已加载，observeOn 控制通知投递的 Scheduler');
+  </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS ObservedValueOf</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS ObservedValueOf</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>ObservedValueOf 是 TypeScript 条件类型，从 <code>ObservableInput</code> 中提取其发出的值类型 <code>T</code>。
+
+  </div>
+
+
+
+  <h2>类型定义</h2>
+
+  <div class="code-box">type ObservedValueOf&lt;O&gt; =
+
+  O extends ObservableInput&lt;infer T&gt; ? T : never;</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>ObservedValueOf 是编译时类型工具，运行时不存在。当函数接受 ObservableInput 并需要推断内部值类型时，RxJS 内部使用此类型。</p>
+
+  <p>例如 <code>defer</code> 的返回类型为 <code>Observable&lt;ObservedValueOf&lt;R&gt;&gt;</code>，其中 R 是工厂函数返回的 ObservableInput。</p>
+
+
+
+  <h2>TypeScript 示例</h2>
+
+  <div class="code-box">import { of, from, ObservedValueOf } from 'rxjs';
+
+
+
+type A = ObservedValueOf&lt;typeof of(1)&gt;;        // number
+
+type B = ObservedValueOf&lt;Promise&lt;string&gt;&gt;;       // string
+
+type C = ObservedValueOf&lt;number[]&gt;;              // number
+
+
+
+// defer 工厂返回 ObservableInput，ObservedValueOf 提取 T
+
+function defer&lt;R extends ObservableInput&lt;any&gt;&gt;(factory: () =&gt; R)
+
+  : Observable&lt;ObservedValueOf&lt;R&gt;&gt; { ... }</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>ObservableInput</code></li>
+
+    <li><code>ObservedValuesFromArray</code></li>
+
+    <li><code>defer</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>ObservedValueOf 是类型层面的概念，以下演示不同 ObservableInput 在运行时的实际值类型：</p>
+
+    <button onclick="runOfNumber()">of(number)</button>
+
+    <button onclick="runFromPromise()">from(Promise&lt;string&gt;)</button>
+
+    <button onclick="runFromArray()">from(number[])</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { of, from } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runOfNumber() {
+
+      log('=== ObservedValueOf<of(1)> → number ===');
+
+      of(1, 2, 3).subscribe(v => log(`值类型: ${typeof v}, 值: ${v}`));
+
+    }
+
+
+
+    function runFromPromise() {
+
+      log('=== ObservedValueOf<Promise<string>> → string ===');
+
+      from(Promise.resolve('RxJS')).subscribe(v => log(`值类型: ${typeof v}, 值: ${v}`));
+
+    }
+
+
+
+    function runFromArray() {
+
+      log('=== ObservedValueOf<number[]> → number ===');
+
+      from([10, 20]).subscribe(v => log(`值类型: ${typeof v}, 值: ${v}`));
+
+    }
+
+
+
+    log('页面已加载，ObservedValueOf = 从 ObservableInput 提取值类型的 TS 工具类型');
+
+  </script>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS ignoreElements</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS ignoreElements</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>ignoreElements 忽略源 Observable 发出的所有 next 值，仅转发 error 和 complete 通知。
+  </div>
+
+  <h2>函数签名</h2>
+  <div class="code-box">ignoreElements(): OperatorFunction<T, never></div>
+
+  <h2>说明</h2>
+  <p>当你只关心 Observable 何时结束或出错，而不关心中间值时使用。</p>
+  <p>输出 Observable 不会发出任何 next 值，只会在源 complete 或 error 时发出相应通知。</p>
+
+
+  <h2>代码示例</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { ignoreElements, tap } from 'rxjs/operators';
+
+of(1, 2, 3).pipe(
+  tap(v => console.log('tap:', v)),
+  ignoreElements()
+).subscribe({
+  complete: () => console.log('仅收到 complete')
+});
+// tap: 1, 2, 3（tap 仍执行）
+// 仅收到 complete</div>
+
+  <h2>也可以看看</h2>
+  <ul><li><code>materialize</code></li>
+    <li><code>isEmpty</code></li>
+    <li><code>last</code></li></ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 ignoreElements：</p>
+    <button onclick="runBasic()">忽略 next</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { ignoreElements, tap } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runBasic() {
+      log('=== ignoreElements ===');
+      of(1, 2, 3).pipe(
+        tap(v => log('tap(源值): ' + v)),
+        ignoreElements()
+      ).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete（无 next 值）')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 ignoreElements');
+  </script>
+</body>
+</html>

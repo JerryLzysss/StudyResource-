@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS 运算符</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; border-left: 4px solid #e91e63; padding-left: 10px; }
+    h3 { color: #666; margin-top: 20px; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul {
+      line-height: 1.8;
+    }
+    .operator-card {
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .operator-name {
+      color: #e91e63;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #e91e63;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>RxJS 运算符</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>运算符是 Observable 类型上的方法，用于处理数据流。它们可以帮助你创建、转换、过滤、组合和操作数据。RxJS 提供了丰富的运算符库，让异步编程变得更加简单。
+  </div>
+
+  <h2>什么是运算符？</h2>
+  <p>运算符是 RxJS 的核心功能，它们是用来处理 Observable 的函数。使用 <code>pipe()</code> 方法可以将多个运算符组合在一起：</p>
+
+  <div class="code-box">import { of } from 'rxjs';
+import { map, filter, take } from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5)
+  .pipe(
+    filter(x => x > 2),
+    map(x => x * 2),
+    take(2)
+  )
+  .subscribe(console.log);
+// 输出: 6, 8</div>
+
+  <h2>运算符分类</h2>
+
+  <h3>1. 创建类运算符 (Creation Operators)</h3>
+  <table>
+    <tr>
+      <th>运算符</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>of()</code></td>
+      <td>将参数转换为 Observable</td>
+      <td>创建发出固定值的 Observable</td>
+    </tr>
+    <tr>
+      <td><code>from()</code></td>
+      <td>从数组、Promise 等创建 Observable</td>
+      <td>转换其他数据类型为 Observable</td>
+    </tr>
+    <tr>
+      <td><code>interval()</code></td>
+      <td>定期发出递增的数字</td>
+      <td>定时任务、轮询</td>
+    </tr>
+    <tr>
+      <td><code>timer()</code></td>
+      <td>延迟后发出值或周期性发出</td>
+      <td>延迟执行、定时器</td>
+    </tr>
+    <tr>
+      <td><code>fromEvent()</code></td>
+      <td>将事件转换为 Observable</td>
+      <td>处理 DOM 事件</td>
+    </tr>
+    <tr>
+      <td><code>ajax()</code></td>
+      <td>创建 HTTP 请求的 Observable</td>
+      <td>发起网络请求</td>
+    </tr>
+  </table>
+
+  <h3>2. 转换类运算符 (Transformation Operators)</h3>
+  <table>
+    <tr>
+      <th>运算符</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>map()</code></td>
+      <td>对每个值进行转换</td>
+      <td>数据转换、格式化</td>
+    </tr>
+    <tr>
+      <td><code>mapTo()</code></td>
+      <td>将所有值映射为固定值</td>
+      <td>信号转换</td>
+    </tr>
+    <tr>
+      <td><code>mergeMap()</code></td>
+      <td>展平内部 Observable（并行）</td>
+      <td>处理并发请求</td>
+    </tr>
+    <tr>
+      <td><code>switchMap()</code></td>
+      <td>切换到新的 Observable，取消之前的</td>
+      <td>搜索、自动完成</td>
+    </tr>
+    <tr>
+      <td><code>concatMap()</code></td>
+      <td>展平内部 Observable（串行）</td>
+      <td>顺序执行任务</td>
+    </tr>
+    <tr>
+      <td><code>scan()</code></td>
+      <td>累加器，类似 reduce 但发出中间结果</td>
+      <td>累计计算、状态管理</td>
+    </tr>
+  </table>
+
+  <h3>3. 过滤类运算符 (Filtering Operators)</h3>
+  <table>
+    <tr>
+      <th>运算符</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>filter()</code></td>
+      <td>只通过符合条件的值</td>
+      <td>数据筛选</td>
+    </tr>
+    <tr>
+      <td><code>take()</code></td>
+      <td>只取前 n 个值</td>
+      <td>限制数据量</td>
+    </tr>
+    <tr>
+      <td><code>takeUntil()</code></td>
+      <td>直到另一个 Observable 发出值时停止</td>
+      <td>取消订阅控制</td>
+    </tr>
+    <tr>
+      <td><code>debounceTime()</code></td>
+      <td>防抖，延迟发出值</td>
+      <td>搜索输入优化</td>
+    </tr>
+    <tr>
+      <td><code>throttleTime()</code></td>
+      <td>节流，限制发出频率</td>
+      <td>滚动事件优化</td>
+    </tr>
+    <tr>
+      <td><code>distinctUntilChanged()</code></td>
+      <td>过滤连续重复的值</td>
+      <td>去重</td>
+    </tr>
+  </table>
+
+  <h3>4. 组合类运算符 (Combination Operators)</h3>
+  <table>
+    <tr>
+      <th>运算符</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>merge()</code></td>
+      <td>合并多个 Observable</td>
+      <td>并行处理多个流</td>
+    </tr>
+    <tr>
+      <td><code>concat()</code></td>
+      <td>顺序连接多个 Observable</td>
+      <td>串行执行任务</td>
+    </tr>
+    <tr>
+      <td><code>combineLatest()</code></td>
+      <td>组合最新值</td>
+      <td>多数据源同步</td>
+    </tr>
+    <tr>
+      <td><code>zip()</code></td>
+      <td>拉链式组合，一对一配对</td>
+      <td>同步多个流</td>
+    </tr>
+    <tr>
+      <td><code>forkJoin()</code></td>
+      <td>等待所有 Observable 完成后发出最终值</td>
+      <td>并行请求等待</td>
+    </tr>
+  </table>
+
+  <h3>5. 错误处理类运算符 (Error Handling Operators)</h3>
+  <table>
+    <tr>
+      <th>运算符</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>catchError()</code></td>
+      <td>捕获错误并返回新的 Observable</td>
+      <td>错误恢复</td>
+    </tr>
+    <tr>
+      <td><code>retry()</code></td>
+      <td>发生错误时重试</td>
+      <td>网络请求重试</td>
+    </tr>
+    <tr>
+      <td><code>retryWhen()</code></td>
+      <td>自定义重试逻辑</td>
+      <td>高级重试策略</td>
+    </tr>
+    <tr>
+      <td><code>finalize()</code></td>
+      <td>Observable 结束时执行清理</td>
+      <td>资源清理</td>
+    </tr>
+  </table>
+
+  <h3>6. 工具类运算符 (Utility Operators)</h3>
+  <table>
+    <tr>
+      <th>运算符</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>tap()</code></td>
+      <td>执行副作用，不改变数据</td>
+      <td>调试、日志记录</td>
+    </tr>
+    <tr>
+      <td><code>delay()</code></td>
+      <td>延迟发出值</td>
+      <td>延迟执行</td>
+    </tr>
+    <tr>
+      <td><code>timeout()</code></td>
+      <td>超时处理</td>
+      <td>请求超时控制</td>
+    </tr>
+    <tr>
+      <td><code>shareReplay()</code></td>
+      <td>共享订阅并缓存</td>
+      <td>多订阅者共享</td>
+    </tr>
+  </table>
+
+  <h2>常用代码示例</h2>
+
+  <div class="operator-card">
+    <span class="operator-name">map - 数据转换</span>
+    <div class="code-box">import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+from([1, 2, 3, 4, 5])
+  .pipe(map(x => x * 10))
+  .subscribe(console.log);
+// 输出: 10, 20, 30, 40, 50</div>
+  </div>
+
+  <div class="operator-card">
+    <span class="operator-name">filter - 数据过滤</span>
+    <div class="code-box">import { from } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+from([1, 2, 3, 4, 5, 6])
+  .pipe(filter(x => x % 2 === 0))
+  .subscribe(console.log);
+// 输出: 2, 4, 6 (只输出偶数)</div>
+  </div>
+
+  <div class="operator-card">
+    <span class="operator-name">switchMap - 切换 Observable</span>
+    <div class="code-box">import { of } from 'rxjs';
+import { switchMap, delay } from 'rxjs/operators';
+
+of('userId: 123')
+  .pipe(
+    switchMap(id => of(`Data for ${id}`).pipe(delay(1000)))
+  )
+  .subscribe(console.log);
+// 常用于 HTTP 请求切换</div>
+  </div>
+
+  <div class="operator-card">
+    <span class="operator-name">debounceTime - 防抖</span>
+    <div class="code-box">import { fromEvent } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
+fromEvent(inputElement, 'input')
+  .pipe(
+    debounceTime(300),
+    map(e => e.target.value)
+  )
+  .subscribe(value => console.log('搜索:', value));
+// 用户停止输入 300ms 后才触发</div>
+  </div>
+
+  <div class="operator-card">
+    <span class="operator-name">combineLatest - 组合多个流</span>
+    <div class="code-box">import { combineLatest, BehaviorSubject } from 'rxjs';
+
+const weight = new BehaviorSubject(70);
+const height = new BehaviorSubject(1.75);
+
+combineLatest([weight, height])
+  .pipe(map(([w, h]) => w / (h * h)))
+  .subscribe(bmi => console.log('BMI:', bmi));</div>
+  </div>
+
+  <div class="operator-card">
+    <span class="operator-name">catchError - 错误处理</span>
+    <div class="code-box">import { throwError, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+throwError(() => new Error('出错啦'))
+  .pipe(
+    catchError(err => {
+      console.log('捕获错误:', err.message);
+      return of('默认值');
+    })
+  )
+  .subscribe(console.log);
+// 输出: 捕获错误: 出错啦
+// 输出: 默认值</div>
+  </div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮运行不同运算符的示例：</p>
+    <button onclick="runMapExample()">map - 转换</button>
+    <button onclick="runFilterExample()">filter - 过滤</button>
+    <button onclick="runMergeMapExample()">mergeMap - 合并</button>
+    <button onclick="runDebounceExample()">debounceTime - 防抖</button>
+    <button onclick="runCombineExample()">combineLatest - 组合</button>
+    <button onclick="runCatchErrorExample()">catchError - 错误处理</button>
+    <button onclick="runPipeExample()">pipe 组合</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <!-- 通过 CDN 引入 RxJS -->
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { Observable, of, from, interval, timer, throwError, combineLatest, BehaviorSubject } = rxjs;
+    const { map, filter, take, mergeMap, switchMap, debounceTime, catchError, tap, delay, finalize, distinctUntilChanged, throttleTime } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    // map 示例
+    function runMapExample() {
+      log('=== map 运算符示例 - 数据转换 ===');
+      
+      of(1, 2, 3, 4, 5)
+        .pipe(
+          map(x => x * 10),
+          tap(x => log(`map: ${x/10} * 10 = ${x}`))
+        )
+        .subscribe({
+          next: x => log(`结果: ${x}`),
+          complete: () => log('map 示例完成\n')
+        });
+    }
+
+    // filter 示例
+    function runFilterExample() {
+      log('=== filter 运算符示例 - 数据过滤 ===');
+      
+      of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        .pipe(
+          filter(x => x % 2 === 0),
+          tap(x => log(`filter 通过: ${x} (偶数)`))
+        )
+        .subscribe({
+          next: x => log(`结果: ${x}`),
+          complete: () => log('filter 示例完成\n')
+        });
+    }
+
+    // mergeMap 示例
+    function runMergeMapExample() {
+      log('=== mergeMap 运算符示例 - 展平 Observable ===');
+      
+      of('A', 'B', 'C')
+        .pipe(
+          mergeMap(letter => 
+            of(`${letter}-1`, `${letter}-2`).pipe(delay(500))
+          ),
+          take(6)
+        )
+        .subscribe({
+          next: x => log(`mergeMap: ${x}`),
+          complete: () => log('mergeMap 示例完成\n')
+        });
+    }
+
+    // debounceTime 示例
+    function runDebounceExample() {
+      log('=== debounceTime 运算符示例 - 防抖 ===');
+      log('模拟快速输入: 1, 2, 3, 4, 5 (每100ms)');
+      log('防抖时间: 500ms (停止输入后500ms才触发)');
+      
+      let count = 0;
+      const source = new Observable(observer => {
+        const interval = setInterval(() => {
+          count++;
+          log(`输入: ${count}`);
+          observer.next(count);
+          if (count >= 5) {
+            clearInterval(interval);
+            observer.complete();
+          }
+        }, 100);
+      });
+
+      source.pipe(
+        debounceTime(500)
+      ).subscribe({
+        next: x => log(`debounceTime 触发: ${x} (最终值)`),
+        complete: () => log('debounceTime 示例完成\n')
+      });
+    }
+
+    // combineLatest 示例
+    function runCombineExample() {
+      log('=== combineLatest 运算符示例 - 组合多个流 ===');
+      
+      const temperature$ = new BehaviorSubject(20);
+      const humidity$ = new BehaviorSubject(60);
+
+      const subscription = combineLatest([temperature$, humidity$])
+        .pipe(
+          map(([temp, hum]) => `温度: ${temp}°C, 湿度: ${hum}%`)
+        )
+        .subscribe(value => log(value));
+
+      // 模拟数据变化
+      setTimeout(() => {
+        log('-- 温度变化 --');
+        temperature$.next(25);
+      }, 500);
+
+      setTimeout(() => {
+        log('-- 湿度变化 --');
+        humidity$.next(65);
+      }, 1000);
+
+      setTimeout(() => {
+        subscription.unsubscribe();
+        log('combineLatest 示例完成\n');
+      }, 1500);
+    }
+
+    // catchError 示例
+    function runCatchErrorExample() {
+      log('=== catchError 运算符示例 - 错误处理 ===');
+      
+      throwError(() => new Error('模拟网络请求失败'))
+        .pipe(
+          tap(() => log('执行请求...')),
+          catchError(err => {
+            log(`捕获错误: ${err.message}`);
+            log('返回默认值...');
+            return of({ data: '默认数据', fromCache: true });
+          }),
+          finalize(() => log('清理资源 (finalize)'))
+        )
+        .subscribe({
+          next: x => log(`结果: ${JSON.stringify(x)}`),
+          error: err => log(`未捕获错误: ${err}`),
+          complete: () => log('catchError 示例完成\n')
+        });
+    }
+
+    // pipe 组合示例
+    function runPipeExample() {
+      log('=== pipe 组合多个运算符 ===');
+      log('场景: 获取用户输入，过滤无效值，转换后发送请求');
+      
+      const userInputs = ['', 'hello', 'hello', 'world', 'world', 'world', 'rxjs'];
+      let index = 0;
+
+      const input$ = new Observable(observer => {
+        const interval = setInterval(() => {
+          if (index < userInputs.length) {
+            log(`用户输入: "${userInputs[index]}"`);
+            observer.next(userInputs[index]);
+            index++;
+          } else {
+            clearInterval(interval);
+            observer.complete();
+          }
+        }, 300);
+      });
+
+      input$.pipe(
+        filter(value => value.length > 0),
+        tap(value => log(`filter 通过非空值: "${value}"`)),
+        distinctUntilChanged(),
+        tap(value => log(`distinctUntilChanged 去重后: "${value}"`)),
+        map(value => value.toUpperCase()),
+        tap(value => log(`map 转换为大写: "${value}"`))
+      ).subscribe({
+        next: x => log(`最终结果: ${x}`),
+        complete: () => log('pipe 组合示例完成\n')
+      });
+    }
+
+    // 页面加载时显示欢迎信息
+    log('页面已加载，点击上方按钮运行运算符示例');
+    log('运算符 = 处理 Observable 数据的函数');
+    log('使用 pipe() 组合多个运算符\n');
+  </script>
+</body>
+</html>

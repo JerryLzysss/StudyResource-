@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS SchedulerLike</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS SchedulerLike</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>SchedulerLike 是调度程序的接口类型，定义了如何安排任务执行以及获取当前时间戳。
+
+  </div>
+
+
+
+  <h2>接口定义</h2>
+
+  <div class="code-box">interface SchedulerLike extends TimestampProvider {
+
+  schedule&lt;T&gt;(
+
+    work: (this: SchedulerAction&lt;T&gt;, state?: T) =&gt; void,
+
+    delay?: number,
+
+    state?: T
+
+  ): Subscription
+
+  now(): number
+
+}</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>SchedulerLike 是 RxJS 调度系统的核心接口。任何实现了 <code>schedule</code> 和 <code>now</code> 方法的对象都可以作为调度程序使用。</p>
+
+  <p>RxJS 内置多种 SchedulerLike 实现：</p>
+
+  <ul>
+
+    <li><code>asyncScheduler</code>（async）— 类似 setTimeout，用于延迟和间隔任务</li>
+
+    <li><code>asapScheduler</code>（asap）— 尽快执行，类似 setTimeout(fn, 0)</li>
+
+    <li><code>queueScheduler</code>（queue）— 在当前调用栈中递归执行</li>
+
+    <li><code>animationFrameScheduler</code>（animationFrame）— 使用 requestAnimationFrame</li>
+
+  </ul>
+
+
+
+  <h2>方法</h2>
+
+  <table>
+
+    <tr><th>方法</th><th>说明</th></tr>
+
+    <tr><td><code>schedule(work, delay?, state?)</code></td><td>安排 work 函数在 delay 毫秒后执行，返回 Subscription</td></tr>
+
+    <tr><td><code>now()</code></td><td>返回当前时间戳（继承自 TimestampProvider）</td></tr>
+
+  </table>
+
+
+
+  <h2>类实现</h2>
+
+  <ul>
+
+    <li><code>VirtualTimeScheduler</code></li>
+
+  </ul>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { asyncScheduler, interval } from 'rxjs';
+
+
+
+// 使用 asyncScheduler 延迟任务
+
+asyncScheduler.schedule(() => console.log('delayed'), 2000);
+
+
+
+// interval 默认使用 asyncScheduler
+
+interval(1000).subscribe(v => console.log(v));</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>SchedulerAction</code></li>
+
+    <li><code>async</code></li>
+
+    <li><code>asap</code></li>
+
+    <li><code>queue</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示不同 SchedulerLike：</p>
+
+    <button onclick="runAsync()">asyncScheduler</button>
+
+    <button onclick="runAsap()">asapScheduler</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { asyncScheduler, asapScheduler } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runAsync() {
+
+      log('=== asyncScheduler.schedule(fn, 1500) ===');
+
+      log('已调度，1.5 秒后执行...');
+
+      asyncScheduler.schedule(() => log('asyncScheduler 执行完成'));
+
+    }
+
+
+
+    function runAsap() {
+
+      log('=== asapScheduler.schedule(fn, 0) ===');
+
+      log('同步代码末尾');
+
+      asapScheduler.schedule(() => log('asapScheduler 尽快执行'));
+
+      log('同步代码继续');
+
+    }
+
+
+
+    log('页面已加载，SchedulerLike 定义调度程序接口');
+
+  </script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS SubscribableOrPromise</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .warning-box {
+
+      background-color: #ffebee;
+
+      border-left: 4px solid #f44336;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS SubscribableOrPromise</h1>
+
+
+
+  <div class="warning-box">
+
+    <strong>已弃用：</strong>请勿使用此类型。大多数情况下应使用 <code>ObservableInput</code>。将在 v8 中移除。
+
+  </div>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>SubscribableOrPromise 是联合类型，表示可订阅对象或 Promise 的输入源。
+
+  </div>
+
+
+
+  <h2>类型定义</h2>
+
+  <div class="code-box">type SubscribableOrPromise&lt;T&gt; =
+
+  | Subscribable&lt;T&gt;
+
+  | Subscribable&lt;never&gt;
+
+  | PromiseLike&lt;T&gt;
+
+  | InteropObservable&lt;T&gt;;</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>SubscribableOrPromise 是 RxJS 早期版本中用于描述 <code>from</code> 等函数可接受输入类型的联合类型。它涵盖了：</p>
+
+  <ul>
+
+    <li><code>Subscribable&lt;T&gt;</code> — 具有 subscribe 方法的对象</li>
+
+    <li><code>PromiseLike&lt;T&gt;</code> — 类 Promise 对象</li>
+
+    <li><code>InteropObservable&lt;T&gt;</code> — 实现 Symbol.observable 的对象</li>
+
+  </ul>
+
+  <p>在 RxJS 7+ 中，推荐使用更完整的 <code>ObservableInput&lt;T&gt;</code> 类型，它还包括 Array、Iterable、AsyncIterable 等更多输入形式。</p>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { from } from 'rxjs';
+
+
+
+// Subscribable 形式
+
+from({ subscribe: obs => { obs.next(1); obs.complete(); return {}; } });
+
+
+
+// Promise 形式
+
+from(Promise.resolve('done'));
+
+
+
+// InteropObservable 形式
+
+from({ [Symbol.observable]: () => ({ subscribe: ... }) });</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>ObservableInput</code>（推荐替代）</li>
+
+    <li><code>Subscribable</code></li>
+
+    <li><code>InteropObservable</code></li>
+
+    <li><code>from</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 SubscribableOrPromise 涵盖的输入类型：</p>
+
+    <button onclick="runSubscribable()">Subscribable 输入</button>
+
+    <button onclick="runPromise()">Promise 输入</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { from } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runSubscribable() {
+
+      log('=== from(Subscribable) ===');
+
+      from({
+
+        subscribe(observer) {
+
+          observer.next('Subscribable 值');
+
+          observer.complete();
+
+          return { unsubscribe() {} };
+
+        }
+
+      }).subscribe(v => log('next: ' + v));
+
+    }
+
+
+
+    function runPromise() {
+
+      log('=== from(Promise) ===');
+
+      from(Promise.resolve('Promise 值')).subscribe(v => log('next: ' + v));
+
+    }
+
+
+
+    log('页面已加载，SubscribableOrPromise 已弃用，请用 ObservableInput');
+
+  </script>
+
+</body>
+
+</html>
+

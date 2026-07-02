@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS bufferToggle</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS bufferToggle</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>将过往数据收集到数组中。当 <code>openings</code> 发出时开始收集，然后调用 <code>closingSelector</code> 函数获取 Observable，该 Observable 告知何时关闭缓冲。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">bufferToggle&lt;T, O&gt;(
+  openings: ObservableInput&lt;O&gt;,
+  closingSelector: (value: O) =&gt; ObservableInput&lt;any&gt;
+): OperatorFunction&lt;T, T[]&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参量</th><th>说明</th></tr>
+    <tr><td><code>openings</code></td><td>开启新缓冲区的通知，可以是 Subscribable 或 Promise</td></tr>
+    <tr><td><code>closingSelector</code></td><td>接受 openings Observable 发出的数据，返回 Subscribable 或 Promise；当它发出时，相关缓冲区应发出并清理</td></tr>
+  </table>
+
+  <h2>返回值</h2>
+  <p>返回 <code>OperatorFunction&lt;T, T[]&gt;</code>：缓冲数组的 Observable。</p>
+
+  <h2>描述</h2>
+  <p>缓冲源 Observable 的值，当 <code>openings</code> Observable 发出信号的时候开始缓冲数据，当 <code>closingSelector</code> 返回的 Subscribable 或者 Promise 发送的时候结束并且发送缓冲区。</p>
+
+  <h2>例子</h2>
+  <p>每隔一秒钟，发出接下来 500 毫秒内的点击事件</p>
+  <div class="code-box">import { fromEvent, interval, EMPTY } from 'rxjs';
+import { bufferToggle } from 'rxjs/operators';
+
+const clicks = fromEvent(document, 'click');
+const openings = interval(1000);
+const buffered = clicks.pipe(
+  bufferToggle(openings, i =>
+    i % 2 ? interval(500) : EMPTY
+  )
+);
+buffered.subscribe(x => console.log(x));</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li>buffer</li>
+    <li>bufferCount</li>
+    <li>bufferTime</li>
+    <li>bufferWhen</li>
+    <li>windowToggle</li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 bufferToggle：</p>
+    <button onclick="runToggle()">bufferToggle</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, timer, EMPTY } = rxjs;
+    const { bufferToggle, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runToggle() {
+      log('=== bufferToggle(interval(1000), i => i%2 ? timer(500) : EMPTY) ===');
+      log('每 1s 开启缓冲，偶数次开启后 500ms 关闭并发出数组');
+      interval(150).pipe(
+        bufferToggle(interval(1000), i => i % 2 ? timer(500) : EMPTY),
+        take(4)
+      ).subscribe({
+        next: arr => log('缓冲区: [' + arr.join(', ') + ']'),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 bufferToggle');
+  </script>
+</body>
+</html>

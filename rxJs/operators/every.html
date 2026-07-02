@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS every</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS every</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>every 检测源 Observable 发出的所有值是否都满足给定条件，在源完成时发出 true 或 false。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">every&lt;T&gt;(
+  predicate: (value: T, index: number) => boolean,
+  thisArg?: any
+): OperatorFunction&lt;T, boolean&gt;</div>
+
+  <h2>描述</h2>
+  <p>every 类似数组的 Array.every 方法。它订阅源 Observable，对每个值应用 predicate 函数。如果所有值都满足条件，在源完成时发出 true；只要有一个值不满足，立即发出 false 并完成。</p>
+  <p>如果源 Observable 为空（没有发出任何值），every 会发出 true。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { every } from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5).pipe(
+  every(val => val % 2 === 0)
+).subscribe(x => console.log(x));
+// 输出: false
+
+of(2, 4, 6, 8, 10).pipe(
+  every(val => val % 2 === 0)
+).subscribe(x => console.log(x));
+// 输出: true</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 every：</p>
+    <button onclick="runFalse()">不全是偶数</button>
+    <button onclick="runTrue()">全是偶数</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { every } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runFalse() {
+      log('=== every 检测是否全是偶数（1,2,3,4,5）===');
+      of(1, 2, 3, 4, 5).pipe(every(val => val % 2 === 0)).subscribe({
+        next: v => log('结果: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runTrue() {
+      log('=== every 检测是否全是偶数（2,4,6,8,10）===');
+      of(2, 4, 6, 8, 10).pipe(every(val => val % 2 === 0)).subscribe({
+        next: v => log('结果: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 every');
+  </script>
+</body>
+</html>

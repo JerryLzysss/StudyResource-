@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS AjaxResponse</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS AjaxResponse</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>AjaxResponse 是标准化的 AJAX 响应对象，由 <code>ajax()</code> 成功时发出，包含 status、response、xhr 等完整响应信息。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class AjaxResponse {
+  constructor(originalEvent: Event, xhr: XMLHttpRequest, request: AjaxRequest)
+  status: number
+  response: any
+  responseText: string
+  responseType: XMLHttpRequestResponseType
+  originalEvent: Event
+  xhr: XMLHttpRequest
+  request: AjaxRequest
+}</div>
+
+  <h2>构造函数</h2>
+  <p><code>constructor(originalEvent: Event, xhr: XMLHttpRequest, request: AjaxRequest)</code></p>
+  <table>
+    <tr><th>参数</th><th>类型</th></tr>
+    <tr><td><code>originalEvent</code></td><td><code>Event</code></td></tr>
+    <tr><td><code>xhr</code></td><td><code>XMLHttpRequest</code></td></tr>
+    <tr><td><code>request</code></td><td><code>AjaxRequest</code></td></tr>
+  </table>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>说明</th></tr>
+    <tr><td><code>status</code></td><td><code>number</code></td><td>HTTP 状态码</td></tr>
+    <tr><td><code>response</code></td><td><code>any</code></td><td>解析后的响应体</td></tr>
+    <tr><td><code>responseText</code></td><td><code>string</code></td><td>原始响应文本</td></tr>
+    <tr><td><code>responseType</code></td><td><code>XMLHttpRequestResponseType</code></td><td>响应类型</td></tr>
+    <tr><td><code>originalEvent</code></td><td><code>Event</code></td><td>原始 load 事件</td></tr>
+    <tr><td><code>xhr</code></td><td><code>XMLHttpRequest</code></td><td>底层 XMLHttpRequest</td></tr>
+    <tr><td><code>request</code></td><td><code>AjaxRequest</code></td><td>对应的请求配置</td></tr>
+  </table>
+
+  <h2>代码示例</h2>
+  <div class="code-box">import { ajax } from 'rxjs/ajax';
+
+ajax('https://api.github.com/users?per_page=3').subscribe(res => {
+  console.log('status:', res.status);
+  console.log('response:', res.response);
+  console.log('responseType:', res.responseType);
+  console.log('request.url:', res.request.url);
+});</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>ajax</code></li>
+    <li><code>AjaxRequest</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 AjaxResponse：</p>
+    <button onclick="runShowResponse()">查看响应属性</button>
+    <button onclick="runResponseText()">response vs responseText</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { ajax, AjaxResponse } = rxjs.ajax;
+    const { map, catchError } = rxjs.operators;
+    const { of } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function logAjaxResponse(res) {
+      log('是 AjaxResponse 实例: ' + (res instanceof AjaxResponse));
+      log('status: ' + res.status);
+      log('responseType: ' + res.responseType);
+      log('request.url: ' + res.request.url);
+      log('request.method: ' + res.request.method);
+      log('xhr.readyState: ' + res.xhr.readyState);
+      log('response 类型: ' + (Array.isArray(res.response) ? 'Array[' + res.response.length + ']' : typeof res.response));
+    }
+
+    function runShowResponse() {
+      log('=== AjaxResponse 属性 ===');
+      ajax('https://api.github.com/users?per_page=2').pipe(
+        map(res => logAjaxResponse(res)),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runResponseText() {
+      log('=== response vs responseText ===');
+      ajax('https://api.github.com/users?per_page=1').pipe(
+        map(res => {
+          log('status: ' + res.status);
+          log('responseText 长度: ' + (res.responseText ? res.responseText.length : 0));
+          log('response[0].login: ' + (res.response[0] ? res.response[0].login : 'N/A'));
+        }),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    log('页面已加载，点击按钮演示 AjaxResponse');
+  </script>
+</body>
+</html>

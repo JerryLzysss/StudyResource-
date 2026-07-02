@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS UnaryFunction</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS UnaryFunction</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>UnaryFunction 是运算符接口，表示接受一个参数并返回一个值的函数类型，是 RxJS 管道类型系统的基础。
+  </div>
+
+  <h2>接口定义</h2>
+  <div class="code-box">interface UnaryFunction&lt;T, R&gt; {
+  (source: T): R
+}</div>
+
+  <h2>子接口</h2>
+  <ul>
+    <li><code>OperatorFunction&lt;T, R&gt;</code></li>
+    <li><code>MonoTypeOperatorFunction&lt;T&gt;</code>（T → T 的特例）</li>
+  </ul>
+
+  <h2>方法</h2>
+  <table>
+    <tr><th>调用签名</th><th>说明</th></tr>
+    <tr><td><code>(source: T): R</code></td><td>接受类型 T 的输入，返回类型 R 的结果</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>UnaryFunction 描述一种通用的一元函数类型。在 RxJS 中，<code>OperatorFunction&lt;T, R&gt;</code> 继承自 UnaryFunction，表示接受 <code>Observable&lt;T&gt;</code> 并返回 <code>Observable&lt;R&gt;</code> 的函数。<code>pipe</code> 方法正是利用这一类型系统来组合多个运算符。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
+
+// map 是 OperatorFunction&lt;number, string&gt;
+// filter 是 MonoTypeOperatorFunction&lt;number&gt;（UnaryFunction 的子接口）
+of(1, 2, 3, 4).pipe(
+  filter(x => x % 2 === 0),  // UnaryFunction: Observable&lt;number&gt; → Observable&lt;number&gt;
+  map(x => `偶数: ${x}`)      // UnaryFunction: Observable&lt;number&gt; → Observable&lt;string&gt;
+).subscribe(console.log);
+
+// 输出: 偶数: 2, 偶数: 4</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>OperatorFunction</code></li>
+    <li><code>MonoTypeOperatorFunction</code></li>
+    <li><code>pipe</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 UnaryFunction 类型的管道组合：</p>
+    <button onclick="runPipe()">pipe 组合运算符</button>
+    <button onclick="runIdentity()">identity（UnaryFunction）</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, identity } = rxjs;
+    const { map, filter } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runPipe() {
+      log('=== filter + map（UnaryFunction 管道）===');
+      of(1, 2, 3, 4).pipe(
+        filter(x => x % 2 === 0),
+        map(x => `偶数: ${x}`)
+      ).subscribe({
+        next: v => log(v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runIdentity() {
+      log('=== identity（UnaryFunction，原样返回）===');
+      of('A', 'B').pipe(identity).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，UnaryFunction = (source: T) => R 接口');
+  </script>
+</body>
+</html>

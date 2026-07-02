@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS fromFetch</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS fromFetch</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>fromFetch 使用浏览器原生 Fetch API 发出 HTTP 请求，返回一个在订阅时执行请求的 Observable，并通过内部 AbortController 支持取消。
+  </div>
+
+  <h2>函数签名</h2>
+  <div class="code-box">fromFetch(
+  input: string | Request,
+  initWithSelector: RequestInit &amp; { selector?: (response: Response) =&gt; any } = {}
+): Observable&lt;Response | T&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>input</code></td><td>要获取的资源，可以是 URL 字符串或 Request 对象</td></tr>
+    <tr><td><code>initWithSelector</code></td><td>可选，默认 <code>{}</code>。类型为 <code>RequestInit &amp; { selector?: (response: Response) =&gt; any }</code></td></tr>
+  </table>
+
+  <h2>返回值</h2>
+  <p>返回 <code>Observable</code>：订阅时使用原生 <code>fetch</code> 执行 HTTP 请求，并将 <code>Subscription</code> 与 <code>AbortController</code> 绑定以支持取消。</p>
+
+  <h2>描述</h2>
+  <p>警告：部分 Fetch API 仍处于试验阶段，<code>AbortController</code> 需浏览器支持才能正常运行并正确使用取消功能。</p>
+  <p>fromFetch 会自动设置内部 <code>AbortController</code>，在订阅取消时中止内部 <code>fetch</code>。若通过 <code>init</code> 参数提供了 <code>signal</code>，其行为将与通常的 <code>fetch</code> 一致；若提供的 <code>signal</code> 被中止，<code>fetch</code> 的 Promise 通常会 reject，此时会被视为 Observable 错误。</p>
+
+  <h3>基本用法</h3>
+  <div class="code-box">import { of } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
+import { switchMap, catchError } from 'rxjs/operators';
+
+const data$ = fromFetch('https://api.github.com/users?per_page=5').pipe(
+  switchMap(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return of({ error: true, message: `Error ${response.status}` });
+    }
+  }),
+  catchError(err => {
+    console.error(err);
+    return of({ error: true, message: err.message });
+  })
+);
+
+data$.subscribe({
+  next: result => console.log(result),
+  complete: () => console.log('完成')
+});</div>
+
+  <h3>与分块传输编码一起使用</h3>
+  <p>对于使用 HTTP 响应分块传输编码的情况，<code>fetch</code> 返回的 Promise 将在响应头被解析后立即 resolve。这意味着 <code>fromFetch</code> 可观察对象会发出 <code>Response</code> 然后完成——在收到响应体之前。当调用 <code>Response</code> 的 <code>text()</code> 或 <code>json()</code> 等方法时，返回的 Promise 要等到收到完整响应体才会 resolve。取消订阅使用 Promise 作为输入的操作符不会中止请求。</p>
+  <p>为便于中止分块传输编码响应的检索，可通过 <code>init</code> 参数指定 <code>selector</code>：</p>
+  <div class="code-box">import { fromFetch } from 'rxjs/fetch';
+
+const data$ = fromFetch('https://api.github.com/users?per_page=5', {
+  selector: response => response.json()
+});
+
+data$.subscribe({
+  next: result => console.log(result),
+  complete: () => console.log('完成')
+});</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 fromFetch（请求 GitHub API）：</p>
+    <button onclick="runBasic()">基本用法</button>
+    <button onclick="runWithSelector()">使用 selector</button>
+    <button onclick="runCancel()">取消请求</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script type="module">
+    import { fromFetch } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/fetch/+esm';
+    import { of } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/+esm';
+    import { switchMap, catchError } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/operators/+esm';
+
+    const output = document.getElementById('output');
+    let currentSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.textContent += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    window.clearOutput = () => { output.textContent = ''; };
+
+    window.runBasic = () => {
+      log('=== fromFetch 基本用法 ===');
+      if (currentSub) currentSub.unsubscribe();
+      currentSub = fromFetch('https://api.github.com/users?per_page=3').pipe(
+        switchMap(response => {
+          log('Response status: ' + response.status);
+          return response.ok ? response.json() : of({ error: true, message: 'Error ' + response.status });
+        }),
+        catchError(err => {
+          log('catchError: ' + err.message);
+          return of({ error: true, message: err.message });
+        })
+      ).subscribe({
+        next: result => log('next: ' + JSON.stringify(result).slice(0, 200) + '...'),
+        complete: () => log('complete')
+      });
+    };
+
+    window.runWithSelector = () => {
+      log('=== fromFetch + selector ===');
+      if (currentSub) currentSub.unsubscribe();
+      currentSub = fromFetch('https://api.github.com/users?per_page=2', {
+        selector: response => response.json()
+      }).subscribe({
+        next: result => log('next (已解析 JSON): ' + JSON.stringify(result).slice(0, 200) + '...'),
+        complete: () => log('complete')
+      });
+    };
+
+    window.runCancel = () => {
+      log('=== 订阅后立即取消 ===');
+      if (currentSub) currentSub.unsubscribe();
+      const sub = fromFetch('https://api.github.com/users?per_page=5').subscribe({
+        next: () => log('不应看到此消息'),
+        complete: () => log('complete（取消后通常不会出现）')
+      });
+      sub.unsubscribe();
+      log('已 unsubscribe，请求应被 AbortController 中止');
+      currentSub = null;
+    };
+
+    log('页面已加载，点击按钮演示 fromFetch');
+  </script>
+</body>
+</html>

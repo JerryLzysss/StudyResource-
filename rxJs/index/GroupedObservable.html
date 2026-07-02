@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS GroupedObservable</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS GroupedObservable</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>GroupedObservable 表示属于由公共键标识的同一组的值。它发出的值来自源 Observable，分组键可通过实例上的 <code>key</code> 字段访问。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class GroupedObservable&lt;K, T&gt; extends Observable {
+  constructor(key: K, groupSubject: Subject&lt;T&gt;, refCountSubscription?: RefCountSubscription)
+  key: K
+  _subscribe(subscriber: Subscriber&lt;T&gt;)
+}</div>
+
+  <h2>描述</h2>
+  <p>GroupedObservable 是 Observable 的子类，通常由 <code>groupBy</code> 运算符创建。每个 GroupedObservable 代表源流中某个分组键对应的所有值。</p>
+  <p>公共密钥可用作 <code>key</code> GroupedObservable 实例上的字段，用于识别当前分组。</p>
+
+  <h2>构造器</h2>
+  <div class="code-box">constructor(key: K, groupSubject: Subject, refCountSubscription?: RefCountSubscription)</div>
+  <ul>
+    <li><strong>key</strong>（类型 K）：分组键</li>
+    <li><strong>groupSubject</strong>（类型 Subject）：内部 Subject，用于向该组推送值</li>
+    <li><strong>refCountSubscription</strong>（可选）：引用计数订阅，用于管理组的生命周期</li>
+  </ul>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>key</code></td><td><code>K</code></td><td>在构造函数中声明的分组键</td></tr>
+  </table>
+
+  <h2>方法</h2>
+  <p><code>_subscribe(subscriber: Subscriber)</code> — 内部订阅方法，将订阅者连接到组 Subject。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { groupBy, mergeMap } from 'rxjs/operators';
+
+of(
+  { id: 1, name: 'JavaScript' },
+  { id: 2, name: 'TypeScript' },
+  { id: 1, name: 'RxJS' }
+).pipe(
+  groupBy(p => p.id),
+  mergeMap(group$ =>
+    group$.pipe(
+      mergeMap(val => of(`key=${group$.key}: ${val.name}`))
+    )
+  )
+).subscribe(console.log);</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>groupBy</code>（operators）</li>
+    <li><code>Subject</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 groupBy 产生的 GroupedObservable：</p>
+    <button onclick="runGroupBy()">按 id 分组</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { groupBy, mergeMap, toArray } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runGroupBy() {
+      log('=== groupBy 按 id 分组 ===');
+      of(
+        { id: 1, name: 'A' },
+        { id: 2, name: 'B' },
+        { id: 1, name: 'C' },
+        { id: 2, name: 'D' }
+      ).pipe(
+        groupBy(p => p.id),
+        mergeMap(group$ =>
+          group$.pipe(
+            toArray(),
+            mergeMap(items => of({ key: group$.key, items: items.map(i => i.name) }))
+          )
+        )
+      ).subscribe({
+        next: g => log(`GroupedObservable key=${g.key}: [${g.items.join(', ')}]`),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 GroupedObservable');
+  </script>
+</body>
+</html>

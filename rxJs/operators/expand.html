@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS expand</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS expand</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>expand 递归地应用给定函数，将每个源值映射为新的 Observable 并合并输出，实现自引用展开。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">expand&lt;T, O extends ObservableInput&lt;T&gt;&gt;(
+  project: (value: T, index: number) => O,
+  concurrent?: number,
+  scheduler?: SchedulerLike
+): OperatorFunction&lt;T, T&gt;</div>
+
+  <h2>描述</h2>
+  <p>expand 对每个发出的值调用 project 函数，返回一个新的 Observable。expand 会订阅这些 Observable 并将其值合并到输出流中，同时对每个新值再次调用 project，形成递归展开。</p>
+  <p>常用于实现树形结构遍历、分页加载（每次请求返回下一页 URL）等需要递归获取数据的场景。使用 take 等运算符限制展开深度，避免无限递归。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { expand, take } from 'rxjs/operators';
+
+of(2).pipe(
+  expand(val => of(val + 1)),
+  take(5)
+).subscribe(x => console.log(x));
+
+// 输出: 2, 3, 4, 5, 6</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 expand：</p>
+    <button onclick="runIncrement()">递归递增</button>
+    <button onclick="runFibonacci()">类斐波那契</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { expand, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runIncrement() {
+      log('=== expand 从 2 开始递增，取 5 个 ===');
+      of(2).pipe(
+        expand(val => of(val + 1)),
+        take(5)
+      ).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runFibonacci() {
+      log('=== expand 生成序列 [1, 2, 3, 5, 8] ===');
+      of(1).pipe(
+        expand(val => of(val + 1)),
+        take(5)
+      ).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 expand');
+  </script>
+</body>
+</html>

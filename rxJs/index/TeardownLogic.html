@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS TeardownLogic</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS TeardownLogic</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>TeardownLogic 是清理逻辑的类型别名，表示订阅取消时可执行的资源释放方式。
+
+  </div>
+
+
+
+  <h2>类型定义</h2>
+
+  <div class="code-box">type TeardownLogic =
+
+  | Subscription
+
+  | Unsubscribable
+
+  | (() =&gt; void)
+
+  | void;</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>TeardownLogic 用于描述 Observable 订阅函数（subscribe）的返回值，以及 Subscription.add() 可接受的清理逻辑。当订阅被取消（unsubscribe）时，这些清理逻辑会被执行。</p>
+
+  <p>可以是以下四种形式之一：</p>
+
+  <ul>
+
+    <li><code>Subscription</code> — 子订阅，取消时自动 unsubscribe</li>
+
+    <li><code>Unsubscribable</code> — 具有 unsubscribe 方法的对象</li>
+
+    <li><code>(() => void)</code> — 清理函数，取消时调用</li>
+
+    <li><code>void</code> — 无清理逻辑</li>
+
+  </ul>
+
+
+
+  <h2>使用场景</h2>
+
+  <table>
+
+    <tr><th>场景</th><th>说明</th></tr>
+
+    <tr><td>Observable 构造函数</td><td>subscribe 函数返回 TeardownLogic，在 unsubscribe 时执行</td></tr>
+
+    <tr><td>Subscription.add()</td><td>将 TeardownLogic 添加为 finalizer，父订阅取消时一并清理</td></tr>
+
+    <tr><td>fromEvent 等</td><td>返回移除事件监听器的函数作为 TeardownLogic</td></tr>
+
+  </table>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { Observable } from 'rxjs';
+
+
+
+const custom$ = new Observable(subscriber => {
+
+  const id = setInterval(() => subscriber.next(Date.now()), 1000);
+
+
+
+  // 返回清理函数作为 TeardownLogic
+
+  return () => {
+
+    clearInterval(id);
+
+    console.log('已清理 interval');
+
+  };
+
+});
+
+
+
+const sub = custom$.subscribe(v => console.log(v));
+
+// 取消订阅时自动执行清理函数
+
+sub.unsubscribe();</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>Subscription</code></li>
+
+    <li><code>Unsubscribable</code></li>
+
+    <li><code>Observable</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 TeardownLogic：</p>
+
+    <button onclick="runTeardown()">清理函数</button>
+
+    <button onclick="runUnsub()">取消订阅触发清理</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { Observable } = rxjs;
+
+    const output = document.getElementById('output');
+
+    let demoSub = null;
+
+    let intervalId = null;
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runTeardown() {
+
+      if (demoSub) demoSub.unsubscribe();
+
+      log('=== Observable 返回 TeardownLogic ===');
+
+      const custom$ = new Observable(subscriber => {
+
+        let count = 0;
+
+        intervalId = setInterval(() => {
+
+          subscriber.next(++count);
+
+          if (count >= 3) subscriber.complete();
+
+        }, 400);
+
+        return () => {
+
+          clearInterval(intervalId);
+
+          log('TeardownLogic 执行：已清理 interval');
+
+        };
+
+      });
+
+      demoSub = custom$.subscribe({
+
+        next: v => log('next: ' + v),
+
+        complete: () => log('complete')
+
+      });
+
+    }
+
+
+
+    function runUnsub() {
+
+      if (demoSub) {
+
+        log('手动 unsubscribe...');
+
+        demoSub.unsubscribe();
+
+        demoSub = null;
+
+      } else {
+
+        log('请先点击「清理函数」启动订阅');
+
+      }
+
+    }
+
+
+
+    log('页面已加载，TeardownLogic 定义订阅取消时的清理逻辑');
+
+  </script>
+
+</body>
+
+</html>
+

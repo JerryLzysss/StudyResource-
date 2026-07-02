@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS Observable</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS Observable</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>Observable 表示在任何时间量内的任何一组值，是 RxJS 的最基本构建块。通过 <code>subscribe</code> 启动执行并注册 Observer 处理程序。
+
+  </div>
+
+
+
+  <h2>类声明</h2>
+
+  <div class="code-box">class Observable&lt;T&gt; implements Subscribable&lt;T&gt; {
+
+  static create: Function
+
+  static if: typeof iif
+
+  static throw: typeof throwError
+
+  constructor(subscribe?: (this: Observable&lt;T&gt;, subscriber: Subscriber&lt;T&gt;) =&gt; TeardownLogic)
+
+  source: Observable&lt;any&gt;
+
+  operator: Operator&lt;any, T&gt;
+
+  lift&lt;R&gt;(operator: Operator&lt;T, R&gt;): Observable&lt;R&gt;
+
+  subscribe(observerOrNext?, error?, complete?): Subscription
+
+  pipe(...operations: OperatorFunction&lt;any, any&gt;[]): Observable&lt;any&gt;
+
+  forEach(next: (value: T) =&gt; void): Promise&lt;void&gt;
+
+  toPromise(): Promise&lt;T&gt;
+
+}</div>
+
+
+
+  <h2>子类</h2>
+
+  <ul>
+
+    <li><code>Subject</code>（含 BehaviorSubject、ReplaySubject、AsyncSubject）</li>
+
+    <li><code>ConnectableObservable</code></li>
+
+    <li><code>GroupedObservable</code></li>
+
+  </ul>
+
+
+
+  <h2>主要方法</h2>
+
+  <table>
+
+    <tr><th>方法</th><th>说明</th></tr>
+
+    <tr><td><code>subscribe()</code></td><td>调用 Observable 的执行并注册 Observer，返回 Subscription</td></tr>
+
+    <tr><td><code>pipe()</code></td><td>将多个操作符串联成管道</td></tr>
+
+    <tr><td><code>lift()</code></td><td>创建带新操作符的 Observable</td></tr>
+
+    <tr><td><code>forEach()</code></td><td>以 Promise 方式消费 Observable</td></tr>
+
+  </table>
+
+
+
+  <h2>描述</h2>
+
+  <p><code>subscribe</code> 不是普通操作符，而是启动 Observable 内部执行的方法。调用 subscribe 才是 Observable 真正开始工作的时刻。</p>
+
+  <p>可以传入 Observer 对象，或依次传入 next、error、complete 三个回调函数。返回的 Subscription 可用于 <code>unsubscribe()</code> 停止执行并清理资源。</p>
+
+
+
+  <h2>例子</h2>
+
+  <h3>订阅 Observer 对象</h3>
+
+  <div class="code-box">import { of } from 'rxjs';
+
+
+
+const sumObserver = {
+
+  sum: 0,
+
+  next(value) {
+
+    console.log('累加: ' + value);
+
+    this.sum = this.sum + value;
+
+  },
+
+  complete() {
+
+    console.log('总和等于: ' + this.sum);
+
+  }
+
+};
+
+
+
+of(1, 2, 3).subscribe(sumObserver);
+
+// 累加: 1, 2, 3 → 总和等于: 6</div>
+
+
+
+  <h3>订阅回调函数</h3>
+
+  <div class="code-box">import { of } from 'rxjs';
+
+
+
+let sum = 0;
+
+of(1, 2, 3).subscribe(
+
+  value => { sum += value; console.log('累加: ' + value); },
+
+  undefined,
+
+  () => console.log('总和等于: ' + sum)
+
+);</div>
+
+
+
+  <h3>取消订阅</h3>
+
+  <div class="code-box">import { interval } from 'rxjs';
+
+
+
+const subscription = interval(1000).subscribe(num => console.log(num));
+
+setTimeout(() => {
+
+  subscription.unsubscribe();
+
+  console.log('已取消订阅！');
+
+}, 2500);</div>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 Observable API：</p>
+
+    <button onclick="runObserverSubscribe()">Observer 订阅</button>
+
+    <button onclick="runCallbackSubscribe()">回调订阅</button>
+
+    <button onclick="runPipe()">pipe + map</button>
+
+    <button onclick="runUnsubscribe()">取消订阅</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { Observable, of, interval } = rxjs;
+
+    const { map, take } = rxjs.operators;
+
+
+
+    const output = document.getElementById('output');
+
+    let intervalSub = null;
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+      if (intervalSub) {
+
+        intervalSub.unsubscribe();
+
+        intervalSub = null;
+
+      }
+
+    }
+
+
+
+    function runObserverSubscribe() {
+
+      log('=== Observer 对象订阅 ===');
+
+      const sumObserver = {
+
+        sum: 0,
+
+        next(value) {
+
+          log('累加: ' + value);
+
+          this.sum += value;
+
+        },
+
+        complete() {
+
+          log('总和等于: ' + this.sum);
+
+        }
+
+      };
+
+      of(1, 2, 3).subscribe(sumObserver);
+
+    }
+
+
+
+    function runCallbackSubscribe() {
+
+      log('=== 回调函数订阅 ===');
+
+      let sum = 0;
+
+      of(10, 20, 30).subscribe(
+
+        v => { sum += v; log('累加: ' + v); },
+
+        undefined,
+
+        () => log('总和等于: ' + sum)
+
+      );
+
+    }
+
+
+
+    function runPipe() {
+
+      log('=== pipe(map(x => x * 2)) ===');
+
+      of(1, 2, 3).pipe(map(x => x * 2)).subscribe(v => log('next: ' + v));
+
+    }
+
+
+
+    function runUnsubscribe() {
+
+      log('=== interval 取消订阅 ===');
+
+      if (intervalSub) intervalSub.unsubscribe();
+
+      intervalSub = interval(500).pipe(take(10)).subscribe({
+
+        next: v => log('tick: ' + v),
+
+        complete: () => log('complete（取消时不会调用）')
+
+      });
+
+      setTimeout(() => {
+
+        if (intervalSub) {
+
+          intervalSub.unsubscribe();
+
+          log('已取消订阅！');
+
+          intervalSub = null;
+
+        }
+
+      }, 1500);
+
+    }
+
+
+
+    log('页面已加载，Observable = RxJS 核心类');
+
+  </script>
+
+</body>
+
+</html>
+
+

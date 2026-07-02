@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS MonoTypeOperatorFunction</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS MonoTypeOperatorFunction</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>MonoTypeOperatorFunction 是 OperatorFunction 的特例，表示输入和输出 Observable 的类型相同（T → T），如 filter、tap 等运算符。
+  </div>
+
+  <h2>类型定义</h2>
+  <div class="code-box">interface MonoTypeOperatorFunction&lt;T&gt; extends OperatorFunction&lt;T, T&gt; {
+  // inherited from OperatorFunction
+  // inherited from UnaryFunction
+  (source: Observable&lt;T&gt;): Observable&lt;T&gt;
+}</div>
+
+  <h2>描述</h2>
+  <p>MonoTypeOperatorFunction 描述一种函数类型：接受 Observable&lt;T&gt; 并返回 Observable&lt;T&gt;，即不改变流中值的类型。它是 <code>OperatorFunction&lt;T, T&gt;</code> 的别名。</p>
+  <p>与之相对，普通的 <code>OperatorFunction&lt;T, R&gt;</code> 允许输入类型 T 与输出类型 R 不同，例如 <code>map</code> 可以将 number 映射为 string。</p>
+  <p>常见的 MonoTypeOperatorFunction 包括：<code>filter</code>、<code>tap</code>、<code>take</code>、<code>skip</code>、<code>distinctUntilChanged</code> 等。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
+
+// filter 和 tap 都是 MonoTypeOperatorFunction&lt;number&gt;
+of(1, 2, 3, 4, 5).pipe(
+  tap(x => console.log('tap:', x)),
+  filter(x => x % 2 === 0)
+).subscribe(x => console.log('out:', x));
+
+// tap: 1  tap: 2  out: 2  tap: 3  tap: 4  out: 4  tap: 5</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>OperatorFunction</code></li>
+    <li><code>UnaryFunction</code></li>
+    <li><code>pipe</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 MonoTypeOperatorFunction 类型的运算符：</p>
+    <button onclick="runFilter()">filter（T → T）</button>
+    <button onclick="runTap()">tap（T → T）</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { filter, tap } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runFilter() {
+      log('=== filter（MonoTypeOperatorFunction）===');
+      of(1, 2, 3, 4, 5).pipe(
+        filter(x => x % 2 === 0)
+      ).subscribe({
+        next: x => log('偶数: ' + x),
+        complete: () => log('complete')
+      });
+    }
+
+    function runTap() {
+      log('=== tap（MonoTypeOperatorFunction，不改变值）===');
+      of('A', 'B', 'C').pipe(
+        tap(v => log('tap 副作用: ' + v))
+      ).subscribe({
+        next: x => log('next: ' + x),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，MonoTypeOperatorFunction 表示 T → T 的管道运算符');
+  </script>
+</body>
+</html>

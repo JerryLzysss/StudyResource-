@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS Subscriber</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS Subscriber</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>Subscriber 实现了 Observer 接口并继承 Subscription 类。所有 Observer 在内部都会转换为 Subscriber，以提供 unsubscribe 等 Subscription 能力。
+
+  </div>
+
+
+
+  <h2>类定义</h2>
+
+  <div class="code-box">class Subscriber&lt;T&gt; extends Subscription implements Observer&lt;T&gt; {
+
+  static create(next?, error?, complete?): Subscriber&lt;T&gt;
+
+  constructor(destination?: Subscriber | Observer)
+
+  protected isStopped: boolean
+
+  protected destination: Subscriber | Observer
+
+  next(value: T): void
+
+  error(err?: any): void
+
+  complete(): void
+
+  unsubscribe(): void
+
+  protected _next(value: T): void
+
+  protected _error(err: any): void
+
+  protected _complete(): void
+
+}</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>Observer 是消费 Observable 值的公共 API，但所有 Observer 都会被转换为 Subscriber，以便提供类似 Subscription 的功能（如 unsubscribe）。</p>
+
+  <p>Subscriber 是 RxJS 中的常见类型，对实现运算符至关重要，但作为公共 API 很少直接使用。自定义运算符时，通常会创建或扩展 Subscriber。</p>
+
+
+
+  <h2>静态方法</h2>
+
+  <table>
+
+    <tr><th>方法</th><th>说明</th></tr>
+
+    <tr><td><code>create(next?, error?, complete?)</code></td><td>根据（可能部分的）Observer 定义静态创建 Subscriber</td></tr>
+
+  </table>
+
+
+
+  <h2>实例方法</h2>
+
+  <table>
+
+    <tr><th>方法</th><th>说明</th></tr>
+
+    <tr><td><code>next(value)</code></td><td>接收 next 类型通知</td></tr>
+
+    <tr><td><code>error(err)</code></td><td>接收 error 类型通知</td></tr>
+
+    <tr><td><code>complete()</code></td><td>接收 complete 类型通知</td></tr>
+
+    <tr><td><code>unsubscribe()</code></td><td>取消订阅并释放资源</td></tr>
+
+    <tr><td><code>_next / _error / _complete</code></td><td>受保护的内部转发方法，子类可重写</td></tr>
+
+  </table>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { Subscriber, of } from 'rxjs';
+
+
+
+// 使用 Subscriber.create 创建
+
+const sub = Subscriber.create(
+
+  v => console.log('next:', v),
+
+  err => console.error('error:', err),
+
+  () => console.log('完成')
+
+);
+
+
+
+of(1, 2, 3).subscribe(sub);
+
+// 输出:
+
+// next: 1
+
+// next: 2
+
+// next: 3
+
+// complete</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>Observer</code></li>
+
+    <li><code>Subscription</code></li>
+
+    <li><code>Operator</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 Subscriber：</p>
+
+    <button onclick="runCreate()">Subscriber.create</button>
+
+    <button onclick="runInstance()">Subscriber 实例</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { Subscriber, of } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runCreate() {
+
+      log('=== Subscriber.create ===');
+
+      const sub = Subscriber.create(
+
+        v => log('next: ' + v),
+
+        err => log('error: ' + err),
+
+        () => log('complete')
+
+      );
+
+      of('A', 'B', 'C').subscribe(sub);
+
+    }
+
+
+
+    function runInstance() {
+
+      log('=== new Subscriber(destination) ===');
+
+      const destination = {
+
+        next: v => log('destination next: ' + v),
+
+        complete: () => log('destination complete')
+
+      };
+
+      const sub = new Subscriber(destination);
+
+      sub.next('via Subscriber');
+
+      sub.complete();
+
+    }
+
+
+
+    log('页面已加载，Subscriber = Observer + Subscription');
+
+  </script>
+
+</body>
+
+</html>
+

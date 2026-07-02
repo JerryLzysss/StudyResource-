@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS forkJoin</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS forkJoin</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>forkJoin 等待所有输入 Observable 完成，然后发出每个 Observable 的最后一个值，组成数组或字典。类似 Promise.all。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">forkJoin(...args: any[]): Observable&lt;any&gt;</div>
+
+  <h2>描述</h2>
+  <p>等待 Observables 完成，然后合并它们发出的最后值；若传入空数组则立即 complete。</p>
+  <p>forkJoin 接受数组或字典形式的输入 Observable。所有输入都 emit 并 complete 后，才 emit 一次结果（数组或对象），然后 complete。若任一输入 error，forkJoin 立即 error 并取消其他订阅。</p>
+  <p><strong>注意：</strong>所有输入 Observable 必须 complete，否则 forkJoin 永远不会 emit。</p>
+
+  <h2>例子</h2>
+  <h3>使用字典形式的 observable 输入</h3>
+  <div class="code-box">import { forkJoin, of, timer } from 'rxjs';
+
+const observable = forkJoin({
+  foo: of(1, 2, 3, 4),
+  bar: Promise.resolve(8),
+  baz: timer(4000)
+});
+
+observable.subscribe({
+  next: value => console.log(value),
+  complete: () => console.log('这就是结束！')
+});
+
+// 输出：
+// { foo: 4, bar: 8, baz: 0 } after 4 seconds
+// '这就是结束！' 紧随其后</div>
+
+  <h3>使用数组形式的 observable 输入</h3>
+  <div class="code-box">import { forkJoin, of, timer } from 'rxjs';
+
+const observable = forkJoin([
+  of(1, 2, 3, 4),
+  Promise.resolve(8),
+  timer(4000)
+]);
+
+observable.subscribe({
+  next: value => console.log(value),
+  complete: () => console.log('这就是结束！')
+});
+
+// 输出：
+// [4, 8, 0] after 4 seconds
+// '这就是结束！' 紧随其后</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>combineLatest</code></li>
+    <li><code>zip</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>forkJoin 等待所有源完成后 emit 最后值：</p>
+    <button onclick="runForkJoinArray()">数组形式 forkJoin</button>
+    <button onclick="runForkJoinObject()">字典形式 forkJoin</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { forkJoin, of, timer } = rxjs;
+    const { take } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runForkJoinArray() {
+      log('=== forkJoin 数组 ===');
+      forkJoin([
+        of(1, 2, 3),
+        of('a', 'b', 'c'),
+        timer(1000).pipe(take(1))
+      ]).subscribe({
+        next: v => log(`结果: ${JSON.stringify(v)}`),
+        complete: () => log('complete')
+      });
+    }
+
+    function runForkJoinObject() {
+      log('=== forkJoin 字典 ===');
+      forkJoin({
+        nums: of(10, 20),
+        letter: of('X', 'Y', 'Z')
+      }).subscribe({
+        next: v => log(`结果: ${JSON.stringify(v)}`),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，forkJoin = 全部完成后 emit 最后值');
+  </script>
+</body>
+</html>

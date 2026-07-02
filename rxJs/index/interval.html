@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS interval</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS interval</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>interval 创建一个 Observable，按指定的时间间隔发出递增的整数序列（0, 1, 2, …），常用于定时任务和轮询。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">interval(period: number = 0, scheduler?: SchedulerLike): Observable&lt;number&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>period</strong>（可选，默认 0）：两次发射之间的时间间隔，单位为毫秒</li>
+    <li><strong>scheduler</strong>（可选）：用于调度值发射的 SchedulerLike，默认使用 async 调度器</li>
+  </ul>
+
+  <h2>描述</h2>
+  <p>interval 返回一个 Observable，它发出无限的升序整数序列，发射之间具有您选择的固定时间间隔 <code>period</code>。第一次发射不会立即发生，而是在第一个 period 过去之后才发出 0。</p>
+  <p>默认情况下，该函数使用 async SchedulerLike 来提供时间概念，但您可以将任何 SchedulerLike 传递给它。与 timer 不同，interval 无法指定首次发射的延迟时间；若需立即开始发射，可使用 <code>timer(0, period)</code>。</p>
+  <p>由于 interval 发出无限序列，通常需要配合 <code>take</code> 或手动 <code>unsubscribe</code> 来停止。</p>
+
+  <h2>例子</h2>
+  <h3>每秒发出升序数字，最多 4 个</h3>
+  <div class="code-box">import { interval, take } from 'rxjs';
+
+const numbers = interval(1000);
+const takeFourNumbers = numbers.pipe(take(4));
+takeFourNumbers.subscribe(x => console.log('下一个: ', x));
+
+// 输出：
+// Next: 0
+// Next: 1
+// Next: 2
+// Next: 3</div>
+
+  <h3>订阅与取消</h3>
+  <div class="code-box">import { interval } from 'rxjs';
+
+const observable = interval(1000);
+const subscription = observable.subscribe(x => console.log(x));
+// 稍后取消：
+subscription.unsubscribe();</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>timer</code></li>
+    <li><code>delay</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 interval（自动停止）：</p>
+    <button onclick="runInterval()">每 500ms 发射</button>
+    <button onclick="stopInterval()">停止</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval } = rxjs;
+    const { take } = rxjs.operators;
+    const output = document.getElementById('output');
+    let intervalSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runInterval() {
+      stopInterval();
+      log('=== interval(500).pipe(take(5)) ===');
+      intervalSub = interval(500).pipe(take(5)).subscribe({
+        next: x => log('next: ' + x),
+        complete: () => log('complete（已自动停止）')
+      });
+    }
+
+    function stopInterval() {
+      if (intervalSub) {
+        intervalSub.unsubscribe();
+        intervalSub = null;
+        log('已手动停止');
+      }
+    }
+
+    log('页面已加载，interval 按固定间隔发出 0, 1, 2, …');
+  </script>
+</body>
+</html>

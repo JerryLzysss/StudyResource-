@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS 订阅</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; border-left: 4px solid #e91e63; padding-left: 10px; }
+    h3 { color: #666; margin-top: 20px; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul {
+      line-height: 1.8;
+    }
+    .concept-box {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .warning-box {
+      background-color: #ffebee;
+      border-left: 4px solid #f44336;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #e91e63;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>RxJS 订阅</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>订阅是代表可抛弃资源的对象，通常是 Observable 的执行。订阅具有一个最重要的方法 <code>unsubscribe()</code>，它不带任何参数，只是处置该订阅所拥有的资源。
+  </div>
+
+  <h2>什么是订阅？</h2>
+  <p>订阅是 Observable 执行时返回的对象，用于控制和管理 Observable 的生命周期。通过订阅，你可以：</p>
+  <ul>
+    <li>启动 Observable 的执行</li>
+    <li>接收 Observable 发出的值</li>
+    <li>取消订阅以释放资源</li>
+  </ul>
+
+  <div class="concept-box">
+    <strong>注意：</strong>在以前的 RxJS 版本中，订阅曾被称为 "Disposable"（一次性对象）。
+  </div>
+
+  <h2>基本订阅示例</h2>
+  <div class="code-box">import { interval } from 'rxjs';
+
+const observable = interval(1000);
+const subscription = observable.subscribe(x => console.log(x));
+
+// 5秒后取消订阅
+setTimeout(() => {
+  // 这会取消正在进行的 Observable 执行
+  subscription.unsubscribe();
+  console.log('已取消订阅');
+}, 5000);</div>
+
+  <p>执行后，控制台会显示：</p>
+  <div class="code-box">0
+1
+2
+3
+4
+已取消订阅</div>
+
+  <h2>订阅的核心方法</h2>
+  <table>
+    <tr>
+      <th>方法</th>
+      <th>说明</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>unsubscribe()</code></td>
+      <td>取消订阅，释放资源</td>
+      <td>停止 Observable 执行，防止内存泄漏</td>
+    </tr>
+    <tr>
+      <td><code>add(subscription)</code></td>
+      <td>添加子订阅</td>
+      <td>将多个订阅组合在一起统一管理</td>
+    </tr>
+    <tr>
+      <td><code>remove(subscription)</code></td>
+      <td>移除子订阅</td>
+      <td>取消之前添加的子订阅</td>
+    </tr>
+  </table>
+
+  <div class="warning-box">
+    <strong>重要提醒：</strong>订阅实际上仅具有 <code>unsubscribe()</code> 一个功能，就是释放资源或取消可观察执行。
+  </div>
+
+  <h2>组合订阅</h2>
+  <p>订阅可以放在一起，这样对一个订阅调用 <code>unsubscribe()</code> 可以同时取消订阅多个订阅。你可以通过将一个订阅"添加"到另一个订阅来实现：</p>
+
+  <div class="code-box">import { interval } from 'rxjs';
+
+const observable1 = interval(400);
+const observable2 = interval(300);
+
+const subscription = observable1.subscribe(x => 
+  console.log('第一个: ' + x)
+);
+
+const childSubscription = observable2.subscribe(x => 
+  console.log('第二个: ' + x)
+);
+
+// 将 childSubscription 添加为 subscription 的子订阅
+subscription.add(childSubscription);
+
+setTimeout(() => {
+  // 这会同时取消 subscription 和 childSubscription
+  subscription.unsubscribe();
+  console.log('所有订阅已取消');
+}, 1000);</div>
+
+  <p>执行后，控制台会显示（时间间隔不同）：</p>
+  <div class="code-box">second: 0
+first: 0
+second: 1
+first: 1
+second: 2
+所有订阅已取消</div>
+
+  <h2>移除子订阅</h2>
+  <p>订阅还具有一种 <code>remove(otherSubscription)</code> 方法，用于撤销之前添加的子订阅：</p>
+
+  <div class="code-box">import { interval } from 'rxjs';
+
+const observable1 = interval(1000);
+const observable2 = interval(500);
+
+const mainSubscription = observable1.subscribe(x => 
+  console.log('主订阅: ' + x)
+);
+
+const childSubscription = observable2.subscribe(x => 
+  console.log('子订阅: ' + x)
+);
+
+mainSubscription.add(childSubscription);
+
+// 3秒后移除子订阅，使其不再受主订阅管理
+setTimeout(() => {
+  mainSubscription.remove(childSubscription);
+  console.log('子订阅已从主订阅中移除');
+  
+  // 此时取消主订阅不会影响子订阅
+  mainSubscription.unsubscribe();
+  console.log('主订阅已取消，子订阅仍在运行');
+}, 3000);
+
+// 5秒后取消子订阅
+setTimeout(() => {
+  childSubscription.unsubscribe();
+  console.log('子订阅已取消');
+}, 5000);</div>
+
+  <h2>防止内存泄漏的最佳实践</h2>
+
+  <h3>1. 及时取消订阅</h3>
+  <div class="code-box">import { interval } from 'rxjs';
+
+export class MyComponent {
+  private subscription;
+
+  ngOnInit() {
+    this.subscription = interval(1000).subscribe(
+      x => console.log(x)
+    );
+  }
+
+  ngOnDestroy() {
+    // 组件销毁时取消订阅，防止内存泄漏
+    this.subscription.unsubscribe();
+  }
+}</div>
+
+  <h3>2. 使用 takeUntil 自动管理订阅</h3>
+  <div class="code-box">import { interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+export class MyComponent {
+  private destroy$ = new Subject<void>();
+
+  ngOnInit() {
+    interval(1000)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(x => console.log(x));
+  }
+
+  ngOnDestroy() {
+    // 发出信号，所有使用 takeUntil 的订阅都会自动完成
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}</div>
+
+  <h3>3. 使用 take 限制订阅次数</h3>
+  <div class="code-box">import { interval } from 'rxjs';
+import { take } from 'rxjs/operators';
+
+// 自动在接收 5 个值后完成订阅
+interval(1000)
+  .pipe(take(5))
+  .subscribe(
+    x => console.log(x),
+    null,
+    () => console.log('自动完成')
+  );</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮运行订阅相关示例：</p>
+    <button onclick="runBasicExample()">基础订阅</button>
+    <button onclick="runUnsubscribeExample()">取消订阅</button>
+    <button onclick="runCombineExample()">组合订阅</button>
+    <button onclick="runRemoveExample()">移除子订阅</button>
+    <button onclick="runMemoryExample()">内存泄漏演示</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <!-- 通过 CDN 引入 RxJS -->
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, Subject } = rxjs;
+    const { take, takeUntil } = rxjs.operators;
+
+    const output = document.getElementById('output');
+    let activeSubscriptions = [];
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+      // 取消所有活动订阅
+      activeSubscriptions.forEach(sub => {
+        if (!sub.closed) {
+          sub.unsubscribe();
+        }
+      });
+      activeSubscriptions = [];
+    }
+
+    // 基础订阅示例
+    function runBasicExample() {
+      log('=== 基础订阅示例 ===');
+      
+      const subscription = interval(1000).subscribe({
+        next: x => log(`收到值: ${x}`),
+        error: err => log(`错误: ${err}`),
+        complete: () => log('订阅已完成')
+      });
+
+      activeSubscriptions.push(subscription);
+
+      // 6秒后自动取消
+      setTimeout(() => {
+        if (!subscription.closed) {
+          subscription.unsubscribe();
+          log('基础订阅已手动取消\n');
+        }
+      }, 6000);
+    }
+
+    // 取消订阅示例
+    function runUnsubscribeExample() {
+      log('=== 取消订阅示例 ===');
+      log('启动 Observable，每 500ms 发出值');
+      
+      const subscription = interval(500).subscribe({
+        next: x => log(`正在运行: ${x}`),
+        complete: () => log('完成')
+      });
+
+      activeSubscriptions.push(subscription);
+
+      // 3秒后取消订阅
+      setTimeout(() => {
+        log('-- 执行 unsubscribe() --');
+        subscription.unsubscribe();
+        log(`订阅状态: ${subscription.closed ? '已关闭' : '未关闭'}`);
+        log('取消订阅示例完成\n');
+      }, 3000);
+    }
+
+    // 组合订阅示例
+    function runCombineExample() {
+      log('=== 组合订阅示例 ===');
+      
+      const subscription1 = interval(400).subscribe({
+        next: x => log(`订阅 1: ${x}`)
+      });
+
+      const subscription2 = interval(300).subscribe({
+        next: x => log(`订阅 2: ${x}`)
+      });
+
+      // 将 subscription2 添加为 subscription1 的子订阅
+      subscription1.add(subscription2);
+      
+      activeSubscriptions.push(subscription1);
+
+      log('subscription2 已添加到 subscription1');
+      log('2秒后取消 subscription1，两个订阅都会停止');
+
+      setTimeout(() => {
+        log('-- 取消主订阅 --');
+        subscription1.unsubscribe();
+        log(`订阅 1 状态: ${subscription1.closed ? '已关闭' : '未关闭'}`);
+        log(`订阅 2 状态: ${subscription2.closed ? '已关闭' : '未关闭'}`);
+        log('组合订阅示例完成\n');
+      }, 2000);
+    }
+
+    // 移除子订阅示例
+    function runRemoveExample() {
+      log('=== 移除子订阅示例 ===');
+      
+      const mainSub = interval(800).subscribe({
+        next: x => log(`主订阅: ${x}`)
+      });
+
+      const childSub = interval(500).subscribe({
+        next: x => log(`子订阅: ${x}`)
+      });
+
+      mainSub.add(childSub);
+      activeSubscriptions.push(mainSub);
+      activeSubscriptions.push(childSub);
+
+      log('子订阅已添加到主订阅');
+
+      setTimeout(() => {
+        log('-- 从主订阅中移除子订阅 --');
+        mainSub.remove(childSub);
+        log('子订阅已移除');
+        
+        setTimeout(() => {
+          log('-- 取消主订阅 --');
+          mainSub.unsubscribe();
+          log(`主订阅状态: ${mainSub.closed ? '已关闭' : '未关闭'}`);
+          log(`子订阅状态: ${childSub.closed ? '已关闭' : '未关闭'} (已移除，不受影响)`);
+          
+          // 1秒后取消子订阅
+          setTimeout(() => {
+            childSub.unsubscribe();
+            log('子订阅已手动取消');
+            log('移除子订阅示例完成\n');
+          }, 1000);
+        }, 1000);
+      }, 2000);
+    }
+
+    // 内存泄漏演示
+    function runMemoryExample() {
+      log('=== 内存泄漏风险演示 ===');
+      log('场景: 组件销毁时未取消订阅');
+      
+      // 模拟一个没有取消订阅的情况
+      const badSubscription = interval(1000).subscribe({
+        next: x => log(`泄漏的订阅仍在运行: ${x}`)
+      });
+
+      activeSubscriptions.push(badSubscription);
+
+      setTimeout(() => {
+        log('-- 模拟组件销毁，但未取消订阅 --');
+        log('这个订阅会继续在后台运行，造成内存泄漏！');
+        log('请使用"清空输出"按钮来停止所有订阅\n');
+      }, 3000);
+
+      // 对比：正确做法
+      setTimeout(() => {
+        log('=== 正确的做法：使用 takeUntil ===');
+        const destroy$ = new Subject();
+        
+        const goodSubscription = interval(1000)
+          .pipe(takeUntil(destroy$))
+          .subscribe({
+            next: x => log(`受控的订阅: ${x}`),
+            complete: () => log('受控订阅已自动完成')
+          });
+
+        activeSubscriptions.push(goodSubscription);
+
+        setTimeout(() => {
+          log('-- 发出销毁信号 --');
+          destroy$.next();
+          destroy$.complete();
+          log('受控订阅已自动清理，不会造成内存泄漏\n');
+        }, 3000);
+      }, 100);
+    }
+
+    // 页面加载时显示欢迎信息
+    log('页面已加载，点击上方按钮运行订阅示例');
+    log('订阅 = 可抛弃资源的对象，用于控制 Observable 执行');
+    log('记得调用 unsubscribe() 来释放资源，防止内存泄漏\n');
+  </script>
+</body>
+</html>

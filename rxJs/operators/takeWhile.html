@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS takeWhile</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS takeWhile</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>takeWhile 持续发出满足 predicate 的值，一旦 predicate 返回 false 就 complete（inclusive 模式可包含该值）。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">takeWhile&lt;T&gt;(
+  predicate: (value: T, index: number) => boolean,
+  inclusive?: boolean
+): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>predicate</strong>：返回 true 时继续发出值</li>
+    <li><strong>inclusive</strong>（可选）：true 时包含第一个不满足条件的值</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>MonoTypeOperatorFunction</code>，predicate 返回 false 时 complete。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5).pipe(
+  takeWhile(v => v &lt;= 3)
+).subscribe(console.log);
+// 输出: 1, 2, 3</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runTakeWhile()">takeWhile(v &lt;= 3)</button>
+    <button onclick="runInclusive()">inclusive 模式</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { takeWhile } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runTakeWhile() {
+      log('=== takeWhile(v => v <= 3) ===');
+      of(1, 2, 3, 4, 5).pipe(takeWhile(v => v <= 3)).subscribe({ next: v => log('next: ' + v), complete: () => log('complete') });
+    }
+    function runInclusive() {
+      log('=== takeWhile(v <= 3, true) inclusive ===');
+      of(1, 2, 3, 4, 5).pipe(takeWhile(v => v <= 3, true)).subscribe({ next: v => log('next: ' + v), complete: () => log('complete') });
+    }
+    log('页面已加载，takeWhile 在条件不满足时停止');
+  </script>
+</body>
+</html>

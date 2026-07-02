@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS refCount</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS refCount</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>refCount 使 ConnectableObservable 在第一个订阅者订阅时自动 connect，最后一个订阅者取消订阅时自动 disconnect。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">refCount&lt;T&gt;(): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>返回值</h2>
+  <p>返回普通 Observable，自动管理 connect/disconnect 生命周期。</p>
+  <h2>描述</h2>
+  <p>refCount 通常跟在 publish、publishReplay 等之后使用。与 share() 等价于 publish().refCount()。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { interval } from 'rxjs';
+import { publish, refCount, tap } from 'rxjs/operators';
+
+const shared = interval(1000).pipe(
+  tap(v => console.log('源:', v)),
+  publish(),
+  refCount()
+);
+
+const sub1 = shared.subscribe(v => console.log('A:', v));
+// 第一个订阅者触发 connect
+
+setTimeout(() => sub1.unsubscribe(), 3000);
+// 最后一个订阅者取消后 disconnect</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runRefCount()">refCount 自动 connect</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval } = rxjs;
+    const { publish, refCount, tap, take } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runRefCount() {
+      log('=== publish().refCount() ===');
+      const shared = interval(400).pipe(tap(v => log('源: ' + v)), publish(), refCount());
+      log('创建 shared，尚未 connect');
+      const sub = shared.pipe(take(3)).subscribe(v => log('A: ' + v));
+      log('第一个订阅触发 connect');
+      setTimeout(() => { sub.unsubscribe(); log('取消订阅，disconnect'); }, 2000);
+    }
+    log('页面已加载，refCount 自动管理连接');
+  </script>
+</body>
+</html>

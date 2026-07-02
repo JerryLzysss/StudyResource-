@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS UnsubscriptionError</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS UnsubscriptionError</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>UnsubscriptionError 是在 Subscription 的 <code>unsubscribe()</code> 运行期间发生一个或多个错误时抛出的错误。
+  </div>
+
+  <h2>接口定义</h2>
+  <div class="code-box">interface UnsubscriptionError extends Error {
+  readonly errors: any[]
+}</div>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>errors</code></td><td><code>any[]</code></td><td>只读。取消订阅过程中收集到的所有错误</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>当 Subscription 执行 <code>unsubscribe()</code> 时，会依次调用所有注册的拆解逻辑（teardown）。如果其中某个拆解函数抛出异常，RxJS 会收集这些错误并最终抛出 UnsubscriptionError，其中 <code>errors</code> 数组包含所有捕获到的异常。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { Subscription } from 'rxjs';
+
+const sub = new Subscription();
+
+// 添加会在 unsubscribe 时抛出错误的拆解逻辑
+sub.add(() => { throw new Error('拆解失败 1'); });
+sub.add(() => { throw new Error('拆解失败 2'); });
+
+try {
+  sub.unsubscribe();
+} catch (err) {
+  console.error(err.name);    // UnsubscriptionError
+  console.error(err.errors);  // [Error, Error]
+}</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>Subscription</code></li>
+    <li><code>TeardownLogic</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 UnsubscriptionError：</p>
+    <button onclick="runUnsubError()">拆解时抛出错误</button>
+    <button onclick="runNormal()">正常取消订阅</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { Subscription } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runUnsubError() {
+      log('=== Subscription 拆解时抛出多个错误 ===');
+      const sub = new Subscription();
+      sub.add(() => { throw new Error('拆解失败 1'); });
+      sub.add(() => { throw new Error('拆解失败 2'); });
+      try {
+        sub.unsubscribe();
+        log('unsubscribe 完成（无异常）');
+      } catch (err) {
+        log(`捕获: ${err.name}`);
+        log(`errors 数量: ${err.errors.length}`);
+        err.errors.forEach((e, i) => log(`  errors[${i}]: ${e.message}`));
+      }
+    }
+
+    function runNormal() {
+      log('=== 正常 unsubscribe（无错误）===');
+      const sub = new Subscription();
+      sub.add(() => log('拆解逻辑 1 执行'));
+      sub.add(() => log('拆解逻辑 2 执行'));
+      sub.unsubscribe();
+      log('正常完成');
+    }
+
+    log('页面已加载，UnsubscriptionError = unsubscribe 期间多个错误的聚合');
+  </script>
+</body>
+</html>

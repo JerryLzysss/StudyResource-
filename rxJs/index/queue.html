@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS queue</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS queue</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong><code>queue</code> 是队列调度程序（queueScheduler），将每个任务放入队列而非立即执行，递归调度时避免栈溢出，类似蹦床（trampoline）机制。
+  </div>
+
+  <h2>声明</h2>
+  <div class="code-box">const queue: QueueScheduler;</div>
+
+  <h2>描述</h2>
+  <p>将每个下一个任务放在队列中，而不是立即执行。</p>
+  <p><code>queue</code> 与 delay 一起使用时，行为与 <code>async</code> 调度程序相同。</p>
+  <p>无 delay 时，同步安排给定任务——调度后立即执行。但在递归调用时（在已调度任务内部再次 schedule），新任务会入队等待当前任务完成，而非立即执行。</p>
+  <p>使用 <code>queue</code> 调度程序时，可确保当前任务在该调度器上的其他任务开始前结束。</p>
+
+  <h2>例子</h2>
+  <h3>先递归调度，再执行后续代码</h3>
+  <div class="code-box">import { queueScheduler } from 'rxjs';
+
+queueScheduler.schedule(() => {
+  queueScheduler.schedule(() => console.log('第二个任务'));
+  console.log('第一个任务');
+});
+
+// 输出:
+// first
+// second</div>
+
+  <h3>递归重新安排自身</h3>
+  <div class="code-box">import { queueScheduler } from 'rxjs';
+
+queueScheduler.schedule(function(state) {
+  if (state !== 0) {
+    console.log('之前', state);
+    this.schedule(state - 1);
+    console.log('之后', state);
+  }
+}, 0, 3);
+
+// queue 调度器输出（深度优先，当前任务完成后才执行队列中下一个）:
+// before 3
+// after 3
+// before 2
+// after 2
+// before 1
+// after 1</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 queue 调度程序：</p>
+    <button onclick="runNested()">嵌套 schedule</button>
+    <button onclick="runRecursive()">递归 countdown</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { queueScheduler } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runNested() {
+      log('=== 嵌套 schedule（先 first 后 second）===');
+      queueScheduler.schedule(() => {
+        queueScheduler.schedule(() => log('second'));
+        log('first');
+      });
+    }
+
+    function runRecursive() {
+      log('=== 递归 schedule state=3 → 0 ===');
+      queueScheduler.schedule(function(state) {
+        if (state !== 0) {
+          log(`before ${state}`);
+          this.schedule(state - 1);
+          log(`after ${state}`);
+        }
+      }, 0, 3);
+    }
+
+    log('页面已加载，queue 将递归任务入队顺序执行');
+  </script>
+</body>
+</html>

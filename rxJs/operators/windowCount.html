@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS windowCount</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS windowCount</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>windowCount 将源 Observable 的值按固定数量分割为多个窗口 Observable，每个窗口包含 windowSize 个值。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">windowCount&lt;T&gt;(
+  windowSize: number,
+  startWindowEvery?: number
+): OperatorFunction&lt;T, Observable&lt;T&gt;&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>windowSize</strong>：每个窗口的值数量</li>
+    <li><strong>startWindowEvery</strong>（可选）：每隔多少个值开启新窗口（滑动窗口）</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>OperatorFunction</code>，发出固定大小的窗口 Observable。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { windowCount, mergeMap, toArray } from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5, 6, 7).pipe(
+  windowCount(3),
+  mergeMap(w => w.pipe(toArray()))
+).subscribe(console.log);
+// [1,2,3], [4,5,6], [7]</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runWindowCount()">windowCount(3)</button>
+    <button onclick="runSliding()">滑动窗口(3,2)</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { windowCount, mergeMap, toArray } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runWindowCount() {
+      log('=== windowCount(3) ===');
+      of(1, 2, 3, 4, 5, 6, 7).pipe(windowCount(3), mergeMap(w => w.pipe(toArray()))).subscribe(arr => log('[' + arr.join(', ') + ']'));
+    }
+    function runSliding() {
+      log('=== windowCount(3, 2) 滑动窗口 ===');
+      of(1, 2, 3, 4, 5, 6, 7).pipe(windowCount(3, 2), mergeMap(w => w.pipe(toArray()))).subscribe(arr => log('[' + arr.join(', ') + ']'));
+    }
+    log('页面已加载，windowCount 按固定数量分窗');
+  </script>
+</body>
+</html>

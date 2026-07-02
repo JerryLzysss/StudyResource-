@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS race</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS race（创建函数）</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>race 是 index 中的创建函数，返回一个 Observable，它镜像第一个发出值的源 Observable。
+
+  </div>
+
+
+
+  <h2>签名</h2>
+
+  <div class="code-box">race(...sources: ObservableInput[]): Observable&lt;T&gt;</div>
+
+
+
+  <h2>参量</h2>
+
+  <ul>
+
+    <li><strong>sources</strong>：要竞争的 Observable 输入源（可传入多个）</li>
+
+  </ul>
+
+
+
+  <h2>描述</h2>
+
+  <p>race 返回一个 Observable，订阅时会立即订阅所有源 Observable。一旦其中一个源 Observable 发出值，结果 Observable 就会取消订阅其他源。结果 Observable 将转发"获胜"源 Observable 的所有通知，包括 error 和 complete。</p>
+
+  <p>如果某个源 Observable 在发出第一个通知之前就抛出错误，race 也会抛出错误，无论其他源 Observable 是否有可能赢得竞争。</p>
+
+  <p>race 可用于从最快的 HTTP 或 WebSocket 网络连接中选择响应，也可用于根据用户输入切换 Observable 上下文。</p>
+
+
+
+  <h2>例子</h2>
+
+  <h3>订阅第一个开始发射的 Observable</h3>
+
+  <div class="code-box">import { race, interval } from 'rxjs';
+
+import { mapTo } from 'rxjs/operators';
+
+
+
+const obs1 = interval(1000).pipe(mapTo('fast one'));
+
+const obs2 = interval(3000).pipe(mapTo('medium one'));
+
+const obs3 = interval(5000).pipe(mapTo('slow one'));
+
+
+
+race(obs3, obs1, obs2).subscribe(winner => console.log(winner));
+
+
+
+// 输出:
+
+// 一系列 'fast one'</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>race</code>（operators，已弃用）</li>
+
+    <li><code>merge</code></li>
+
+    <li><code>forkJoin</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 race 创建函数：</p>
+
+    <button onclick="runRace()">竞速 interval</button>
+
+    <button onclick="stopDemo()">停止</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { race, interval } = rxjs;
+
+    const { mapTo, take } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    let demoSub = null;
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function stopDemo() {
+
+      if (demoSub) {
+
+        demoSub.unsubscribe();
+
+        demoSub = null;
+
+        log('已停止');
+
+      }
+
+    }
+
+
+
+    function runRace() {
+
+      stopDemo();
+
+      log('=== race(慢/快/中 interval) ===');
+
+      const fast = interval(300).pipe(mapTo('fast one'), take(3));
+
+      const medium = interval(600).pipe(mapTo('medium one'), take(3));
+
+      const slow = interval(900).pipe(mapTo('slow one'), take(3));
+
+      demoSub = race(slow, fast, medium).subscribe({
+
+        next: v => log('winner: ' + v),
+
+        complete: () => log('complete（仅 fast 获胜）')
+
+      });
+
+    }
+
+
+
+    log('页面已加载，race 只保留第一个发出值的 Observable');
+
+  </script>
+
+</body>
+
+</html>
+

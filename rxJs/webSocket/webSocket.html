@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS webSocket</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS webSocket</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>webSocket 是工厂函数，用于创建 WebSocketSubject，对浏览器提供的 w3c 兼容 WebSocket 对象进行封装，既可接收消息（Observable）也可发送消息（Observer）。
+  </div>
+
+  <h2>函数签名</h2>
+  <div class="code-box">webSocket(urlConfigOrSource: string | WebSocketSubjectConfig): WebSocketSubject</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>urlConfigOrSource</code></td><td>WebSocket 端点 URL 字符串，或包含配置与生命周期观察者的 WebSocketSubjectConfig 对象</td></tr>
+  </table>
+
+  <h2>返回值</h2>
+  <p>返回 <code>WebSocketSubject</code>，可通过 WebSocket 连接与服务器双向通信。</p>
+
+  <h2>描述</h2>
+  <p><code>webSocket</code> 是工厂函数，产生 <code>WebSocketSubject</code>，用于与任意端点建立 WebSocket 连接。参数可以是端点 URL 字符串，也可以是 <code>WebSocketSubjectConfig</code> 对象，以提供额外配置及追踪连接生命周期的观察者。</p>
+
+  <h3>接收服务器消息</h3>
+  <div class="code-box">import { webSocket } from 'rxjs/webSocket';
+
+const subject = webSocket('ws://localhost:8081');
+
+subject.subscribe({
+  next: msg => console.log('收到消息: ' + msg),
+  error: err => console.log(err),
+  complete: () => console.log('完成')
+});</div>
+
+  <h3>向服务器推送消息</h3>
+  <div class="code-box">import { webSocket } from 'rxjs/webSocket';
+
+const subject = webSocket('ws://localhost:8081');
+
+subject.subscribe();
+// 至少需要一个消费者订阅，否则 next 的值只会被缓冲而不会发送
+
+subject.next({ message: 'some message' });
+// 连接建立后发送消息，默认使用 JSON.stringify 序列化
+
+subject.complete(); // 关闭连接
+
+subject.error({ code: 4000, reason: 'I think our app just broke!' });
+// 也会关闭连接，并告知服务器关闭由错误引起</div>
+
+  <h3>多路复用（multiplex）</h3>
+  <p>WebSocketSubject 支持多路复用，允许多个虚拟 socket 流共享同一个底层 WebSocket 连接。通过 <code>multiplex</code> 方法，可在订阅时发送订阅消息、在取消订阅时发送退订消息，并用 <code>messageFilter</code> 筛选服务器返回的数据。</p>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 webSocket（使用模拟 WebSocket，无需真实服务器）：</p>
+    <button onclick="runSubscribe()">订阅接收消息</button>
+    <button onclick="runSend()">发送消息</button>
+    <button onclick="runMultiplex()">multiplex 多路复用</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script type="module">
+    import { webSocket } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/webSocket/+esm';
+
+    const output = document.getElementById('output');
+    let mockSocket = null;
+    let subject = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.textContent += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    class MockWebSocket {
+      constructor(url) {
+        this.url = url;
+        this.readyState = 0;
+        this.onopen = null;
+        this.onmessage = null;
+        this.onclose = null;
+        this.onerror = null;
+        setTimeout(() => {
+          this.readyState = 1;
+          if (this.onopen) this.onopen({ type: 'open' });
+        }, 50);
+      }
+      send(data) {
+        log('MockWebSocket.send: ' + data);
+        setTimeout(() => {
+          if (this.onmessage) {
+            this.onmessage({ data: JSON.stringify({ echo: JSON.parse(data) }) });
+          }
+        }, 80);
+      }
+      close() {
+        this.readyState = 3;
+        if (this.onclose) this.onclose({ type: 'close', code: 1000 });
+      }
+    }
+
+    function createSubject() {
+      return webSocket({
+        url: 'ws://mock.local/8081',
+        WebSocketCtor: MockWebSocket,
+        openObserver: { next: () => log('openObserver: 连接已打开') },
+        closeObserver: { next: () => log('closeObserver: 连接已关闭') }
+      });
+    }
+
+    window.clearOutput = () => { output.textContent = ''; };
+
+    window.runSubscribe = () => {
+      log('=== webSocket 订阅接收消息 ===');
+      subject = createSubject();
+      subject.subscribe({
+        next: msg => log('收到消息: ' + JSON.stringify(msg)),
+        error: err => log('error: ' + JSON.stringify(err)),
+        complete: () => log('complete: 连接关闭')
+      });
+      setTimeout(() => subject.next({ message: 'hello server' }), 200);
+      setTimeout(() => subject.complete(), 600);
+    };
+
+    window.runSend = () => {
+      log('=== webSocket 发送消息 ===');
+      subject = createSubject();
+      subject.subscribe();
+      setTimeout(() => {
+        subject.next({ message: 'some message' });
+        log('已 next({ message: "some message" })');
+      }, 150);
+      setTimeout(() => subject.complete(), 500);
+    };
+
+    window.runMultiplex = () => {
+      log('=== multiplex 多路复用 ===');
+      subject = createSubject();
+      const streamA = subject.multiplex(
+        () => ({ subscribe: 'A' }),
+        () => ({ unsubscribe: 'A' }),
+        msg => msg.channel === 'A'
+      );
+      streamA.subscribe(msg => log('streamA: ' + JSON.stringify(msg)));
+      setTimeout(() => {
+        subject.next({ channel: 'A', data: 'messageForA' });
+        log('已发送 channel A 消息');
+      }, 200);
+      setTimeout(() => subject.complete(), 600);
+    };
+
+    log('页面已加载，点击按钮演示 webSocket（模拟连接）');
+  </script>
+</body>
+</html>

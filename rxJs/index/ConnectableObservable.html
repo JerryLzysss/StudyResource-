@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS ConnectableObservable</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS ConnectableObservable</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>ConnectableObservable 是一种特殊的 Observable，订阅时不会立即开始执行，只有调用 <code>connect()</code> 后才会向所有观察者共享同一次底层执行（多播）。
+  </div>
+
+  <h2>类声明</h2>
+  <div class="code-box">class ConnectableObservable&lt;T&gt; extends Observable&lt;T&gt; {
+  constructor(source: Observable&lt;T&gt;, subjectFactory: () =&gt; Subject&lt;T&gt;)
+  connect(): Subscription
+  refCount(): Observable&lt;T&gt;
+}</div>
+
+  <h2>描述</h2>
+  <p><code>multicast</code> 返回一个看起来像普通 Observable 的 Observable，但在订阅时却像 Subject 一样工作。<code>multicast</code> 返回一个 <code>ConnectableObservable</code>，它只是多了 <code>connect()</code> 方法的 Observable。</p>
+  <p>该 <code>connect()</code> 方法对于准确确定共享 Observable 执行何时开始非常重要。因为 <code>connect()</code> 在底层执行了 <code>source.subscribe(subject)</code>，所以它返回 Subscription，你可以取消订阅以取消共享 Observable 的执行。</p>
+
+  <h2>主要方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr><td><code>connect()</code></td><td>启动共享执行，将 source 订阅到内部 Subject</td></tr>
+    <tr><td><code>refCount()</code></td><td>返回普通 Observable，在第一个订阅者到达时自动 connect，最后一个离开时断开</td></tr>
+  </table>
+
+  <h2>引用计数 refCount</h2>
+  <p>若希望避免显式调用 <code>connect()</code>，可使用 ConnectableObservable 的 <code>refCount()</code> 方法。当订阅者数量从 0 变为 1 时自动 connect；从 1 变为 0 时完全取消订阅，停止进一步执行。</p>
+  <p><code>refCount()</code> 仅存在于 ConnectableObservable 上，并且返回 <code>Observable</code>，而不是另一个 ConnectableObservable。</p>
+
+  <h2>例子</h2>
+  <h3>使用 multicast 与 connect</h3>
+  <div class="code-box">import { from, Subject } from 'rxjs';
+import { multicast } from 'rxjs/operators';
+
+const source = from([1, 2, 3]);
+const subject = new Subject();
+const multicasted = source.pipe(multicast(subject));
+
+multicasted.subscribe({ next: v => console.log(`observerA: ${v}`) });
+multicasted.subscribe({ next: v => console.log(`observerB: ${v}`) });
+
+multicasted.connect();</div>
+
+  <h3>使用 refCount 自动连接</h3>
+  <div class="code-box">import { interval, Subject } from 'rxjs';
+import { multicast, refCount } from 'rxjs/operators';
+
+const source = interval(500);
+const subject = new Subject();
+const refCounted = source.pipe(multicast(subject), refCount());
+
+refCounted.subscribe({ next: v => console.log(`observerA: ${v}`) });
+setTimeout(() => {
+  refCounted.subscribe({ next: v => console.log(`observerB: ${v}`) });
+}, 600);</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>multicast</code></li>
+    <li><code>publish</code></li>
+    <li><code>refCount</code></li>
+    <li><code>share</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>演示 ConnectableObservable 需 connect 后才开始多播：</p>
+    <button onclick="runWithoutConnect()">订阅但不 connect</button>
+    <button onclick="runWithConnect()">订阅并 connect</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, Subject } = rxjs;
+    const { multicast, take } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runWithoutConnect() {
+      log('=== 订阅但不 connect（无输出）===');
+      const source = interval(300).pipe(take(3));
+      const subject = new Subject();
+      const conn = source.pipe(multicast(() => subject));
+      conn.subscribe(v => log(`A: ${v}`));
+      conn.subscribe(v => log(`B: ${v}`));
+      log('已订阅，未调用 connect()，不会收到值');
+    }
+
+    function runWithConnect() {
+      log('=== 订阅并 connect（多播共享）===');
+      const source = interval(300).pipe(take(3));
+      const subject = new Subject();
+      const conn = source.pipe(multicast(() => subject));
+      conn.subscribe(v => log(`A: ${v}`));
+      conn.subscribe(v => log(`B: ${v}`));
+      conn.connect();
+      log('已调用 connect()，两个观察者共享同一执行');
+    }
+
+    log('页面已加载，ConnectableObservable = 需 connect 才开始的多播 Observable');
+  </script>
+</body>
+</html>

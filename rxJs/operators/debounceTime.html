@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS debounceTime</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 300px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>RxJS debounceTime</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>debounceTime 忽略源 Observable 在指定毫秒数内连续发出的值，仅在静默期结束后才发出最后一个值。常用于搜索框输入防抖。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">debounceTime&lt;T&gt;(
+  dueTime: number,
+  scheduler?: SchedulerLike
+): MonoTypeOperatorFunction&lt;T&gt;</div>
+
+  <h2>描述</h2>
+  <p>debounceTime 是 debounce 的时间版本，使用固定的 dueTime（毫秒）作为静默期。每当源发出新值，计时器会重置。只有当 dueTime 毫秒内没有新值发出时，才会发出最后一个值。</p>
+  <p>典型应用场景：用户输入搜索关键词时，等待用户停止输入 300ms 后再发起请求，避免频繁调用 API。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { fromEvent } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
+const input = document.getElementById('search');
+fromEvent(input, 'input').pipe(
+  map(e => e.target.value),
+  debounceTime(500)
+).subscribe(val => console.log('防抖输入:', val));</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>在下方输入框中快速输入，观察 500ms 防抖效果：</p>
+    <input id="demoInput" type="text" placeholder="在此输入..." />
+    <br /><br />
+    <button onclick="runBurst()">模拟快速发出值</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { fromEvent, interval } = rxjs;
+    const { debounceTime, map, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    fromEvent(document.getElementById('demoInput'), 'input').pipe(
+      map(e => e.target.value),
+      debounceTime(500)
+    ).subscribe(val => log('debounceTime 输出: ' + val));
+
+    function runBurst() {
+      log('=== 快速发出 A,B,C,D（500ms 后只输出 D）===');
+      const letters = ['A', 'B', 'C', 'D'];
+      interval(100).pipe(take(4)).pipe(
+        map(i => letters[i]),
+        debounceTime(500)
+      ).subscribe({
+        next: v => log('debounceTime 输出: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，在输入框中输入或点击按钮演示 debounceTime');
+  </script>
+</body>
+</html>

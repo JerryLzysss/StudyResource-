@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS scheduled</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS scheduled</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>scheduled 将常见的 ObservableInput 类型转换为 Observable，并在指定的调度程序上安排订阅和发射。
+
+  </div>
+
+
+
+  <h2>签名</h2>
+
+  <div class="code-box">scheduled&lt;T&gt;(input: ObservableInput&lt;T&gt;, scheduler: SchedulerLike): Observable&lt;T&gt;</div>
+
+
+
+  <h2>参量</h2>
+
+  <ul>
+
+    <li><strong>input</strong>：要调度的 Observable、数组、Promise、Iterable 等 ObservableInput</li>
+
+    <li><strong>scheduler</strong>：用于安排订阅和发射的 SchedulerLike 调度程序</li>
+
+  </ul>
+
+
+
+  <h2>描述</h2>
+
+  <p>scheduled 是 RxJS 内部用于将各种输入源统一转换为 Observable 并指定调度时机的工具函数。它接受任意 ObservableInput（如数组、Promise、Iterable）和 SchedulerLike，返回在该调度器上执行订阅与发射的 Observable。</p>
+
+  <p><code>from</code> 和 <code>of</code> 等创建函数在传入 scheduler 参数时，内部会使用 scheduled 来实现。</p>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { scheduled, of, asyncScheduler } from 'rxjs';
+
+
+
+// 将 of 的值在 async 调度器上异步发射
+
+const result = scheduled(of(1, 2, 3), asyncScheduler);
+
+result.subscribe(v => console.log(v));
+
+
+
+// 等价于:
+
+// of(1, 2, 3, asyncScheduler).subscribe(...)</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>from</code></li>
+
+    <li><code>of</code></li>
+
+    <li><code>asyncScheduler</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 scheduled：</p>
+
+    <button onclick="runSync()">同步 of</button>
+
+    <button onclick="runScheduled()">scheduled + asyncScheduler</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { scheduled, of, asyncScheduler } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runSync() {
+
+      log('=== of(1,2,3) 同步 ===');
+
+      log('subscribe 之前');
+
+      of(1, 2, 3).subscribe(v => log('next: ' + v));
+
+      log('subscribe 之后（同步已全部发射）');
+
+    }
+
+
+
+    function runScheduled() {
+
+      log('=== scheduled(of(1,2,3), asyncScheduler) ===');
+
+      log('subscribe 之前');
+
+      scheduled(of(1, 2, 3), asyncScheduler).subscribe(v => log('next: ' + v));
+
+      log('subscribe 之后（异步调度，稍后发射）');
+
+    }
+
+
+
+    log('页面已加载，scheduled 在指定调度器上安排订阅与发射');
+
+  </script>
+
+</body>
+
+</html>
+

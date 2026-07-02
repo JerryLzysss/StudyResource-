@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS VirtualTimeScheduler</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS VirtualTimeScheduler</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>VirtualTimeScheduler 是虚拟时间调度器，用于测试场景，可以手动推进"虚拟时间"而无需等待真实时间流逝。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class VirtualTimeScheduler extends AsyncScheduler {
+  protected static frameTimeFactor: number
+  constructor(
+    SchedulerAction: typeof AsyncAction = VirtualAction,
+    maxFrames: number = Number.POSITIVE_INFINITY
+  )
+  frame: number
+  index: number
+  maxFrames: number
+  flush(): void
+}</div>
+
+  <h2>构造函数</h2>
+  <p><code>constructor(SchedulerAction?, maxFrames?)</code></p>
+  <ul>
+    <li><strong>SchedulerAction</strong>（可选，默认 VirtualAction）：调度动作类型</li>
+    <li><strong>maxFrames</strong>（可选，默认 Infinity）：最大帧数</li>
+  </ul>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>frame</code></td><td><code>number</code></td><td>当前虚拟时间帧</td></tr>
+    <tr><td><code>index</code></td><td><code>number</code></td><td>当前索引</td></tr>
+    <tr><td><code>maxFrames</code></td><td><code>number</code></td><td>最大帧数限制</td></tr>
+  </table>
+
+  <h2>方法</h2>
+  <p><code>flush(): void</code> — 提示调度程序执行其所有排队的操作，从而清理队列。</p>
+
+  <h2>描述</h2>
+  <p>VirtualTimeScheduler 主要用于 RxJS 测试（如 TestScheduler、大理石测试）。通过调用 <code>flush()</code> 可以立即执行所有已调度的任务，无需等待真实延迟，使异步代码的测试变得确定且快速。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { VirtualTimeScheduler } from 'rxjs';
+
+const scheduler = new VirtualTimeScheduler();
+
+scheduler.schedule(() => console.log('帧 10'), 10);
+scheduler.schedule(() => console.log('帧 20'), 20);
+
+console.log('flush 前，帧:', scheduler.frame); // 0
+scheduler.flush();
+console.log('flush 后，帧:', scheduler.frame); // 20
+// 输出： frame 10, frame 20</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>TestScheduler</code></li>
+    <li><code>async</code></li>
+    <li><code>SchedulerLike</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 VirtualTimeScheduler（虚拟时间，无需真实等待）：</p>
+    <button onclick="runFlush()">调度 + flush</button>
+    <button onclick="runTimer()">timer + 虚拟调度器</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { VirtualTimeScheduler, timer } = rxjs;
+    const { take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runFlush() {
+      log('=== VirtualTimeScheduler schedule + flush ===');
+      const scheduler = new VirtualTimeScheduler();
+      scheduler.schedule(() => log('任务执行 @ frame 10'), 10);
+      scheduler.schedule(() => log('任务执行 @ frame 20'), 20);
+      log('flush 前 frame: ' + scheduler.frame);
+      scheduler.flush();
+      log('flush 后 frame: ' + scheduler.frame);
+    }
+
+    function runTimer() {
+      log('=== timer(0, 10, virtualScheduler).pipe(take(3)) ===');
+      const scheduler = new VirtualTimeScheduler();
+      timer(0, 10, scheduler).pipe(take(3)).subscribe({
+        next: v => log('next: ' + v + ' @ frame ' + scheduler.frame),
+        complete: () => log('complete @ frame ' + scheduler.frame)
+      });
+      scheduler.flush();
+    }
+
+    log('页面已加载，VirtualTimeScheduler 用于测试中的虚拟时间推进');
+  </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS AjaxError</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS AjaxError</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>AjaxError 是 ajax 请求失败时抛出的错误类型，继承自 <code>Error</code>，包含 XMLHttpRequest、请求配置和响应详情。
+  </div>
+
+  <h2>接口</h2>
+  <div class="code-box">interface AjaxError extends Error {
+  xhr: XMLHttpRequest
+  request: AjaxRequest
+  status: number
+  responseType: XMLHttpRequestResponseType
+  response: any
+}</div>
+
+  <h2>子类型</h2>
+  <ul>
+    <li><code>AjaxTimeoutError</code></li>
+  </ul>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>说明</th></tr>
+    <tr><td><code>xhr</code></td><td><code>XMLHttpRequest</code></td><td>底层 XMLHttpRequest 对象</td></tr>
+    <tr><td><code>request</code></td><td><code>AjaxRequest</code></td><td>发起请求时使用的配置对象</td></tr>
+    <tr><td><code>status</code></td><td><code>number</code></td><td>HTTP 状态码</td></tr>
+    <tr><td><code>responseType</code></td><td><code>XMLHttpRequestResponseType</code></td><td>响应类型</td></tr>
+    <tr><td><code>response</code></td><td><code>any</code></td><td>响应体内容</td></tr>
+  </table>
+
+  <h2>代码示例</h2>
+  <div class="code-box">import { ajax, AjaxError } from 'rxjs/ajax';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+ajax('https://api.github.com/404').pipe(
+  catchError((err: AjaxError) => {
+    console.log('名称:', err.name);       // AjaxError
+    console.log('状态:', err.status);   // 404
+    console.log('请求 URL:', err.request.url);
+    console.log('响应:', err.response);
+    return of(err);
+  })
+).subscribe();</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>ajax</code></li>
+    <li><code>AjaxRequest</code></li>
+    <li><code>AjaxTimeoutError</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 AjaxError：</p>
+    <button onclick="run404Error()">404 AjaxError</button>
+    <button onclick="runNetworkError()">无效 URL</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { ajax, AjaxError } = rxjs.ajax;
+    const { catchError } = rxjs.operators;
+    const { of } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function logAjaxError(err) {
+      log('name: ' + err.name);
+      log('message: ' + err.message);
+      log('status: ' + err.status);
+      log('request.url: ' + (err.request ? err.request.url : 'N/A'));
+      log('responseType: ' + err.responseType);
+      log('是 AjaxError 实例: ' + (err instanceof AjaxError));
+    }
+
+    function run404Error() {
+      log('=== 404 AjaxError ===');
+      ajax('https://api.github.com/404').pipe(
+        catchError(err => {
+          logAjaxError(err);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runNetworkError() {
+      log('=== 无效 URL 错误 ===');
+      ajax('https://this-domain-does-not-exist-xyz123.invalid/').pipe(
+        catchError(err => {
+          logAjaxError(err);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    log('页面已加载，点击按钮演示 AjaxError');
+  </script>
+</body>
+</html>

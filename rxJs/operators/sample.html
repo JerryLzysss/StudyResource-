@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS sample</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS sample</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>sample 在 notifier Observable 每次发出值时，采样源 Observable 的最近一个值并发出。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">sample&lt;T&gt;(notifier: Observable&lt;any&gt;): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>notifier</strong>：采样触发 Observable，每次发出值时采样源的最新值</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>MonoTypeOperatorFunction</code>，按 notifier 节奏采样源的值。</p>
+  <h2>描述</h2>
+  <p>sample 与 sampleTime 类似，但采样时机由 notifier 控制而非固定时间间隔。若采样时没有新值，则不发出。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { interval, timer } from 'rxjs';
+import { sample } from 'rxjs/operators';
+
+interval(100).pipe(
+  sample(timer(0, 500))
+).subscribe(console.log);
+// 每 500ms 采样一次 interval 的当前值</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runSample()">sample 采样</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, timer } = rxjs;
+    const { sample, take } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runSample() {
+      log('=== interval(100).pipe(sample(timer(0,500))) ===');
+      interval(100).pipe(sample(timer(0, 500)), take(4)).subscribe(v => log('采样值: ' + v));
+    }
+    log('页面已加载，sample 按 notifier 节奏采样');
+  </script>
+</body>
+</html>

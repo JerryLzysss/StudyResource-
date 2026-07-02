@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS Unsubscribable</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS Unsubscribable</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>Unsubscribable 是订阅接口，定义了具有 <code>unsubscribe()</code> 方法的对象，用于释放资源或取消执行。
+  </div>
+
+  <h2>接口定义</h2>
+  <div class="code-box">interface Unsubscribable {
+  unsubscribe(): void
+}</div>
+
+  <h2>子接口</h2>
+  <ul>
+    <li><code>SubscriptionLike</code></li>
+  </ul>
+
+  <h2>方法</h2>
+  <div class="code-box">unsubscribe(): void</div>
+  <p>释放资源、取消订阅。不带任何参数。</p>
+
+  <h2>描述</h2>
+  <p>Unsubscribable 是 RxJS 中最基础的"可取消"接口。任何实现了 <code>unsubscribe()</code> 方法的对象都符合此接口，包括 <code>Subscription</code>、<code>Subject</code> 以及 <code>using</code> 运算符创建的资源对象。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { interval } from 'rxjs';
+
+// Subscription 实现了 Unsubscribable
+const resource: Unsubscribable = interval(1000).subscribe(x => console.log(x));
+
+// 稍后取消
+resource.unsubscribe();</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>Subscription</code></li>
+    <li><code>using</code></li>
+    <li><code>TeardownLogic</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 Unsubscribable 接口：</p>
+    <button onclick="runSubscribe()">订阅 interval</button>
+    <button onclick="runUnsubscribe()">调用 unsubscribe()</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval } = rxjs;
+    const output = document.getElementById('output');
+    let resource = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runSubscribe() {
+      if (resource) resource.unsubscribe();
+      log('=== interval(500).subscribe() → Unsubscribable ===');
+      resource = interval(500).subscribe({
+        next: x => log('next: ' + x)
+      });
+      log('已获得 Unsubscribable 对象，可调用 unsubscribe()');
+    }
+
+    function runUnsubscribe() {
+      if (resource) {
+        resource.unsubscribe();
+        log('已调用 unsubscribe()，资源已释放');
+        resource = null;
+      } else {
+        log('请先点击"订阅 interval"');
+      }
+    }
+
+    log('页面已加载，Unsubscribable = { unsubscribe(): void } 接口');
+  </script>
+</body>
+</html>

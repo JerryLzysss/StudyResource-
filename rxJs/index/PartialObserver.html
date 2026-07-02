@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS PartialObserver</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS PartialObserver</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong><code>PartialObserver&lt;T&gt;</code> 是局部观察者的联合类型，允许只提供 next、error、complete 中的部分回调。
+  </div>
+
+  <h2>类型定义</h2>
+  <div class="code-box">type PartialObserver&lt;T&gt; =
+  | NextObserver&lt;T&gt;
+  | ErrorObserver&lt;T&gt;
+  | CompletionObserver&lt;T&gt;;</div>
+
+  <h2>组成类型</h2>
+  <table>
+    <tr><th>类型</th><th>必需回调</th><th>说明</th></tr>
+    <tr><td><code>NextObserver&lt;T&gt;</code></td><td><code>next</code></td><td>必须提供 next，error/complete 可选</td></tr>
+    <tr><td><code>ErrorObserver&lt;T&gt;</code></td><td><code>error</code></td><td>必须提供 error，next/complete 可选</td></tr>
+    <tr><td><code>CompletionObserver&lt;T&gt;</code></td><td><code>complete</code></td><td>必须提供 complete，next/error 可选</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>与完整 <code>Observer</code>（三个回调均必需）不同，<code>PartialObserver</code> 允许按需只实现关心的通知类型。未提供的回调对应的通知会被忽略。</p>
+  <p><code>Observable.subscribe()</code> 接受 <code>PartialObserver&lt;T&gt;</code> 作为参数，也支持将 next、error、complete 作为三个独立函数参数传入。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of, throwError } from 'rxjs';
+
+// NextObserver：只关心 next
+of(1, 2, 3).subscribe({ next: x =&gt; console.log(x) });
+
+// ErrorObserver：只关心 error
+throwError(() =&gt; new Error('fail')).subscribe({
+  error: err =&gt; console.error(err.message)
+});
+
+// CompletionObserver：只关心 complete
+of('done').subscribe({ complete: () =&gt; console.log('完成') });</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>Observer</code></li>
+    <li><code>NextObserver</code></li>
+    <li><code>ErrorObserver</code></li>
+    <li><code>CompletionObserver</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>PartialObserver 三种形式：</p>
+    <button onclick="runNext()">NextObserver</button>
+    <button onclick="runError()">ErrorObserver</button>
+    <button onclick="runComplete()">CompletionObserver</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, throwError } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runNext() {
+      log('=== NextObserver（仅 next）===');
+      of('A', 'B', 'C').subscribe({ next: x => log(`next: ${x}`) });
+    }
+
+    function runError() {
+      log('=== ErrorObserver（仅 error）===');
+      throwError(() => new Error('网络失败')).subscribe({
+        error: err => log(`error: ${err.message}`)
+      });
+    }
+
+    function runComplete() {
+      log('=== CompletionObserver（仅 complete，忽略 next 值）===');
+      of(1, 2, 3).subscribe({
+        complete: () => log('complete!（1,2,3 未打印）')
+      });
+    }
+
+    log('页面已加载，PartialObserver = 可只提供部分回调的观察者');
+  </script>
+</body>
+</html>

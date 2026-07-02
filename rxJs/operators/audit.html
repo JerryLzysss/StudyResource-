@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS audit</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS audit</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>在由另一个 Observable 确定的持续时间内忽略源值，沉默期结束后发出源 Observable 的最新值，然后重复此过程。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">audit&lt;T&gt;(
+  durationSelector: (value: T) =&gt; SubscribableOrPromise&lt;any&gt;
+): MonoTypeOperatorFunction&lt;T&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参量</th><th>说明</th></tr>
+    <tr><td><code>durationSelector</code></td><td>接收源 Observable 发出的值，返回用于计算沉默持续时间的 Observable 或 Promise</td></tr>
+  </table>
+
+  <h2>返回值</h2>
+  <p>返回 <code>MonoTypeOperatorFunction</code>：对源 Observable 执行速率限制的 Observable。</p>
+
+  <h2>描述</h2>
+  <p>就像 <code>auditTime</code>，但沉默持续时间由第二个 Observable 确定。</p>
+  <p><code>audit</code> 与 <code>throttle</code> 相似，但从静音时间窗口中发出<strong>最后一个</strong>值，而不是第一个值。<code>audit</code> 在内部计时器被禁用时，将源 Observable 的最新值发射到输出 Observable；计时器启用时则忽略源值。最初计时器被禁用，第一个源值到达后，通过 <code>durationSelector</code> 启用计时器并返回"持续时间" Observable；持续时间 Observable 发出一个值或完成时，禁用计时器，最近的源值在输出 Observable 上发出，此过程对下一个源值重复。</p>
+
+  <h2>例子</h2>
+  <p>以每秒最多一次的速度发出点击事件</p>
+  <div class="code-box">import { fromEvent, interval } from 'rxjs';
+import { audit } from 'rxjs/operators';
+
+const clicks = fromEvent(document, 'click');
+const result = clicks.pipe(audit(ev => interval(1000)));
+result.subscribe(x => console.log(x));</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li>auditTime</li>
+    <li>debounce</li>
+    <li>delayWhen</li>
+    <li>sample</li>
+    <li>throttle</li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 audit：</p>
+    <button onclick="runAudit()">audit 限速</button>
+    <button onclick="runCompare()">无 audit 对比</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval } = rxjs;
+    const { audit, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runAudit() {
+      log('=== audit(ev => interval(1000))，每 200ms 发值，沉默 1s 后发出最新值 ===');
+      interval(200).pipe(audit(() => interval(1000)), take(5)).subscribe({
+        next: v => log('audit 发出: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runCompare() {
+      log('=== 无 audit，每 200ms 直接发出 ===');
+      interval(200).pipe(take(8)).subscribe({
+        next: v => log('原始值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 audit');
+  </script>
+</body>
+</html>

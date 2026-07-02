@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS TestScheduler</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS TestScheduler</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>TestScheduler 继承自 VirtualTimeScheduler，用于虚拟化时间，同步且确定性地测试使用计时器的异步 RxJS 代码（如 delay、debounceTime 等），支持 ASCII 大理石图断言。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class TestScheduler extends VirtualTimeScheduler {
+  static parseMarblesAsSubscriptions(marbles: string, runMode?: boolean): SubscriptionLog
+  static parseMarbles(marbles: string, values?: any, errorValue?: any,
+    materializeInnerObservables?: boolean, runMode?: boolean): TestMessage[]
+  constructor(assertDeepEqual: (actual: any, expected: any) =&gt; boolean | void)
+  get hotObservables: HotObservable&lt;any&gt;[]
+  get coldObservables: ColdObservable&lt;any&gt;[]
+  assertDeepEqual: (actual: any, expected: any) =&gt; boolean | void
+  createTime(marbles: string): number
+  createColdObservable&lt;T&gt;(marbles: string, values?: object, error?: any): ColdObservable&lt;T&gt;
+  createHotObservable&lt;T&gt;(marbles: string, values?: object, error?: any): HotObservable&lt;T&gt;
+  expectObservable(observable: Observable, subscriptionMarbles?: string): { toBe: ... }
+  expectSubscriptions(actualSubscriptionLogs: SubscriptionLog[]): { toBe: ... }
+  flush(): void
+  run&lt;T&gt;(callback: (helpers: RunHelpers) =&gt; T): T
+}</div>
+
+  <h2>描述</h2>
+  <p>使用 TestScheduler 虚拟化时间，可以同步且确定性地测试异步 RxJS 代码。ASCII 大理石图提供直观方式表示 Observable 行为，用于断言 Observable 是否符合预期。</p>
+  <p>目前 TestScheduler 主要适用于使用计时器的代码（使用 AsyncScheduler 且延迟 &gt; 0），如 delay、debounceTime 等。若代码消费 Promise 或使用 AsapScheduler / AnimationFrameScheduler 调度，则无法可靠地用 TestScheduler 测试。</p>
+  <p>推荐使用 <code>testScheduler.run(callback)</code>：在回调中，使用计时器的操作符会自动使用 TestScheduler 的虚拟时间，无需像过去那样手动传入 scheduler。</p>
+
+  <h2>静态方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr><td><code>parseMarblesAsSubscriptions(marbles, runMode?)</code></td><td>解析订阅大理石图，返回 <code>SubscriptionLog</code></td></tr>
+    <tr><td><code>parseMarbles(marbles, values?, errorValue?, ...)</code></td><td>解析大理石图，返回 <code>TestMessage[]</code></td></tr>
+  </table>
+
+  <h2>实例方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr><td><code>createTime(marbles)</code></td><td>从大理石图创建时间帧，返回 <code>number</code></td></tr>
+    <tr><td><code>createColdObservable(marbles, values?, error?)</code></td><td>创建冷 Observable（订阅时才开始）</td></tr>
+    <tr><td><code>createHotObservable(marbles, values?, error?)</code></td><td>创建热 Observable（测试开始时已在"运行"）</td></tr>
+    <tr><td><code>expectObservable(observable, subscriptionMarbles?)</code></td><td>安排 Observable 断言，返回带 <code>toBe</code> 的对象</td></tr>
+    <tr><td><code>expectSubscriptions(logs)</code></td><td>安排订阅断言，返回带 <code>toBe</code> 的对象</td></tr>
+    <tr><td><code>flush()</code></td><td>执行所有排队的操作</td></tr>
+    <tr><td><code>run(callback)</code></td><td>在虚拟时间环境中运行测试，<code>helpers</code> 提供 <code>cold</code>、<code>hot</code>、<code>expectObservable</code> 等</td></tr>
+  </table>
+
+  <h2>run() 示例</h2>
+  <div class="code-box">import { TestScheduler } from 'rxjs/testing';
+
+const testScheduler = new TestScheduler((actual, expected) => {
+  expect(actual).toEqual(expected);
+});
+
+testScheduler.run(({ cold, expectObservable }) => {
+  const source$ = cold('-a-b-c|', { a: 1, b: 2, c: 3 });
+  const expected =   '-a-b-c|';
+
+  expectObservable(source$).toBe(expected, { a: 1, b: 2, c: 3 });
+});</div>
+
+  <h2>delay 测试示例</h2>
+  <div class="code-box">testScheduler.run(({ cold, expectObservable }) => {
+  const source$ = cold('a-b|', { a: 'x', b: 'y' });
+  const result$ = source$.pipe(delay(20));
+
+  // a 在 frame 0 发出，delay 20 后在 frame 20 到达
+  expectObservable(result$).toBe('20ms a 20ms b|', { a: 'x', b: 'y' });
+});</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮在浏览器中演示 TestScheduler（虚拟时间，无需真实等待）：</p>
+    <button onclick="runCold()">cold Observable</button>
+    <button onclick="runDelay()">delay 虚拟时间</button>
+    <button onclick="runDebounce()">debounceTime</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script type="module">
+    import { TestScheduler } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/testing/+esm';
+    import { delay, debounceTime } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/operators/+esm';
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.textContent += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    const assertDeepEqual = (actual, expected) => {
+      const a = JSON.stringify(actual);
+      const e = JSON.stringify(expected);
+      if (a !== e) throw new Error('断言失败: ' + a + ' !== ' + e);
+    };
+
+    window.clearOutput = () => { output.textContent = ''; };
+
+    window.runCold = () => {
+      log('=== cold Observable 大理石测试 ===');
+      const testScheduler = new TestScheduler(assertDeepEqual);
+      const results = [];
+      try {
+        testScheduler.run(({ cold, expectObservable }) => {
+          const source$ = cold('-a-b-c|', { a: 1, b: 2, c: 3 });
+          expectObservable(source$).toBe('-a-b-c|', { a: 1, b: 2, c: 3 });
+        });
+        log('断言通过: -a-b-c| 符合预期');
+      } catch (e) {
+        log('断言失败: ' + e.message);
+      }
+    };
+
+    window.runDelay = () => {
+      log('=== delay(20) 虚拟时间测试 ===');
+      const testScheduler = new TestScheduler(assertDeepEqual);
+      try {
+        testScheduler.run(({ cold, expectObservable }) => {
+          const source$ = cold('a-b|', { a: 'x', b: 'y' });
+          const result$ = source$.pipe(delay(20));
+          expectObservable(result$).toBe('20ms a 21ms b|', { a: 'x', b: 'y' });
+        });
+        log('断言通过: delay 20 帧后发出 a，21 帧后发出 b');
+      } catch (e) {
+        log('断言失败: ' + e.message);
+      }
+    };
+
+    window.runDebounce = () => {
+      log('=== debounceTime(10) 虚拟时间测试 ===');
+      const testScheduler = new TestScheduler(assertDeepEqual);
+      try {
+        testScheduler.run(({ cold, expectObservable }) => {
+          const source$ = cold('a-b-c--d|', { a: 1, b: 2, c: 3, d: 4 });
+          const result$ = source$.pipe(debounceTime(10));
+          expectObservable(result$).toBe('-----------d|', { d: 4 });
+        });
+        log('断言通过: debounceTime(10) 仅发出最后一个值 d');
+      } catch (e) {
+        log('断言失败: ' + e.message);
+      }
+    };
+
+    log('页面已加载，TestScheduler 用于虚拟时间下的确定性测试');
+  </script>
+</body>
+</html>

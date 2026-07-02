@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS EmptyError</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS EmptyError</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>EmptyError 是在查询 Observable 或序列但没有元素时抛出的错误，常见于 <code>first</code>、<code>last</code>、<code>single</code> 等运算符。
+  </div>
+
+  <h2>接口</h2>
+  <div class="code-box">interface EmptyError extends Error { }</div>
+
+  <h2>描述</h2>
+  <p>当 Observable 完成时未发出任何值，而运算符要求至少有一个元素时，会抛出 EmptyError。例如对空的 Observable 使用 <code>first()</code> 或 <code>single()</code>。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { EMPTY } from 'rxjs';
+import { first } from 'rxjs/operators';
+
+EMPTY.pipe(first()).subscribe({
+  next: v => console.log(v),
+  error: err => console.error(err.name) // EmptyError
+});</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>first</code></li>
+    <li><code>last</code></li>
+    <li><code>single</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>对空 Observable 使用 first 会抛出 EmptyError：</p>
+    <button onclick="runEmptyError()">EMPTY + first()</button>
+    <button onclick="runFirstSuccess()">of(1) + first()</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { EMPTY, of } = rxjs;
+    const { first } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runEmptyError() {
+      log('=== EMPTY.pipe(first()) ===');
+      EMPTY.pipe(first()).subscribe({
+        next: v => log(`next: ${v}`),
+        error: err => log(`error: ${err.name} - ${err.message}`),
+        complete: () => log('complete')
+      });
+    }
+
+    function runFirstSuccess() {
+      log('=== of(1,2,3).pipe(first()) ===');
+      of(1, 2, 3).pipe(first()).subscribe({
+        next: v => log(`next: ${v}`),
+        error: err => log(`error: ${err.name}`),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，EmptyError = 序列无元素时抛出的错误');
+  </script>
+</body>
+</html>

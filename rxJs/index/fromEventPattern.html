@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS fromEventPattern</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS fromEventPattern</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>fromEventPattern 从任意支持注册事件处理程序的 API 创建一个 Observable，比 fromEvent 更灵活，可处理自定义事件源。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">fromEventPattern&lt;T&gt;(
+  addHandler: (handler: NodeEventHandler) =&gt; any,
+  removeHandler?: (handler: NodeEventHandler, signal?: any) =&gt; void,
+  resultSelector?: (...args: any[]) =&gt; T
+): Observable&lt;T&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>addHandler</strong>：以 handler 函数为参数，将其附加到实际事件源的函数</li>
+    <li><strong>removeHandler</strong>（可选）：以 handler 函数为参数，将其从事件源中删除；若 addHandler 返回令牌，removeHandler 会将其作为第二个参数</li>
+    <li><strong>resultSelector</strong>（可选）：投影函数，接受事件处理程序的所有参数并返回要发出的值</li>
+  </ul>
+
+  <h2>描述</h2>
+  <p><code>fromEventPattern</code> 允许您将任何支持注册事件处理程序功能的 API 转换为 Observable。它类似于 fromEvent，但更加灵活。实际上，fromEvent 的所有用例都可以由 fromEventPattern 处理（尽管写法更详细）。</p>
+  <p>该函数接受 <code>addHandler</code> 作为第一个参数，订阅返回的 Observable 时才会调用它，因此调用 fromEventPattern 时不一定立即注册处理程序。</p>
+  <p>注册后，每次监听的事件发生时，Observable 都会发出事件处理程序被调用时的第一个参数。若事件处理程序被多个参数调用，第二个及后续参数默认不会出现在 Observable 中。</p>
+  <p>若 API 支持注销事件处理程序，可将 <code>removeHandler</code> 作为第二个参数传入；当消费者取消订阅时，removeHandler 会被调用。</p>
+
+  <h2>例子</h2>
+  <h3>发出 DOM 文档上发生的点击</h3>
+  <div class="code-box">import { fromEventPattern } from 'rxjs';
+
+function addClickHandler(handler) {
+  document.addEventListener('click', handler);
+}
+
+function removeClickHandler(handler) {
+  document.removeEventListener('click', handler);
+}
+
+const clicks = fromEventPattern(addClickHandler, removeClickHandler);
+clicks.subscribe(x => console.log(x));
+// 在浏览器任意位置点击，将记录 DOM MouseEvent 对象</div>
+
+  <h3>与返回取消令牌的 API 一起使用</h3>
+  <div class="code-box">import { fromEventPattern } from 'rxjs';
+
+const someAPIObservable = fromEventPattern(
+  function(handler) { return someAPI.registerEventHandler(handler); },
+  function(handler, token) { someAPI.unregisterEventHandler(token); }
+);</div>
+
+  <h3>与投影函数一起使用</h3>
+  <div class="code-box">const someAPIObservable = fromEventPattern(
+  handler => someAPI.registerEventHandler(handler),
+  handler => someAPI.unregisterEventHandler(handler),
+  (eventType, eventMessage) => eventType + ' --- ' + eventMessage
+);
+// 输出: "EVENT_TYPE --- EVENT_MESSAGE"</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>fromEvent</code></li>
+    <li><code>bindCallback</code></li>
+    <li><code>bindNodeCallback</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 fromEventPattern（点击页面任意位置触发）：</p>
+    <button onclick="runClickDemo()">监听点击</button>
+    <button onclick="stopClickDemo()">停止监听</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { fromEventPattern } = rxjs;
+    const output = document.getElementById('output');
+    let clickSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runClickDemo() {
+      if (clickSub) {
+        log('已在监听中');
+        return;
+      }
+      log('=== 开始监听点击 ===');
+      const clicks = fromEventPattern(
+        handler => document.addEventListener('click', handler),
+        handler => document.removeEventListener('click', handler)
+      );
+      clickSub = clicks.subscribe(e => log(`点击: (${e.clientX}, ${e.clientY})`));
+    }
+
+    function stopClickDemo() {
+      if (clickSub) {
+        clickSub.unsubscribe();
+        clickSub = null;
+        log('已停止监听');
+      }
+    }
+
+    log('页面已加载，点击「监听点击」后在页面任意位置点击');
+  </script>
+</body>
+</html>

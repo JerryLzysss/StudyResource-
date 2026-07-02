@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS isObservable</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS isObservable</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>isObservable 用于判断给定对象是否为 RxJS Observable，是库推荐的类型检测方式。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">isObservable&lt;T&gt;(obj: any): obj is Observable&lt;T&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>obj</strong>：待测试的对象</li>
+  </ul>
+
+  <h2>返回值</h2>
+  <p><code>obj is Observable&lt;T&gt;</code> — TypeScript 类型守卫，运行时返回 boolean。</p>
+
+  <h2>描述</h2>
+  <p><code>isObservable</code> 是 RxJS 提供的官方工具函数，用于可靠地检测某个值是否为 RxJS（5+）Observable。相比 <code>instanceof</code> 或 <code>typeof obj.subscribe === 'function'</code> 等手写检测，它能更好地处理跨模块副本和兼容性问题。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { isObservable, of, interval } from 'rxjs';
+
+console.log(isObservable(of(1)));       // true
+console.log(isObservable(interval()));  // true
+console.log(isObservable([1, 2, 3]));   // false
+console.log(isObservable(null));        // false</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮检测不同类型：</p>
+    <button onclick="checkObservable()">检测 Observable</button>
+    <button onclick="checkArray()">检测数组</button>
+    <button onclick="checkPlain()">检测普通对象</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { isObservable, of, interval } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function checkObservable() {
+      log('isObservable(of(1)): ' + isObservable(of(1)));
+      log('isObservable(interval()): ' + isObservable(interval()));
+    }
+
+    function checkArray() {
+      log('isObservable([1,2,3]): ' + isObservable([1, 2, 3]));
+    }
+
+    function checkPlain() {
+      log('isObservable({}): ' + isObservable({}));
+      log('isObservable(null): ' + isObservable(null));
+    }
+
+    log('页面已加载，isObservable 用于判断值是否为 RxJS Observable');
+  </script>
+</body>
+</html>

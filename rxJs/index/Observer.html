@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS Observer</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS Observer</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>Observer 是 Observable 传递的值的消费者，包含 <code>next</code>、<code>error</code>、<code>complete</code> 三个必需回调，用于处理 Observable 发出的各类通知。
+  </div>
+
+  <h2>接口</h2>
+  <div class="code-box">interface Observer&lt;T&gt; {
+  closed?: boolean
+  next: (value: T) =&gt; void
+  error: (err: any) =&gt; void
+  complete: () =&gt; void
+}</div>
+
+  <h2>类的实现</h2>
+  <ul>
+    <li><code>Subscriber</code></li>
+  </ul>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th></tr>
+    <tr><td><code>closed</code></td><td><code>boolean</code>（可选）</td></tr>
+    <tr><td><code>next</code></td><td><code>(value: T) =&gt; void</code></td></tr>
+    <tr><td><code>error</code></td><td><code>(err: any) =&gt; void</code></td></tr>
+    <tr><td><code>complete</code></td><td><code>() =&gt; void</code></td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>Observer 是 RxJS 观察者模式的核心类型。订阅 Observable 时传入 Observer，Observable 会在执行过程中调用对应的回调。完整的 Observer 必须同时提供 next、error、complete 三个方法。</p>
+  <p>若只需部分回调，可使用 <code>PartialObserver</code>（如 NextObserver、ErrorObserver、CompletionObserver）。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+
+const observer = {
+  next: x =&gt; console.log('next:', x),
+  error: err =&gt; console.error('error:', err),
+  complete: () =&gt; console.log('完成')
+};
+
+of(1, 2, 3).subscribe(observer);</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>PartialObserver</code></li>
+    <li><code>NextObserver</code></li>
+    <li><code>ErrorObserver</code></li>
+    <li><code>CompletionObserver</code></li>
+    <li><code>Subscriber</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>Observer 接口与 subscribe 用法：</p>
+    <button onclick="runFullObserver()">完整 Observer</button>
+    <button onclick="runErrorObserver()">error 回调</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, throwError } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runFullObserver() {
+      log('=== 完整 Observer 对象 ===');
+      of('A', 'B', 'C').subscribe({
+        next: x => log(`next: ${x}`),
+        error: err => log(`error: ${err}`),
+        complete: () => log('complete')
+      });
+    }
+
+    function runErrorObserver() {
+      log('=== Observer 处理 error ===');
+      throwError(() => new Error('出错了')).subscribe({
+        next: x => log(`next: ${x}`),
+        error: err => log(`error: ${err.message}`),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，Observer = 包含 next、error、complete 的完整观察者');
+  </script>
+</body>
+</html>

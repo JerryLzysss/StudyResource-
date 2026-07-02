@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS generate</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS generate</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>generate 通过运行状态驱动的循环来生成 Observable 序列，类似 for 循环，在每次迭代时发出一个值。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">generate&lt;T, S&gt;(
+  initialStateOrOptions: S | GenerateOptions&lt;T, S&gt;,
+  condition?: ConditionFunc,
+  iterate?: IterateFunc,
+  resultSelectorOrObservable?: SchedulerLike | ResultFunc&lt;S, T&gt;,
+  scheduler?: SchedulerLike
+): Observable&lt;T&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>initialState</strong>：初始状态</li>
+    <li><strong>condition</strong>：终止条件（返回 false 时停止）</li>
+    <li><strong>iterate</strong>：迭代步骤函数，更新状态</li>
+    <li><strong>resultSelector</strong>（可选）：选择器函数，映射每次迭代的结果</li>
+    <li><strong>scheduler</strong>（可选）：控制循环何时进行下一次迭代</li>
+  </ul>
+
+  <h2>描述</h2>
+  <p><code>generate</code> 允许您创建使用循环生成的值流，与传统的 for 循环非常相似：</p>
+  <ul>
+    <li>第一个参数是初始值（对应 for 循环的初始化表达式）</li>
+    <li>第二个参数测试是否继续循环（对应 for 循环的条件表达式）</li>
+    <li>第三个参数定义每步如何修改状态（对应 for 循环的递增表达式）</li>
+  </ul>
+  <p>返回的 Observable 在每次循环迭代时发出一个值。首先运行条件函数，若返回 true，则发出当前存储的值，然后使用迭代函数更新该值；若条件返回 false，则 Observable 完成。</p>
+  <p>也可传入包含 <code>initialState</code>、<code>condition</code>、<code>iterate</code>、<code>resultSelector</code> 属性的选项对象。若省略 condition，则条件始终成立，Observable 永不完成。</p>
+  <p>默认情况下同步发出值；传入 <code>async</code> 调度器可确保每个值在事件循环的单独任务中推送。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { generate } from 'rxjs';
+
+const source = generate(
+  0,
+  x => x < 3,
+  x => x + 1,
+  x => x
+);
+
+source.subscribe({
+  next: x => console.log('下一个: ' + x),
+  complete: () => console.log('已完成')
+});
+
+// => Next: 0
+// => Next: 1
+// => Next: 2
+// => Completed</div>
+
+  <h3>使用选项对象</h3>
+  <div class="code-box">import { generate } from 'rxjs';
+
+const source = generate({
+  initialState: 0,
+  condition: x => x < 5,
+  iterate: x => x + 1,
+  resultSelector: x => x * 2
+});</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 generate：</p>
+    <button onclick="runBasic()">基础循环 0-2</button>
+    <button onclick="runWithSelector()">带 resultSelector</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { generate } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runBasic() {
+      log('=== generate(0, x < 3, x + 1) ===');
+      generate(0, x => x < 3, x => x + 1, x => x).subscribe({
+        next: x => log('next: ' + x),
+        complete: () => log('complete')
+      });
+    }
+
+    function runWithSelector() {
+      log('=== resultSelector: x * 2 ===');
+      generate(0, x => x < 4, x => x + 1, x => x * 2).subscribe({
+        next: x => log('next: ' + x),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 generate');
+  </script>
+</body>
+</html>

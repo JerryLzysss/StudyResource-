@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS BehaviorSubject</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS BehaviorSubject</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>BehaviorSubject 是 Subject 的变体，它需要一个初始值，并且在订阅时会立即发出其当前值。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class BehaviorSubject&lt;T&gt; extends Subject {
+  constructor(_value: T)
+  get value: T
+  _subscribe(subscriber: Subscriber&lt;T&gt;): Subscription
+  getValue(): T
+  next(value: T): void
+}</div>
+
+  <h2>说明</h2>
+  <p>BehaviorSubject 存储当前值（"当前值"概念），每当有新的 Observer 订阅时，它会立即收到最新的值。BehaviorSubject 对于表示"随时间变化的值"很有用，例如应用状态、用户登录信息等。</p>
+
+  <h2>构造函数</h2>
+  <p><code>constructor(_value: T)</code> — 参量 <em>value</em>，类型：<code>T</code>。创建时必须提供初始值。</p>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>value</code></td><td><code>T</code></td><td>只读。当前存储的值</td></tr>
+  </table>
+
+  <h2>方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr><td><code>_subscribe(subscriber)</code></td><td>订阅时立即发送当前值，返回 Subscription</td></tr>
+    <tr><td><code>getValue(): T</code></td><td>同步获取当前值</td></tr>
+    <tr><td><code>next(value: T)</code></td><td>更新当前值并通知所有订阅者</td></tr>
+  </table>
+
+  <h2>代码示例</h2>
+  <div class="code-box">import { BehaviorSubject } from 'rxjs';
+
+const subject = new BehaviorSubject(0); // 0 是初始值
+
+subject.subscribe({
+  next: (v) => console.log(`observerA: ${v}`)
+});
+
+subject.next(1);
+subject.next(2);
+
+subject.subscribe({
+  next: (v) => console.log(`observerB: ${v}`)
+});
+
+subject.next(3);
+
+// 输出:
+// observerA: 0
+// observerA: 1
+// observerA: 2
+// observerB: 2
+// observerA: 3
+// observerB: 3</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 BehaviorSubject：</p>
+    <button onclick="runBasic()">基本用法</button>
+    <button onclick="runGetValue()">getValue 同步取值</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { BehaviorSubject } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runBasic() {
+      log('=== BehaviorSubject 基本用法 ===');
+      const subject = new BehaviorSubject(0);
+      subject.subscribe(v => log(`observerA: ${v}`));
+      subject.next(1);
+      subject.next(2);
+      subject.subscribe(v => log(`observerB: ${v}`));
+      subject.next(3);
+    }
+
+    function runGetValue() {
+      log('=== getValue() 同步取值 ===');
+      const subject = new BehaviorSubject('初始');
+      log('当前值: ' + subject.getValue());
+      subject.next('更新后');
+      log('更新后: ' + subject.getValue());
+    }
+
+    log('页面已加载，点击按钮演示 BehaviorSubject');
+  </script>
+</body>
+</html>

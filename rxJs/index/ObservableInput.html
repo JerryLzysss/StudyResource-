@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS ObservableInput</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS ObservableInput</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>ObservableInput 是 TypeScript 类型别名，表示可被 RxJS 转换为 Observable 的输入类型，包括 Subscribable、Promise、数组和可迭代对象。
+
+  </div>
+
+
+
+  <h2>类型定义</h2>
+
+  <div class="code-box">type ObservableInput&lt;T&gt; =
+
+  | SubscribableOrPromise&lt;T&gt;
+
+  | ArrayLike&lt;T&gt;
+
+  | Iterable&lt;T&gt;;</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>许多创建函数和操作符（如 <code>from</code>、<code>combineLatest</code>、<code>concat</code>、<code>merge</code>、<code>forkJoin</code>）接受 ObservableInput 作为参数。RxJS 内部会将这些输入统一转换为 Observable。</p>
+
+  <p>ObservableInput 包含：</p>
+
+  <ul>
+
+    <li><strong>Observable / Subscribable</strong> — 带 subscribe 方法的对象</li>
+
+    <li><strong>Promise</strong> — 异步单值</li>
+
+    <li><strong>ArrayLike / Iterable</strong> — 数组、Set、Map 等可迭代结构</li>
+
+    <li><strong>InteropObservable</strong> — 实现 <code>[Symbol.observable]</code> 的互操作对象</li>
+
+  </ul>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { from, combineLatest, of } from 'rxjs';
+
+
+
+// Promise 作为 ObservableInput
+
+from(Promise.resolve(42)).subscribe(console.log);
+
+
+
+// 数组作为 ObservableInput
+
+from([1, 2, 3]).subscribe(console.log);
+
+
+
+// 多个 ObservableInput 传给 combineLatest
+
+combineLatest(of('A'), [1, 2], Promise.resolve(true))
+
+  .subscribe(console.log);</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>SubscribableOrPromise</code></li>
+
+    <li><code>ObservedValueOf</code></li>
+
+    <li><code>from</code></li>
+
+    <li><code>combineLatest</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>不同 ObservableInput 类型均可被 from / combineLatest 消费：</p>
+
+    <button onclick="runFromPromise()">from(Promise)</button>
+
+    <button onclick="runFromArray()">from(Array)</button>
+
+    <button onclick="runCombineLatest()">combineLatest 混合输入</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { from, combineLatest, of } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runFromPromise() {
+
+      log('=== from(Promise.resolve(42)) ===');
+
+      from(Promise.resolve(42)).subscribe(v => log('next: ' + v));
+
+    }
+
+
+
+    function runFromArray() {
+
+      log('=== from([1, 2, 3]) ===');
+
+      from([1, 2, 3]).subscribe(v => log('next: ' + v));
+
+    }
+
+
+
+    function runCombineLatest() {
+
+      log('=== combineLatest(of, array, promise) ===');
+
+      combineLatest(
+
+        of('RxJS'),
+
+        [1, 2],
+
+        Promise.resolve('OK')
+
+      ).subscribe(v => log('合并结果: ' + JSON.stringify(v)));
+
+    }
+
+
+
+    log('页面已加载，ObservableInput = 可转为 Observable 的输入类型');
+
+  </script>
+
+</body>
+
+</html>
+
+

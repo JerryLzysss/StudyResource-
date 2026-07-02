@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS throwIfEmpty</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS throwIfEmpty</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>throwIfEmpty 在源 Observable complete 且未发出任何值时，抛出 EmptyError；否则正常透传。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">throwIfEmpty&lt;T&gt;(errorFactory?: () =&gt; any): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>errorFactory</strong>（可选）：自定义错误工厂，默认抛出 EmptyError</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>MonoTypeOperatorFunction</code>，空序列时 error。</p>
+  <h2>描述</h2>
+  <p>常用于确保 Observable 至少有一个值，如查询结果不能为空。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { EMPTY, of } from 'rxjs';
+import { throwIfEmpty } from 'rxjs/operators';
+
+EMPTY.pipe(
+  throwIfEmpty(() => new Error('没有数据'))
+).subscribe(
+  v => console.log(v),
+  err => console.log(err.message)  // '没有数据'
+);
+
+of(1).pipe(throwIfEmpty()).subscribe(console.log);  // 1</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runEmpty()">空序列报错</button>
+    <button onclick="runHasValue()">有值正常</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { EMPTY, of } = rxjs;
+    const { throwIfEmpty } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runEmpty() {
+      log('=== EMPTY.pipe(throwIfEmpty()) ===');
+      EMPTY.pipe(throwIfEmpty(() => new Error('没有数据'))).subscribe({
+        next: v => log('next: ' + v),
+        error: e => log('error: ' + e.message)
+      });
+    }
+    function runHasValue() {
+      log('=== of(42).pipe(throwIfEmpty()) ===');
+      of(42).pipe(throwIfEmpty()).subscribe({ next: v => log('next: ' + v), complete: () => log('complete') });
+    }
+    log('页面已加载，throwIfEmpty 空序列时抛出错误');
+  </script>
+</body>
+</html>

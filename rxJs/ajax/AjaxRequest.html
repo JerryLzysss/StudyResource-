@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS AjaxRequest</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS AjaxRequest</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>AjaxRequest 是 RxJS 用于发起 HTTP 请求的配置对象，包含 url、method、headers、body 等参数。传入 <code>ajax()</code> 时使用。
+  </div>
+
+  <h2>接口</h2>
+  <div class="code-box">interface AjaxRequest {
+  url: string
+  body?: any
+  method: string
+  async: boolean
+  headers: Readonly&lt;Record&lt;string, any&gt;&gt;
+  timeout: number
+  user?: string
+  password?: string
+  crossDomain: boolean
+  withCredentials: boolean
+  responseType: XMLHttpRequestResponseType
+}</div>
+
+  <h2>描述</h2>
+  <p>该对象包含 RxJS 发起 HTTP 请求时使用的各项值。在 <code>AjaxError</code> 实例中可通过 <code>request</code> 属性访问。</p>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>说明</th></tr>
+    <tr><td><code>url</code></td><td><code>string</code></td><td>请求的 URL</td></tr>
+    <tr><td><code>body</code></td><td><code>any</code></td><td>HTTP 请求体（可选）</td></tr>
+    <tr><td><code>method</code></td><td><code>string</code></td><td>HTTP 方法（GET、POST 等）</td></tr>
+    <tr><td><code>async</code></td><td><code>boolean</code></td><td>是否异步请求</td></tr>
+    <tr><td><code>headers</code></td><td><code>Readonly&lt;Record&lt;string, any&gt;&gt;</code></td><td>请求头</td></tr>
+    <tr><td><code>timeout</code></td><td><code>number</code></td><td>超时时间（毫秒），仅 async 为 true 时生效</td></tr>
+    <tr><td><code>user</code></td><td><code>string</code></td><td>HTTP 基本认证用户名（可选）</td></tr>
+    <tr><td><code>password</code></td><td><code>string</code></td><td>HTTP 基本认证密码（可选）</td></tr>
+    <tr><td><code>crossDomain</code></td><td><code>boolean</code></td><td>是否为跨域请求</td></tr>
+    <tr><td><code>withCredentials</code></td><td><code>boolean</code></td><td>跨域请求是否携带凭证</td></tr>
+    <tr><td><code>responseType</code></td><td><code>XMLHttpRequestResponseType</code></td><td>响应类型</td></tr>
+  </table>
+
+  <h2>代码示例</h2>
+  <div class="code-box">import { ajax } from 'rxjs/ajax';
+
+const request: AjaxRequest = {
+  url: 'https://api.github.com/users?per_page=5',
+  method: 'GET',
+  headers: { 'Accept': 'application/json' }
+};
+
+ajax(request).subscribe(res => console.log(res.response));</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>ajax</code></li>
+    <li><code>AjaxResponse</code></li>
+    <li><code>AjaxError</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 AjaxRequest 配置：</p>
+    <button onclick="runGetRequest()">GET 请求配置</button>
+    <button onclick="runPostRequest()">POST 请求配置</button>
+    <button onclick="runShowRequestOnError()">错误时查看 request</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { ajax } = rxjs.ajax;
+    const { map, catchError } = rxjs.operators;
+    const { of } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function logRequest(req) {
+      log('request.url: ' + req.url);
+      log('request.method: ' + req.method);
+      log('request.async: ' + req.async);
+      log('request.timeout: ' + req.timeout);
+      log('request.responseType: ' + req.responseType);
+      log('request.headers: ' + JSON.stringify(req.headers));
+    }
+
+    function runGetRequest() {
+      log('=== GET AjaxRequest ===');
+      const request = {
+        url: 'https://api.github.com/users?per_page=2',
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      };
+      log('发送配置:');
+      log('  url: ' + request.url);
+      log('  method: ' + request.method);
+      ajax(request).pipe(
+        map(res => {
+          log('响应 status: ' + res.status);
+          log('响应 request.url: ' + res.request.url);
+          logRequest(res.request);
+        }),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runPostRequest() {
+      log('=== POST AjaxRequest ===');
+      ajax({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: { key: 'value' }
+      }).pipe(
+        map(res => {
+          log('响应 status: ' + res.status);
+          logRequest(res.request);
+        }),
+        catchError(err => {
+          log('error: ' + err.message);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    function runShowRequestOnError() {
+      log('=== 错误时查看 request 对象 ===');
+      ajax('https://api.github.com/404').pipe(
+        catchError(err => {
+          log('AjaxError.request:');
+          logRequest(err.request);
+          return of(err);
+        })
+      ).subscribe();
+    }
+
+    log('页面已加载，点击按钮演示 AjaxRequest');
+  </script>
+</body>
+</html>

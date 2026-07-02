@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS WebSocketSubjectConfig</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS WebSocketSubjectConfig</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>WebSocketSubjectConfig 是普通配置对象，用于自定义 webSocket 的行为，包括序列化/反序列化策略及连接生命周期观察者。
+  </div>
+
+  <h2>接口定义</h2>
+  <div class="code-box">interface WebSocketSubjectConfig&lt;T&gt; {
+  url: string
+  protocol?: string | Array&lt;string&gt;
+  resultSelector?: (e: MessageEvent) =&gt; T
+  serializer?: (value: T) =&gt; WebSocketMessage
+  deserializer?: (e: MessageEvent) =&gt; T
+  openObserver?: NextObserver&lt;Event&gt;
+  closeObserver?: NextObserver&lt;CloseEvent&gt;
+  closingObserver?: NextObserver&lt;void&gt;
+  WebSocketCtor?: { new(url: string, protocols?: string | string[]): WebSocket }
+  binaryType?: 'blob' | 'arraybuffer'
+}</div>
+
+  <h2>描述</h2>
+  <p>提供灵活性给 <code>webSocket</code>。它定义了一组属性以在套接字生命周期的特定时刻提供自定义行为。连接打开后可用 <code>openObserver</code>，连接关闭时用 <code>closeObserver</code>；通过 <code>deserializer</code> 可自定义从服务器到达数据的反序列化策略。默认 <code>deserializer</code> 对每条服务器消息应用 <code>JSON.parse</code>。</p>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>url</code></td><td><code>string</code></td><td>要连接的套接字服务器 URL</td></tr>
+    <tr><td><code>protocol</code></td><td><code>string | Array&lt;string&gt;</code></td><td>用于连接的协议</td></tr>
+    <tr><td><code>resultSelector</code></td><td><code>(e: MessageEvent) =&gt; T</code></td><td>结果选择器</td></tr>
+    <tr><td><code>serializer</code></td><td><code>(value: T) =&gt; WebSocketMessage</code></td><td>发送前创建消息的序列化器，默认为 JSON.stringify</td></tr>
+    <tr><td><code>deserializer</code></td><td><code>(e: MessageEvent) =&gt; T</code></td><td>反序列化器，默认为 JSON.parse</td></tr>
+    <tr><td><code>openObserver</code></td><td><code>NextObserver&lt;Event&gt;</code></td><td>监视 WebSocket 打开事件</td></tr>
+    <tr><td><code>closeObserver</code></td><td><code>NextObserver&lt;CloseEvent&gt;</code></td><td>监视 WebSocket 关闭事件</td></tr>
+    <tr><td><code>closingObserver</code></td><td><code>NextObserver&lt;void&gt;</code></td><td>监视因取消订阅等原因即将发生的关闭</td></tr>
+    <tr><td><code>WebSocketCtor</code></td><td>WebSocket 构造函数</td><td>用于 Node 环境或测试时模拟 WebSocket</td></tr>
+    <tr><td><code>binaryType</code></td><td><code>'blob' | 'arraybuffer'</code></td><td>二进制数据类型</td></tr>
+  </table>
+
+  <h2>示例</h2>
+
+  <h3>deserializer — 自定义反序列化</h3>
+  <div class="code-box">import { webSocket } from 'rxjs/webSocket';
+
+const wsSubject = webSocket({
+  url: 'ws://localhost:8081',
+  deserializer: ({ data }) => data
+});
+
+wsSubject.subscribe(console.log);
+// 服务器发送: ws.send("This is a msg from the server")
+// 输出: This is a msg from the server</div>
+
+  <h3>serializer — 自定义序列化</h3>
+  <div class="code-box">import { webSocket } from 'rxjs/webSocket';
+
+const wsSubject = webSocket({
+  url: 'ws://localhost:8081',
+  serializer: msg => JSON.stringify({ channel: 'webDevelopment', msg: msg })
+});
+
+wsSubject.subscribe(() => wsSubject.next('msg to the server'));
+// 发送: {"channel":"webDevelopment","msg":"msg to the server"}</div>
+
+  <h3>closeObserver — 自定义关闭处理</h3>
+  <div class="code-box">import { webSocket } from 'rxjs/webSocket';
+
+const wsSubject = webSocket({
+  url: 'ws://localhost:8081',
+  closeObserver: {
+    next(closeEvent) {
+      const customError = { code: 6666, reason: '自定义错误原因' };
+      console.log(`code: ${customError.code}, reason: ${customError.reason}`);
+    }
+  }
+});
+// 输出: code: 6666, reason: Custom evil reason</div>
+
+  <h3>openObserver — 连接成功通知</h3>
+  <div class="code-box">import { webSocket } from 'rxjs/webSocket';
+
+const wsSubject = webSocket({
+  url: 'ws://localhost:8081',
+  openObserver: {
+    next: () => console.log('连接正常')
+  }
+});
+// 输出: connection ok</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 WebSocketSubjectConfig 各项配置：</p>
+    <button onclick="runDeserializer()">deserializer 文本</button>
+    <button onclick="runSerializer()">serializer 包装</button>
+    <button onclick="runOpenClose()">open/close Observer</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script type="module">
+    import { webSocket } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/webSocket/+esm';
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.textContent += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    class MockWebSocket {
+      constructor(url) {
+        this.url = url;
+        this.readyState = 0;
+        this.onopen = null;
+        this.onmessage = null;
+        this.onclose = null;
+        setTimeout(() => {
+          this.readyState = 1;
+          if (this.onopen) this.onopen({});
+          setTimeout(() => {
+            if (this.onmessage) {
+              this.onmessage({ data: 'This is a msg from the server' });
+            }
+          }, 50);
+        }, 30);
+      }
+      send(data) { log('Mock 发送: ' + data); }
+      close() {
+        this.readyState = 3;
+        if (this.onclose) this.onclose({ code: 1000, reason: 'normal' });
+      }
+    }
+
+    window.clearOutput = () => { output.textContent = ''; };
+
+    window.runDeserializer = () => {
+      log('=== deserializer: 直接返回 data ===');
+      const ws = webSocket({
+        url: 'ws://mock.local',
+        WebSocketCtor: MockWebSocket,
+        deserializer: ({ data }) => data
+      });
+      ws.subscribe(msg => log('收到: ' + msg));
+      setTimeout(() => ws.complete(), 300);
+    };
+
+    window.runSerializer = () => {
+      log('=== serializer: 包装 channel + msg ===');
+      const ws = webSocket({
+        url: 'ws://mock.local',
+        WebSocketCtor: MockWebSocket,
+        serializer: msg => JSON.stringify({ channel: 'webDevelopment', msg: msg })
+      });
+      ws.subscribe();
+      setTimeout(() => {
+        ws.next('msg to the server');
+        ws.complete();
+      }, 80);
+    };
+
+    window.runOpenClose = () => {
+      log('=== openObserver + closeObserver ===');
+      const ws = webSocket({
+        url: 'ws://mock.local',
+        WebSocketCtor: MockWebSocket,
+        openObserver: { next: () => log('openObserver: 连接正常') },
+        closeObserver: {
+          next: () => log('closeObserver: 代码: 6666, 原因: 自定义错误原因')
+        }
+      });
+      ws.subscribe();
+      setTimeout(() => ws.complete(), 150);
+    };
+
+    log('页面已加载，点击按钮演示 WebSocketSubjectConfig');
+  </script>
+</body>
+</html>

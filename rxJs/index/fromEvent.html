@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS fromEvent</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS fromEvent</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>fromEvent 从给定事件目标（DOM、Node.js EventEmitter 等）创建 Observable，在订阅时注册事件监听，取消订阅时移除。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">fromEvent&lt;T&gt;(
+  target: any,
+  eventName: string,
+  options?: EventListenerOptions | ((...args: any[]) =&gt; T),
+  resultSelector?: (...args: any[]) =&gt; T
+): Observable&lt;T&gt;</div>
+
+  <h2>描述</h2>
+  <p>创建一个 Observable，它从给定事件目标发出特定类型的事件。</p>
+  <p><code>fromEvent</code> 接受事件目标（具有注册事件处理函数方法的对象）和事件类型字符串。若事件目标不在支持列表中，应使用 <code>fromEventPattern</code>。</p>
+  <p>每次订阅时，事件处理函数会注册到目标上；事件触发时，处理函数的第一个参数会被 emit；取消订阅时，处理函数会被移除。</p>
+
+  <h2>支持的事件目标</h2>
+  <ul>
+    <li><strong>DOM EventTarget</strong>：具有 addEventListener / removeEventListener</li>
+    <li><strong>Node.js EventEmitter</strong>：具有 addListener / removeListener</li>
+    <li><strong>JQuery 风格</strong>：具有 on / off 方法</li>
+    <li><strong>NodeList / HTMLCollection</strong>：为每个节点安装/移除监听</li>
+  </ul>
+
+  <h2>例子</h2>
+  <h3>发出 document 上发生的点击</h3>
+  <div class="code-box">import { fromEvent } from 'rxjs';
+
+const clicks = fromEvent(document, 'click');
+clicks.subscribe(x => console.log(x));
+
+// 每次在 document 上点击，控制台输出 MouseEvent 对象</div>
+
+  <h3>使用 addEventListener 的 capture 选项</h3>
+  <div class="code-box">import { fromEvent } from 'rxjs';
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+
+const clicksInDocument = fromEvent(document, 'click', { capture: true });
+const clicksInDiv = fromEvent(div, 'click');
+
+clicksInDocument.subscribe(() => console.log('文档'));
+clicksInDiv.subscribe(() => console.log('div 元素'));
+
+// 使用 capture 时，document 在捕获阶段先收到事件</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>bindCallback</code></li>
+    <li><code>bindNodeCallback</code></li>
+    <li><code>fromEventPattern</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮或页面任意位置体验 fromEvent：</p>
+    <button id="demoBtn">演示按钮（click）</button>
+    <button onclick="runDocumentClick()">监听 document 点击</button>
+    <button onclick="stopListening()">停止监听</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { fromEvent } = rxjs;
+    const { take, map } = rxjs.operators;
+
+    const output = document.getElementById('output');
+    let docSub = null;
+    let btnSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runDocumentClick() {
+      if (docSub) {
+        log('已在监听 document 点击');
+        return;
+      }
+      log('=== 监听 document click（点击页面任意位置）===');
+      docSub = fromEvent(document, 'click')
+        .pipe(take(5), map(e => `(${e.clientX}, ${e.clientY})`))
+        .subscribe({
+          next: pos => log(`点击位置: ${pos}`),
+          complete: () => {
+            log('已收到 5 次点击，停止监听');
+            docSub = null;
+          }
+        });
+    }
+
+    function stopListening() {
+      if (docSub) {
+        docSub.unsubscribe();
+        docSub = null;
+        log('已手动停止 document 监听');
+      }
+      if (btnSub) {
+        btnSub.unsubscribe();
+        btnSub = null;
+        log('已停止按钮监听');
+      }
+    }
+
+    btnSub = fromEvent(document.getElementById('demoBtn'), 'click')
+      .subscribe(() => log('演示按钮被点击'));
+
+    log('页面已加载，fromEvent = DOM/事件源转 Observable');
+  </script>
+</body>
+</html>

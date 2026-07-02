@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS from</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS from</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>from 从数组、类数组对象、Promise、可迭代对象或类 Observable 对象创建 Observable，几乎可将任何数据源转换为 Observable。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">from&lt;T&gt;(input: any, scheduler?: SchedulerLike): Observable&lt;T&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>input</code></td><td>类型：<code>any</code>。数组、Promise、Iterable 等</td></tr>
+    <tr><td><code>scheduler</code></td><td>可选。默认 <code>undefined</code>。类型：<code>SchedulerLike</code></td></tr>
+  </table>
+
+  <h2>返回值</h2>
+  <p><code>Observable&lt;T&gt;</code></p>
+
+  <h2>描述</h2>
+  <p><code>from</code> 将各种其他对象和数据类型转换为 Observable。它还将 Promise、类数组对象或可迭代对象转换为 Observable，该 Observable 发出 Promise、数组或可迭代的各项。字符串被视为字符数组。包含 ES2015 Symbol.observable 的类 Observable 对象也可通过此运算符转换。</p>
+
+  <h2>例子</h2>
+  <h3>将数组转换为 Observable</h3>
+  <div class="code-box">import { from } from 'rxjs';
+
+const array = [10, 20, 30];
+const result = from(array);
+
+result.subscribe(x => console.log(x));
+
+// 输出：
+// 10
+// 20
+// 30</div>
+
+  <h3>将无限迭代（从生成器）转换为 Observable</h3>
+  <div class="code-box">import { from } from 'rxjs';
+import { take } from 'rxjs/operators';
+
+function* generateDoubles(seed) {
+   let i = seed;
+   while (true) {
+     yield i;
+     i = 2 * i;
+   }
+}
+
+const iterator = generateDoubles(3);
+const result = from(iterator).pipe(take(10));
+
+result.subscribe(x => console.log(x));
+
+// 输出：
+// 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536</div>
+
+  <h3>使用异步调度程序</h3>
+  <div class="code-box">import { from, asyncScheduler } from 'rxjs';
+
+console.log('开始');
+
+const array = [10, 20, 30];
+const result = from(array, asyncScheduler);
+
+result.subscribe(x => console.log(x));
+
+console.log('结束');
+
+// 输出：
+// start
+// end
+// 10
+// 20
+// 30</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>fromEvent</code></li>
+    <li><code>fromEventPattern</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>from 将多种数据源转为 Observable：</p>
+    <button onclick="runFromArray()">from 数组</button>
+    <button onclick="runFromPromise()">from Promise</button>
+    <button onclick="runFromGenerator()">from 生成器</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { from } = rxjs;
+    const { take } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runFromArray() {
+      log('=== from([10, 20, 30]) ===');
+      from([10, 20, 30]).subscribe(v => log(`next: ${v}`));
+    }
+
+    function runFromPromise() {
+      log('=== from(Promise) ===');
+      from(Promise.resolve('你好 RxJS')).subscribe(v => log(`next: ${v}`));
+    }
+
+    function runFromGenerator() {
+      log('=== from 生成器 ===');
+      function* gen() {
+        yield 3;
+        yield 6;
+        yield 12;
+      }
+      from(gen()).subscribe(v => log(`next: ${v}`));
+    }
+
+    log('页面已加载，from = 将任意数据源转为 Observable');
+  </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS pipe</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS pipe</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong><code>pipe</code> 是工具函数，用于组合多个 UnaryFunction；也可通过 <code>Observable.prototype.pipe</code> 将管道运算符串联到 Observable 上。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">pipe(...fns: UnaryFunction&lt;any, any&gt;[]): UnaryFunction&lt;any, any&gt;</div>
+
+  <h2>描述</h2>
+  <p><code>pipe</code> 可接受一个或多个函数，每个函数接受一个参数并返回值。它返回一个新函数：将初始参数传给第一个函数，结果传给第二个，依此类推。</p>
+  <p>RxJS 中有两种用法：</p>
+  <ul>
+    <li><strong>Observable.pipe(...)</strong>：实例方法，将 pipeable 运算符组合到当前 Observable</li>
+    <li><strong>import { pipe } from 'rxjs'</strong>：工具函数，从多个运算符构建可复用的组合函数</li>
+  </ul>
+  <p>可管道运算符（pipeable operator）返回签名为 <code>&lt;T, R&gt;(source: Observable&lt;T&gt;) =&gt; Observable&lt;R&gt;</code> 的函数，即 <code>OperatorFunction</code>。</p>
+
+  <h2>例子</h2>
+  <h3>Observable.pipe 组合运算符</h3>
+  <div class="code-box">import { of } from 'rxjs';
+import { filter, map, scan } from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5).pipe(
+  filter(x =&gt; x % 2 === 0),
+  map(x =&gt; x + x),
+  scan((acc, x) =&gt; acc + x, 0)
+).subscribe(x =&gt; console.log(x));
+
+// 4, 8, 12</div>
+
+  <h3>pipe 工具函数构建可复用组合</h3>
+  <div class="code-box">import { pipe } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+
+const oddSquare = pipe(
+  filter((n: number) => n % 2 === 1),
+  map(n =&gt; n * n)
+);
+
+// oddSquare 可复用于任意 Observable
+import { of } from 'rxjs';
+of(1, 2, 3, 4, 5).pipe(oddSquare).subscribe(console.log);
+// 1, 9, 25</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>OperatorFunction</code></li>
+    <li><code>UnaryFunction</code></li>
+    <li><code>identity</code></li>
+    <li>RxJS 管道运算符（文档）</li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 pipe：</p>
+    <button onclick="runInstancePipe()">Observable.pipe</button>
+    <button onclick="runUtilityPipe()">pipe 工具函数</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, pipe } = rxjs;
+    const { filter, map, scan } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runInstancePipe() {
+      log('=== of(1..5).pipe(filter, map, scan) ===');
+      of(1, 2, 3, 4, 5).pipe(
+        filter(x => x % 2 === 0),
+        map(x => x + x),
+        scan((acc, x) => acc + x, 0)
+      ).subscribe({
+        next: v => log(`next: ${v}`),
+        complete: () => log('complete')
+      });
+    }
+
+    function runUtilityPipe() {
+      log('=== pipe(filter, map) 可复用组合 ===');
+      const oddSquare = pipe(
+        filter(n => n % 2 === 1),
+        map(n => n * n)
+      );
+      of(1, 2, 3, 4, 5).pipe(oddSquare).subscribe({
+        next: v => log(`next: ${v}`),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，pipe 用于组合管道运算符');
+  </script>
+</body>
+</html>

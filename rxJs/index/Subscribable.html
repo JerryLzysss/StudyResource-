@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS Subscribable</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS Subscribable</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>Subscribable 是可订阅对象的接口，定义了 <code>subscribe</code> 方法，是 Observable 体系的基础契约之一。
+
+  </div>
+
+
+
+  <h2>接口定义</h2>
+
+  <div class="code-box">interface Subscribable&lt;T&gt; {
+
+  subscribe(observer: Partial&lt;Observer&lt;T&gt;&gt;): Unsubscribable
+
+}</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>Subscribable 是 RxJS 中最基本的可订阅接口。任何实现了 <code>subscribe</code> 方法并返回 <code>Unsubscribable</code> 的对象都符合 Subscribable 契约。</p>
+
+  <p>Observable 和 Subject 都实现了 Subscribable。RxJS 的 <code>from</code> 等函数会检查输入是否为 Subscribable 来决定如何转换。</p>
+
+
+
+  <h2>子接口</h2>
+
+  <ul>
+
+    <li><code>SubjectLike</code></li>
+
+  </ul>
+
+
+
+  <h2>类实现</h2>
+
+  <ul>
+
+    <li><code>Observable</code></li>
+
+    <li><code>Subject</code></li>
+
+  </ul>
+
+
+
+  <h2>方法</h2>
+
+  <table>
+
+    <tr><th>方法</th><th>说明</th></tr>
+
+    <tr><td><code>subscribe(observer)</code></td><td>订阅并接收通知，返回 Unsubscribable 用于取消</td></tr>
+
+  </table>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">// 自定义 Subscribable 对象
+
+const customSubscribable = {
+
+  subscribe(observer) {
+
+    observer.next('hello');
+
+    observer.complete();
+
+    return { unsubscribe() {} };
+
+  }
+
+};
+
+
+
+// RxJS from 可识别 Subscribable
+
+import { from } from 'rxjs';
+
+from(customSubscribable).subscribe(console.log);
+
+// 输出: hello</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>Observable</code></li>
+
+    <li><code>Unsubscribable</code></li>
+
+    <li><code>Observer</code></li>
+
+    <li><code>InteropObservable</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 Subscribable：</p>
+
+    <button onclick="runCustom()">自定义 Subscribable</button>
+
+    <button onclick="runFrom()">from(Subscribable)</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { from, of } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runCustom() {
+
+      log('=== 自定义 Subscribable ===');
+
+      const subscribable = {
+
+        subscribe(observer) {
+
+          observer.next('来自 Subscribable');
+
+          observer.complete();
+
+          return { unsubscribe() { log('unsubscribe 调用'); } };
+
+        }
+
+      };
+
+      subscribable.subscribe({
+
+        next: v => log('next: ' + v),
+
+        complete: () => log('complete')
+
+      });
+
+    }
+
+
+
+    function runFrom() {
+
+      log('=== from(Subscribable) ===');
+
+      const subscribable = {
+
+        subscribe(observer) {
+
+          observer.next(1);
+
+          observer.next(2);
+
+          observer.complete();
+
+          return { unsubscribe() {} };
+
+        }
+
+      };
+
+      from(subscribable).subscribe({
+
+        next: v => log('next: ' + v),
+
+        complete: () => log('complete')
+
+      });
+
+    }
+
+
+
+    log('页面已加载，Subscribable 定义 subscribe 契约');
+
+  </script>
+
+</body>
+
+</html>
+

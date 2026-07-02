@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS ObservedValuesFromArray</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS ObservedValuesFromArray</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>ObservedValuesFromArray 是 TypeScript 条件类型，从 <code>ObservableInput[]</code> 数组中提取每个输入对应的值类型元组。
+
+  </div>
+
+
+
+  <h2>类型定义</h2>
+
+  <div class="code-box">type ObservedValuesFromArray&lt;X&gt; =
+
+  X extends Array&lt;ObservableInput&lt;infer T&gt;&gt; ? T : never;</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>ObservedValuesFromArray 用于 <code>combineLatest</code>、<code>forkJoin</code>、<code>zip</code> 等接受多个 ObservableInput 的函数，在 TypeScript 中推断合并结果的元组类型。</p>
+
+  <p>例如传入 <code>[of(1), of('a')]</code>，ObservedValuesFromArray 帮助推断结果为 <code>[number, string]</code>。</p>
+
+
+
+  <h2>TypeScript 示例</h2>
+
+  <div class="code-box">import { combineLatest, of } from 'rxjs';
+
+
+
+const sources = [of(1), of('hello')] as const;
+
+
+
+combineLatest(sources).subscribe(([num, str]) => {
+
+  // num: number, str: string
+
+  console.log(num, str);
+
+});
+
+
+
+// combineLatest 签名中使用 ObservedValuesFromArray
+
+// 推断 (...values: ObservedValuesFromArray&lt;O&gt;[]) =&gt; R</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>ObservedValueOf</code></li>
+
+    <li><code>ObservableInput</code></li>
+
+    <li><code>combineLatest</code></li>
+
+    <li><code>forkJoin</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>以下演示 combineLatest 对多个 ObservableInput 合并后的运行时值（对应 TS 元组类型）：</p>
+
+    <button onclick="runCombineTwo()">combineLatest [number, string]</button>
+
+    <button onclick="runCombineThree()">combineLatest [number, boolean, string]</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { combineLatest, of } = rxjs;
+
+    const output = document.getElementById('output');
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function runCombineTwo() {
+
+      log('=== combineLatest([of(1), of("RxJS")]) ===');
+
+      log('TS 类型: [number, string]');
+
+      combineLatest([of(1), of('RxJS')]).subscribe(([num, str]) => {
+
+        log(`合并: [${typeof num} ${num}, ${typeof str} "${str}"]`);
+
+      });
+
+    }
+
+
+
+    function runCombineThree() {
+
+      log('=== combineLatest 三个源 ===');
+
+      log('TS 类型: [number, boolean, string]');
+
+      combineLatest([
+
+        of(42),
+
+        of(true),
+
+        of('OK')
+
+      ]).subscribe(([n, b, s]) => {
+
+        log(`合并: [${n}, ${b}, "${s}"]`);
+
+      });
+
+    }
+
+
+
+    log('页面已加载，ObservedValuesFromArray = 从 ObservableInput 数组提取值类型元组');
+
+  </script>
+
+</body>
+
+</html>
+
+

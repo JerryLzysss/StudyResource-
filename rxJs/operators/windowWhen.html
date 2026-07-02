@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS windowWhen</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS windowWhen</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>windowWhen 在每个窗口开始时调用 closingSelector 获取关闭窗口的 Observable，该 Observable 发出值时关闭当前窗口并开启新窗口。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">windowWhen&lt;T&gt;(
+  closingSelector: () =&gt; ObservableInput&lt;any&gt;
+): OperatorFunction&lt;T, Observable&lt;T&gt;&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>closingSelector</strong>：返回关闭当前窗口的 Observable 的函数</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>OperatorFunction</code>，由 closingSelector 控制窗口关闭时机。</p>
+  <h2>描述</h2>
+  <p>windowWhen 在第一个值到达时开启第一个窗口，closingSelector 返回的 Observable 发出值时关闭窗口并开启新窗口。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { interval, timer } from 'rxjs';
+import { windowWhen, take, mergeMap, toArray } from 'rxjs/operators';
+
+interval(100).pipe(
+  windowWhen(() => timer(800)),
+  take(3),
+  mergeMap(w => w.pipe(toArray()))
+).subscribe(console.log);</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runWindowWhen()">windowWhen</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, timer } = rxjs;
+    const { windowWhen, take, mergeMap, toArray } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    let idx = 0;
+    function runWindowWhen() {
+      idx = 0;
+      log('=== windowWhen(() => timer(700)) ===');
+      interval(100).pipe(
+        windowWhen(() => timer(700)),
+        take(3),
+        mergeMap(w => w.pipe(toArray()))
+      ).subscribe(arr => { idx++; log('窗口' + idx + ': [' + arr.join(', ') + ']'); });
+    }
+    log('页面已加载，windowWhen 由 closingSelector 控制关窗');
+  </script>
+</body>
+</html>

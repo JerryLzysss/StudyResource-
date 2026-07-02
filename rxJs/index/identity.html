@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS identity</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS identity</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>identity 是一个恒等函数，接收一个参数并原样返回，常用于 pipe 中作为默认或占位函数。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">identity&lt;T&gt;(x: T): T</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>x</strong>（类型 T）：输入值</li>
+  </ul>
+
+  <h2>返回值</h2>
+  <p>类型 T — 与输入相同的值。</p>
+
+  <h2>描述</h2>
+  <p><code>identity</code> 是最简单的函数之一：传入什么就返回什么。在 RxJS 内部，它常作为默认的投影函数或参数转换函数的占位符。例如 <code>fromEventPattern</code> 的默认 resultSelector 就是只取第一个参数的 identity 行为。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { identity } from 'rxjs';
+
+console.log(identity(42));        // 42
+console.log(identity('hello'));   // 'hello'
+console.log(identity({ a: 1 }));  // { a: 1 }</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 identity：</p>
+    <button onclick="runNumber()">数字</button>
+    <button onclick="runString()">字符串</button>
+    <button onclick="runObject()">对象</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { identity } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runNumber() {
+      log('identity(42) => ' + identity(42));
+    }
+
+    function runString() {
+      log('identity("RxJS") => ' + identity('RxJS'));
+    }
+
+    function runObject() {
+      const obj = { name: 'identity', type: 'function' };
+      log('identity(obj) => ' + JSON.stringify(identity(obj)));
+    }
+
+    log('页面已加载，identity(x) 始终返回 x 本身');
+  </script>
+</body>
+</html>

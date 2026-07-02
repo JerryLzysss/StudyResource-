@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS combineLatest</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS combineLatest</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>combineLatest 组合多个 Observable，创建一个 Observable，其值是根据每个输入 Observable 的最新值计算得出的。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">combineLatest&lt;O extends ObservableInput&lt;any&gt;, R&gt;(
+  ...observables: (SchedulerLike | O | ((...values: ObservedValueOf&lt;O&gt;[]) => R))[]
+): Observable&lt;R&gt;</div>
+
+  <h2>描述</h2>
+  <p>每当任何 Observable 输入发出一个值时，它都会使用来自所有输入的最新值来计算公式，然后发出该公式的输出。</p>
+  <p><code>combineLatest</code> 合并所有作为参数传递的 Observable 的值。这是通过按顺序订阅每个 Observable 来完成的，并且每当发出任何 Observable 时，就从每个 Observable 中收集最新值的数组。因此，如果将 <code>n</code> 个 Observables 传递给运算符，则返回的 Observable 将始终发出 <code>n</code> 个值数组。</p>
+  <p>为确保输出数组的长度始终相同，<code>combineLatest</code> 实际上将等待所有输入 Observable 至少发出一次，然后再开始发出结果。传递空数组将导致 Observable 立即完成。</p>
+  <p>如果至少有一个 Observable 传递给了 <code>combineLatest</code> 并且所有 Observable 都发出了值，那么当所有组合流完成时，结果 Observable 将完成。如果有任何 Observable 出错，<code>combineLatest</code> 也会立即发生错误。</p>
+  <p><code>combineLatest</code> 接受可选的 <code>project</code> 函数作为参数，该函数接受通常由结果 Observable 发出的所有值作为参数，可以返回任何类型的值。</p>
+
+  <h2>例子</h2>
+  <h3>结合两个 timer Observables</h3>
+  <div class="code-box">import { combineLatest, timer } from 'rxjs';
+
+const firstTimer = timer(0, 1000);
+const secondTimer = timer(500, 1000);
+const combinedTimers = combineLatest([firstTimer, secondTimer]);
+combinedTimers.subscribe(value => console.log(value));
+
+// 输出:
+// [0, 0] 在 0.5 秒后
+// [1, 0] 在 1 秒后
+// [1, 1] 在 1.5 秒后
+// [2, 1] 在 2 秒后</div>
+
+  <h3>使用 project 函数动态计算 BMI</h3>
+  <div class="code-box">import { combineLatest, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+const weight = of(70, 72, 76, 79, 75);
+const height = of(1.76, 1.77, 1.78);
+const bmi = combineLatest([weight, height]).pipe(
+  map(([w, h]) => w / (h * h))
+);
+bmi.subscribe(x => console.log('BMI 为 ' + x));
+
+// 输出:
+// BMI is 24.212293388429753
+// BMI is 23.93948099205209
+// BMI is 23.671253629592222</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 combineLatest：</p>
+    <button onclick="runTwoSources()">两个数据源</button>
+    <button onclick="runBMI()">BMI 计算</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { combineLatest, of, timer } = rxjs;
+    const { map, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runTwoSources() {
+      log('=== 两个 of 数据源 ===');
+      const a$ = of('A', 'B', 'C');
+      const b$ = of(1, 2);
+      combineLatest([a$, b$]).pipe(take(3)).subscribe({
+        next: v => log('合并: ' + JSON.stringify(v)),
+        complete: () => log('complete')
+      });
+    }
+
+    function runBMI() {
+      log('=== BMI 计算 ===');
+      const weight = of(70, 72, 76);
+      const height = of(1.76, 1.77, 1.78);
+      combineLatest([weight, height]).pipe(
+        map(([w, h]) => w / (h * h))
+      ).subscribe({
+        next: x => log('BMI is ' + x.toFixed(4)),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 combineLatest');
+  </script>
+</body>
+</html>

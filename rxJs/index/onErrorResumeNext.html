@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS onErrorResumeNext</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS onErrorResumeNext</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>当任何提供的 Observable 发出 complete 或 error 通知时，立即订阅下一个源；忽略错误，继续执行后续 Observable 序列。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">onErrorResumeNext&lt;T, R&gt;(...sources: any[]): Observable&lt;R&gt;</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>sources</strong>：Observable（或任何可观察对象），可直接传入或作为数组传入</li>
+  </ul>
+
+  <h2>返回值</h2>
+  <p><code>Observable</code>：将所有源一个接一个串联的 Observable，忽略所有错误，任何错误都会导致它继续移动到下一个源。</p>
+
+  <h2>描述</h2>
+  <p>不管发生什么，都执行一系列 Observable，即使这意味着"吞掉"错误。</p>
+  <p><code>onErrorResumeNext</code> 将依次订阅它提供的每个可观察源。如果其订阅的源发出错误或完成，它将无误地移至下一个源。</p>
+  <p>如果 <code>onErrorResumeNext</code> 未提供参数或传入空数组，则返回 <code>EMPTY</code>。</p>
+  <p>它基本上是 <code>concat</code>，即使其中一个来源发出错误，也只会继续。注意：无法通过 onErrorResumeNext 的结果来处理源抛出的错误；若需处理，可先用 <code>catchError</code> 再传入。</p>
+
+  <h2>例子</h2>
+  <h3>映射失败后订阅下一个 Observable</h3>
+  <div class="code-box">import { onErrorResumeNext, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+onErrorResumeNext(
+  of(1, 2, 3, 0).pipe(
+    map(x => {
+      if (x === 0) throw Error();
+      return 10 / x;
+    })
+  ),
+  of(1, 2, 3),
+).subscribe(
+  val =&gt; console.log(val),
+  err =&gt; console.log(err),   // 永远不会被调用
+  () =&gt; console.log('完成'),
+);
+
+// 输出:
+// 10
+// 5
+// 3.3333333333333335
+// 1
+// 2
+// 3
+// done</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>concat</code></li>
+    <li><code>catchError</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 onErrorResumeNext：</p>
+    <button onclick="runResumeNext()">错误后继续下一个源</button>
+    <button onclick="runConcatCompare()">对比：concat 遇错终止</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { onErrorResumeNext, of, concat, throwError } = rxjs;
+    const { map } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runResumeNext() {
+      log('=== onErrorResumeNext（遇错继续）===');
+      onErrorResumeNext(
+        of(1, 2, 3, 0).pipe(
+          map(x => {
+            if (x === 0) throw new Error('除零');
+            return 10 / x;
+          })
+        ),
+        of(1, 2, 3)
+      ).subscribe({
+        next: v => log(`next: ${v}`),
+        error: err => log(`error: ${err.message}`),
+        complete: () => log('complete')
+      });
+    }
+
+    function runConcatCompare() {
+      log('=== concat（遇错终止，不会到达第二个源）===');
+      concat(
+        throwError(() => new Error('第一个源出错')),
+        of('B', 'C')
+      ).subscribe({
+        next: v => log(`next: ${v}`),
+        error: err => log(`error: ${err.message}`),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，onErrorResumeNext 遇错或完成后继续下一个源');
+  </script>
+</body>
+</html>

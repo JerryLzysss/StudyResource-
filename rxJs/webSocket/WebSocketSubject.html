@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS WebSocketSubject</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS WebSocketSubject</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>WebSocketSubject 继承自 AnonymousSubject，是可通过 WebSocket 与服务器通信的 Subject，支持双向消息传递与多路复用。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class WebSocketSubject&lt;T&gt; extends AnonymousSubject {
+  constructor(
+    urlConfigOrSource: string | WebSocketSubjectConfig&lt;T&gt; | Observable&lt;T&gt;,
+    destination?: Observer&lt;T&gt;
+  )
+  _output: Subject&lt;T&gt;
+  lift&lt;R&gt;(operator: Operator&lt;T, R&gt;): WebSocketSubject&lt;R&gt;
+  multiplex(
+    subMsg: () =&gt; any,
+    unsubMsg: () =&gt; any,
+    messageFilter: (value: T) =&gt; boolean
+  )
+  _subscribe(subscriber: Subscriber&lt;T&gt;): Subscription
+  unsubscribe()
+}</div>
+
+  <h2>构造函数</h2>
+  <p><code>constructor(urlConfigOrSource, destination?)</code></p>
+  <table>
+    <tr><th>参数</th><th>类型</th></tr>
+    <tr><td><code>urlConfigOrSource</code></td><td><code>string | WebSocketSubjectConfig | Observable</code></td></tr>
+    <tr><td><code>destination</code></td><td>可选，默认 <code>undefined</code>，类型 <code>Observer</code></td></tr>
+  </table>
+
+  <h2>属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>_output</code></td><td><code>Subject&lt;T&gt;</code></td><td>内部输出 Subject</td></tr>
+  </table>
+
+  <h2>方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr>
+      <td><code>lift(operator)</code></td>
+      <td>应用操作符，返回 <code>WebSocketSubject&lt;R&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>multiplex(subMsg, unsubMsg, messageFilter)</code></td>
+      <td>创建 Observable：订阅时通过 <code>subMsg</code> 向服务器发送订阅消息；数据到达后用 <code>messageFilter</code> 筛选；拆卸时通过 <code>unsubMsg</code> 发送退订消息。消息仍由配置中的序列化器处理（默认 JSON）</td>
+    </tr>
+    <tr>
+      <td><code>_subscribe(subscriber)</code></td>
+      <td>订阅 WebSocketSubject，返回 <code>Subscription</code></td>
+    </tr>
+    <tr>
+      <td><code>unsubscribe()</code></td>
+      <td>取消订阅，无参数</td>
+    </tr>
+  </table>
+
+  <h3>multiplex 参量</h3>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>subMsg</code></td><td>生成订阅消息的函数，发送到服务器</td></tr>
+    <tr><td><code>unsubMsg</code></td><td>生成退订消息的函数，在拆卸时发送到服务器</td></tr>
+    <tr><td><code>messageFilter</code></td><td>从服务器消息中筛选适当数据的谓词</td></tr>
+  </table>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 WebSocketSubject：</p>
+    <button onclick="runBasic()">基本收发</button>
+    <button onclick="runMultiplex()">multiplex</button>
+    <button onclick="runUnsubscribe()">unsubscribe 关闭</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script type="module">
+    import { webSocket } from 'https://cdn.jsdelivr.net/npm/rxjs@7.8.2/webSocket/+esm';
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.textContent += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    class MockWebSocket {
+      constructor(url) {
+        this.url = url;
+        this.readyState = 0;
+        this.onopen = null;
+        this.onmessage = null;
+        this.onclose = null;
+        setTimeout(() => {
+          this.readyState = 1;
+          if (this.onopen) this.onopen({});
+        }, 30);
+      }
+      send(data) {
+        log('服务器收到: ' + data);
+        setTimeout(() => {
+          if (this.onmessage) {
+            const parsed = JSON.parse(data);
+            if (parsed.subscribe) {
+              this.onmessage({ data: JSON.stringify({ channel: parsed.subscribe, data: 'welcome' }) });
+            } else {
+              this.onmessage({ data: JSON.stringify({ echo: parsed }) });
+            }
+          }
+        }, 60);
+      }
+      close() {
+        this.readyState = 3;
+        if (this.onclose) this.onclose({ code: 1000 });
+      }
+    }
+
+    function createSubject() {
+      return webSocket({
+        url: 'ws://mock.local',
+        WebSocketCtor: MockWebSocket
+      });
+    }
+
+    window.clearOutput = () => { output.textContent = ''; };
+
+    window.runBasic = () => {
+      log('=== WebSocketSubject 基本收发 ===');
+      const subject = createSubject();
+      subject.subscribe({
+        next: msg => log('next: ' + JSON.stringify(msg)),
+        complete: () => log('complete')
+      });
+      setTimeout(() => subject.next({ text: 'ping' }), 100);
+      setTimeout(() => subject.complete(), 400);
+    };
+
+    window.runMultiplex = () => {
+      log('=== multiplex 订阅/退订 ===');
+      const subject = createSubject();
+      const obs = subject.multiplex(
+        () => ({ subscribe: 'channel-1' }),
+        () => ({ unsubscribe: 'channel-1' }),
+        msg => msg.channel === 'channel-1'
+      );
+      const sub = obs.subscribe(msg => log('multiplex next: ' + JSON.stringify(msg)));
+      setTimeout(() => sub.unsubscribe(), 350);
+    };
+
+    window.runUnsubscribe = () => {
+      log('=== unsubscribe 关闭连接 ===');
+      const subject = createSubject();
+      const sub = subject.subscribe(msg => log('next: ' + JSON.stringify(msg)));
+      setTimeout(() => {
+        subject.unsubscribe();
+        log('已调用 subject.unsubscribe()');
+      }, 200);
+    };
+
+    log('页面已加载，点击按钮演示 WebSocketSubject');
+  </script>
+</body>
+</html>

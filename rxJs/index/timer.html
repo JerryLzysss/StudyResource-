@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS timer</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS timer</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>timer 创建一个 Observable，在 <code>dueTime</code> 之后开始发射，此后每隔 <code>period</code> 发射递增的数字序列。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">timer(dueTime: number | Date = 0, periodOrScheduler?: number | SchedulerLike, scheduler?: SchedulerLike): Observable&lt;number&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>dueTime</code></td><td>可选，默认 0。指定为 Date 对象或整数，表示发出第一个值 0 之前要等待的毫秒数</td></tr>
+    <tr><td><code>periodOrScheduler</code></td><td>可选。两次发射之间的时间间隔（后续编号）</td></tr>
+    <tr><td><code>scheduler</code></td><td>可选。用于调度值发射的 SchedulerLike</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>就像 <code>interval</code>，但是您可以指定何时应该开始发射。</p>
+  <p><code>timer</code> 返回一个 Observable，它发出一个无限的升序整数序列，具有固定时间间隔 <code>period</code>。第一次发射发生在指定的时间 <code>dueTime</code> 之后。如果 <code>period</code> 未指定，则 Observable 仅发出一个值 <code>0</code> 后完成。</p>
+
+  <h2>例子</h2>
+  <h3>发出升序数字，3 秒后开始，每秒一次</h3>
+  <div class="code-box">import { timer } from 'rxjs';
+
+const numbers = timer(3000, 1000);
+numbers.subscribe(x => console.log(x));</div>
+
+  <h3>五秒钟后发出一个数字</h3>
+  <div class="code-box">import { timer } from 'rxjs';
+
+const numbers = timer(5000);
+numbers.subscribe(x => console.log(x));</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>interval</code></li>
+    <li><code>delay</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 timer：</p>
+    <button onclick="runOnce()">延迟 1 秒发射一次</button>
+    <button onclick="runPeriodic()">延迟后开始周期发射</button>
+    <button onclick="stopTimer()">停止</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { timer } = rxjs;
+    const { take } = rxjs.operators;
+    const output = document.getElementById('output');
+    let timerSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function stopTimer() {
+      if (timerSub) { timerSub.unsubscribe(); timerSub = null; log('已停止'); }
+    }
+
+    function runOnce() {
+      stopTimer();
+      log('=== timer(1000) 延迟 1 秒发射一次 ===');
+      timerSub = timer(1000).subscribe({
+        next: x => log('next: ' + x),
+        complete: () => log('complete')
+      });
+    }
+
+    function runPeriodic() {
+      stopTimer();
+      log('=== timer(1000, 500).pipe(take(5)) ===');
+      timerSub = timer(1000, 500).pipe(take(5)).subscribe({
+        next: x => log('next: ' + x),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，timer 可指定首次延迟和发射间隔');
+  </script>
+</body>
+</html>

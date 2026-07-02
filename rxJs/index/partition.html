@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS partition</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS partition（创建函数）</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong><code>partition</code> 是 index 中的静态创建函数（非 operators 里已弃用的 partition 运算符），将源 Observable 分为两个：一个发出满足谓词的值，另一个发出不满足谓词的值。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">partition&lt;T&gt;(
+  source: ObservableInput&lt;T&gt;,
+  predicate: (value: T, index: number) =&gt; boolean,
+  thisArg?: any
+): [Observable&lt;T&gt;, Observable&lt;T&gt;]</div>
+
+  <h2>参量</h2>
+  <ul>
+    <li><strong>source</strong>：源 Observable（或任何可观察输入）</li>
+    <li><strong>predicate</strong>：评估每个值的函数。返回 <code>true</code> 的值进入第一个 Observable，返回 <code>false</code> 的进入第二个。<code>index</code> 是从订阅以来第 i 次发射的编号（从 0 开始）</li>
+    <li><strong>thisArg</strong>（可选）：谓词函数中 <code>this</code> 的值，默认 <code>undefined</code></li>
+  </ul>
+
+  <h2>返回值</h2>
+  <p><code>[Observable, Observable]</code>：两个 Observable 的数组，第一个类似 filter 结果，第二个类似 filter 取反结果。</p>
+
+  <h2>描述</h2>
+  <p>类似于 <code>filter</code>，但一次返回两个 Observable。第一个发出谓词返回 true 的源值；第二个发出谓词返回 false 的源值。</p>
+  <p>注意：operators 中的 <code>partition</code> 已弃用，请使用此 index 静态创建函数：<code>import { partition } from 'rxjs'</code>。</p>
+
+  <h2>例子</h2>
+  <h3>将数字划分为奇数和偶数</h3>
+  <div class="code-box">import { of, partition } from 'rxjs';
+
+const observableValues = of(1, 2, 3, 4, 5, 6);
+const [evens$, odds$] = partition(
+  observableValues,
+  (value, index) =&gt; value % 2 === 0
+);
+
+odds$.subscribe(x =&gt; console.log('奇数', x));
+evens$.subscribe(x =&gt; console.log('偶数', x));
+
+// 输出:
+// odds 1
+// odds 3
+// odds 5
+// evens 2
+// evens 4
+// evens 6</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>filter</code>（operators）</li>
+    <li><code>partition</code>（operators，已弃用）</li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 partition 创建函数：</p>
+    <button onclick="runOddEven()">奇偶分区</button>
+    <button onclick="runGreaterThan()">大于 3 / 不大于 3</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, partition } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runOddEven() {
+      log('=== partition 奇偶 ===');
+      const src = of(1, 2, 3, 4, 5, 6);
+      const [evens$, odds$] = partition(src, v => v % 2 === 0);
+      odds$.subscribe(x => log(`odds: ${x}`));
+      evens$.subscribe(x => log(`evens: ${x}`));
+    }
+
+    function runGreaterThan() {
+      log('=== partition value > 3 ===');
+      const src = of(1, 2, 3, 4, 5, 6, 7);
+      const [pass$, fail$] = partition(src, v => v > 3);
+      pass$.subscribe(x => log(`&gt;3: ${x}`));
+      fail$.subscribe(x => log(`≤3: ${x}`));
+    }
+
+    log('页面已加载，partition（index）将源流一分为二');
+  </script>
+</body>
+</html>

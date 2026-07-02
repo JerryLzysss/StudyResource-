@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS Subscription</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS Subscription</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>Subscription 表示一次性资源，例如 Observable 的执行。它具有最重要的方法 <code>unsubscribe()</code>，用于处置该订阅所拥有的资源。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class Subscription implements SubscriptionLike {
+  static EMPTY: Subscription
+  constructor(unsubscribe?: () => void)
+  closed: boolean
+  unsubscribe(): void
+  add(teardown: TeardownLogic): Subscription
+  remove(subscription: Subscription): void
+}</div>
+
+  <h2>子类</h2>
+  <ul>
+    <li><code>Subscriber</code></li>
+  </ul>
+
+  <h2>描述</h2>
+  <p>此外，可以通过 <code>add()</code> 方法将订阅分组在一起，该方法会将子订阅附加到当前订阅。取消订阅后，其所有子项（及其子孙）也将被取消订阅。</p>
+
+  <h2>静态属性</h2>
+  <table>
+    <tr><th>属性</th><th>类型</th><th>描述</th></tr>
+    <tr><td><code>EMPTY</code></td><td><code>Subscription</code></td><td>空的、已关闭的 Subscription 实例</td></tr>
+  </table>
+
+  <h2>方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr><td><code>unsubscribe()</code></td><td>处置订阅所拥有的资源，取消 Observable 执行</td></tr>
+    <tr><td><code>add(teardown)</code></td><td>添加在 unsubscribe 期间要调用的拆解逻辑，也可用于添加子订阅</td></tr>
+    <tr><td><code>remove(subscription)</code></td><td>从内部订阅列表中移除指定的子订阅</td></tr>
+  </table>
+
+  <h2>例子</h2>
+  <h3>基本订阅与取消</h3>
+  <div class="code-box">import { interval } from 'rxjs';
+
+const observable = interval(1000);
+const subscription = observable.subscribe(x => console.log(x));
+
+// 5 秒后取消订阅
+setTimeout(() => subscription.unsubscribe(), 5000);</div>
+
+  <h3>组合订阅</h3>
+  <div class="code-box">import { interval } from 'rxjs';
+
+const sub1 = interval(400).subscribe(x => console.log('第一个: ' + x));
+const sub2 = interval(300).subscribe(x => console.log('第二个: ' + x));
+
+sub1.add(sub2);
+// 取消 sub1 会同时取消 sub2
+sub1.unsubscribe();</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>Unsubscribable</code></li>
+    <li><code>TeardownLogic</code></li>
+    <li><code>Subscriber</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 Subscription：</p>
+    <button onclick="runBasic()">基本订阅</button>
+    <button onclick="runUnsub()">取消订阅</button>
+    <button onclick="runAdd()">add 组合订阅</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { interval, Subscription } = rxjs;
+    const output = document.getElementById('output');
+    let activeSub = null;
+    let childSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+      if (activeSub) { activeSub.unsubscribe(); activeSub = null; }
+      if (childSub) { childSub.unsubscribe(); childSub = null; }
+    }
+
+    function runBasic() {
+      clearOutput();
+      log('=== interval(500).subscribe() ===');
+      activeSub = interval(500).subscribe({
+        next: x => log('next: ' + x)
+      });
+      log('已获得 Subscription，点击"取消订阅"停止');
+    }
+
+    function runUnsub() {
+      if (activeSub) {
+        activeSub.unsubscribe();
+        log('已调用 unsubscribe()，closed: ' + activeSub.closed);
+        activeSub = null;
+      } else {
+        log('请先点击"基本订阅"');
+      }
+    }
+
+    function runAdd() {
+      clearOutput();
+      log('=== sub1.add(sub2) 组合订阅 ===');
+      activeSub = interval(400).subscribe(x => log('first: ' + x));
+      childSub = interval(300).subscribe(x => log('second: ' + x));
+      activeSub.add(childSub);
+      setTimeout(() => {
+        log('取消 sub1（同时取消 sub2）...');
+        activeSub.unsubscribe();
+        activeSub = null;
+        childSub = null;
+      }, 1200);
+    }
+
+    log('页面已加载，Subscription = 管理 Observable 执行的一次性资源');
+  </script>
+</body>
+</html>

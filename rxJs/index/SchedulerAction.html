@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>RxJS SchedulerAction</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      line-height: 1.6;
+
+    }
+
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+
+    h2 { color: #e91e63; margin-top: 30px; }
+
+    h3 { color: #666; }
+
+    .highlight {
+
+      background-color: #fff3cd;
+
+      padding: 15px;
+
+      border-left: 4px solid #ffc107;
+
+      margin: 15px 0;
+
+    }
+
+    .code-box {
+
+      background-color: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+
+      border-radius: 4px;
+
+      padding: 15px;
+
+      margin: 15px 0;
+
+      font-family: Consolas, Monaco, monospace;
+
+      overflow-x: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    .demo-section {
+
+      background-color: #e3f2fd;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    button {
+
+      background-color: #e91e63;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px 20px;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      margin: 5px;
+
+    }
+
+    button:hover { background-color: #c2185b; }
+
+    #output {
+
+      background-color: #263238;
+
+      color: #00e676;
+
+      padding: 15px;
+
+      border-radius: 4px;
+
+      margin-top: 15px;
+
+      font-family: Consolas, Monaco, monospace;
+
+      min-height: 100px;
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+      white-space: pre;
+
+      line-height: 1.5;
+
+    }
+
+    ul { line-height: 1.8; }
+
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+
+    th { background-color: #f5f5f5; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>RxJS SchedulerAction</h1>
+
+
+
+  <div class="highlight">
+
+    <strong>核心概念：</strong>SchedulerAction 是调度程序执行的工作单元，继承自 Subscription，表示一次被调度的任务。
+
+  </div>
+
+
+
+  <h2>接口定义</h2>
+
+  <div class="code-box">interface SchedulerAction&lt;T&gt; extends Subscription {
+
+  schedule(state?: T, delay?: number): Subscription
+
+}</div>
+
+
+
+  <h2>描述</h2>
+
+  <p>SchedulerAction 代表调度程序上的一次具体执行动作。当调用 <code>SchedulerLike.schedule()</code> 时，会创建一个 SchedulerAction 实例来执行传入的 work 函数。</p>
+
+  <p>由于 SchedulerAction 继承 Subscription，可以通过 <code>unsubscribe()</code> 取消尚未执行或正在执行的任务。在 work 函数内部，<code>this</code> 指向当前 SchedulerAction，可用于递归调度（如 interval 任务）。</p>
+
+
+
+  <h2>方法</h2>
+
+  <table>
+
+    <tr><th>方法</th><th>说明</th></tr>
+
+    <tr><td><code>schedule(state?, delay?)</code></td><td>重新调度此 Action，可选传入新状态和延迟，返回 Subscription</td></tr>
+
+    <tr><td><code>unsubscribe()</code></td><td>取消此 Action（继承自 Subscription）</td></tr>
+
+  </table>
+
+
+
+  <h2>例子</h2>
+
+  <div class="code-box">import { asyncScheduler } from 'rxjs';
+
+
+
+function task(state) {
+
+  console.log(state);
+
+  this.schedule(state + 1, 1000);
+
+  // `this` 是当前 SchedulerAction，
+
+  // 用新状态和延迟重新调度
+
+}
+
+
+
+asyncScheduler.schedule(task, 1000, 0);
+
+
+
+// 输出:
+
+// 0（1 秒后）
+
+// 1（2 秒后）
+
+// 2（3 秒后）
+
+// ...</div>
+
+
+
+  <h2>也可以看看</h2>
+
+  <ul>
+
+    <li><code>SchedulerLike</code></li>
+
+    <li><code>asyncScheduler</code></li>
+
+    <li><code>Subscription</code></li>
+
+  </ul>
+
+
+
+  <h2>在线演示</h2>
+
+  <div class="demo-section">
+
+    <p>点击下方按钮演示 SchedulerAction（通过 asyncScheduler）：</p>
+
+    <button onclick="runTask()">递归调度任务</button>
+
+    <button onclick="stopDemo()">取消任务</button>
+
+    <button onclick="clearOutput()">清空输出</button>
+
+    <div id="output"></div>
+
+  </div>
+
+
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+
+  <script>
+
+    const { asyncScheduler } = rxjs;
+
+    const output = document.getElementById('output');
+
+    let actionSub = null;
+
+
+
+    function log(message) {
+
+      const time = new Date().toLocaleTimeString();
+
+      output.innerHTML += `[${time}] ${message}\n`;
+
+      output.scrollTop = output.scrollHeight;
+
+    }
+
+
+
+    function clearOutput() {
+
+      output.innerHTML = '';
+
+    }
+
+
+
+    function stopDemo() {
+
+      if (actionSub) {
+
+        actionSub.unsubscribe();
+
+        actionSub = null;
+
+        log('已取消 SchedulerAction');
+
+      }
+
+    }
+
+
+
+    function runTask() {
+
+      stopDemo();
+
+      log('=== asyncScheduler.schedule 递归任务 ===');
+
+      function task(state) {
+
+        log('state: ' + state);
+
+        if (state < 3) {
+
+          actionSub = this.schedule(state + 1, 800);
+
+        } else {
+
+          log('任务完成');
+
+        }
+
+      }
+
+      actionSub = asyncScheduler.schedule(task, 500, 0);
+
+    }
+
+
+
+    log('页面已加载，SchedulerAction 是调度程序上的工作单元');
+
+  </script>
+
+</body>
+
+</html>
+

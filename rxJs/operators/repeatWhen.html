@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS repeatWhen</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS repeatWhen</h1>
+  <div class="highlight">
+    <strong>核心概念：</strong>repeatWhen 在源 complete 时，根据 notifier Observable 决定是否重新订阅源，实现自定义重复逻辑。
+  </div>
+  <h2>签名</h2>
+  <div class="code-box">repeatWhen&lt;T&gt;(notifier: (notifications: Observable&lt;void&gt;) => Observable&lt;any&gt;): MonoTypeOperatorFunction&lt;T&gt;</div>
+  <h2>参量</h2>
+  <ul>
+    <li><strong>notifier</strong>：接收 complete 通知的 Observable，返回决定是否重复的 Observable</li>
+  </ul>
+  <h2>返回值</h2>
+  <p>返回 <code>MonoTypeOperatorFunction</code>，notifier 发出值时重新订阅源。</p>
+  <h2>描述</h2>
+  <p>repeatWhen 提供比 repeat 更灵活的控制，如延迟重复、条件重复、有限次数等。</p>
+  <h2>例子</h2>
+  <div class="code-box">import { of, timer } from 'rxjs';
+import { repeatWhen, delayWhen, take } from 'rxjs/operators';
+
+of(1, 2, 3).pipe(
+  repeatWhen(notifications =>
+    notifications.pipe(
+      delayWhen(() => timer(1000)),
+      take(2)
+    )
+  )
+).subscribe(console.log);
+// 每次 complete 后延迟 1s 重复，最多 2 次</div>
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <button onclick="runRepeatWhen()">repeatWhen 延迟重复</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of, timer } = rxjs;
+    const { repeatWhen, delayWhen, take } = rxjs.operators;
+    const output = document.getElementById('output');
+    function log(msg) { output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`; output.scrollTop = output.scrollHeight; }
+    function clearOutput() { output.innerHTML = ''; }
+    function runRepeatWhen() {
+      log('=== repeatWhen：complete 后延迟 800ms 重复 ===');
+      of('A', 'B').pipe(
+        repeatWhen(n => n.pipe(delayWhen(() => timer(800)), take(1)))
+      ).subscribe({
+        next: v => log('next: ' + v),
+        complete: () => log('complete')
+      });
+    }
+    log('页面已加载，repeatWhen 自定义重复逻辑');
+  </script>
+</body>
+</html>

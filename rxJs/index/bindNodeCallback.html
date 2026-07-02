@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS bindNodeCallback</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS bindNodeCallback</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>bindNodeCallback 将 Node.js 样式的回调 API 转换为返回 Observable 的函数。回调应遵循 <code>callback(error, result)</code> 约定。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">bindNodeCallback&lt;T&gt;(
+  callbackFunc: Function,
+  resultSelector?: Function | SchedulerLike,
+  scheduler?: SchedulerLike
+): (...args: any[]) => Observable&lt;T&gt;</div>
+
+  <h2>描述</h2>
+  <p>就像 bindCallback，但是回调应该是 type <code>callback(error, result)</code>。</p>
+  <p><code>bindNodeCallback</code> 不是运算符，因为其输入和输出都不是 Observable。输入是带有若干参数的函数 <code>func</code>，最后一个参数必须是完成后调用的回调函数。回调函数应遵循 Node.js 约定，其中回调的第一个参数是错误对象，表示调用是否成功。</p>
+  <p>当使用参数调用输出函数时，它将返回一个 Observable：</p>
+  <ul>
+    <li>若 <code>func</code> 用错误参数调用其回调，Observable 也将以该值发生错误</li>
+    <li>若未传递错误参数，Observable 将发出第二个参数</li>
+    <li>若有更多参数，Observable 将发出除第一个 error 参数以外的所有参数组成的数组</li>
+  </ul>
+  <p>请注意，<code>func</code> 在订阅结果 Observable 时才被调用。默认同步执行，可通过 <code>scheduler</code> 参数更改。SchedulerLike 工作原理与 bindCallback 完全相同。</p>
+  <p>与中一样 bindCallback，输入函数的 <code>this</code> 上下文在被调用时将设置为返回函数的上下文。</p>
+  <p>Observable 发出值后立即完成。如需处理多次调用回调的函数，请使用 <code>fromEvent</code> 或 <code>fromEventPattern</code>。</p>
+
+  <h2>例子</h2>
+  <h3>在具有多个参数的函数调用回调上使用</h3>
+  <div class="code-box">someFunction((err, a, b) => {
+  console.log(err); // null
+  console.log(a);   // 5
+  console.log(b);   // "some string"
+});
+
+const boundSomeFunction = bindNodeCallback(someFunction);
+boundSomeFunction().subscribe(value => {
+  console.log(value); // [5, "some string"]
+});</div>
+
+  <h3>用于常规样式的函数调用回调（会出错）</h3>
+  <div class="code-box">someFunction(a => {
+  console.log(a); // 5
+});
+
+const boundSomeFunction = bindNodeCallback(someFunction);
+boundSomeFunction().subscribe(
+  value => {},              // 永远不会被调用
+  err => console.log(err)  // 5
+);</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 bindNodeCallback：</p>
+    <button onclick="runSuccess()">成功回调</button>
+    <button onclick="runError()">错误回调</button>
+    <button onclick="runMultiArgs()">多参数回调</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { bindNodeCallback } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runSuccess() {
+      log('=== 成功回调 ===');
+      function readFile(path, callback) {
+        callback(null, '文件内容: ' + path);
+      }
+      bindNodeCallback(readFile)('demo.txt').subscribe({
+        next: x => log('收到: ' + x),
+        error: e => log('error: ' + e),
+        complete: () => log('complete')
+      });
+    }
+
+    function runError() {
+      log('=== 错误回调 ===');
+      function readFile(path, callback) {
+        callback(new Error('文件不存在: ' + path));
+      }
+      bindNodeCallback(readFile)('missing.txt').subscribe({
+        next: x => log('收到: ' + x),
+        error: e => log('error: ' + e.message),
+        complete: () => log('complete')
+      });
+    }
+
+    function runMultiArgs() {
+      log('=== 多参数回调 ===');
+      function compute(callback) {
+        callback(null, 5, 'some string');
+      }
+      bindNodeCallback(compute)().subscribe({
+        next: x => log('收到数组: ' + JSON.stringify(x)),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 bindNodeCallback');
+  </script>
+</body>
+</html>

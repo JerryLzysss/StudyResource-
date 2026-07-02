@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS throwError</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS throwError</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>throwError 创建一个 Observable，不向观察者发出任何项目，仅发出错误通知。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">throwError(error: any, scheduler?: SchedulerLike): Observable&lt;never&gt;</div>
+
+  <h2>参量</h2>
+  <table>
+    <tr><th>参数</th><th>说明</th></tr>
+    <tr><td><code>error</code></td><td>要传递给错误通知的特定错误（RxJS 7+ 推荐传入工厂函数 <code>() => new Error('...')</code>）</td></tr>
+    <tr><td><code>scheduler</code></td><td>可选。用于调度错误通知发出的 SchedulerLike</td></tr>
+  </table>
+
+  <h2>描述</h2>
+  <p>只是发出"错误"，别无其他。此静态创建函数可用于创建仅发出错误通知的 Observable，它可以用来与其他可观测值组合，例如在 <code>mergeMap</code> 中。</p>
+
+  <h2>例子</h2>
+  <h3>发出数字 7，然后发出错误</h3>
+  <div class="code-box">import { throwError, concat, of } from 'rxjs';
+
+const result = concat(of(7), throwError(() => new Error('oops!')));
+result.subscribe({
+  next: x => console.log(x),
+  error: e => console.error(e)
+});
+
+// 输出：
+// 7
+// Error: oops!</div>
+
+  <h3>将数字映射并展平到序列 'a'、'b'、'c'，但会在 2 时抛出错误</h3>
+  <div class="code-box">import { throwError, interval, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+
+interval(1000).pipe(
+  mergeMap(x => x === 2
+    ? throwError(() => 'Twos are bad')
+    : of('a', 'b', 'c')
+  ),
+).subscribe({
+  next: x => console.log(x),
+  error: e => console.error(e)
+});</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>Observable</code></li>
+    <li><code>EMPTY</code></li>
+    <li><code>NEVER</code></li>
+    <li><code>of</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 throwError：</p>
+    <button onclick="runConcat()">concat + throwError</button>
+    <button onclick="runMergeMap()">mergeMap 条件错误</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { throwError, concat, of, interval } = rxjs;
+    const { mergeMap, take } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runConcat() {
+      log('=== concat(of(7), throwError) ===');
+      concat(of(7), throwError(() => new Error('oops!'))).subscribe({
+        next: x => log('next: ' + x),
+        error: e => log('error: ' + e.message)
+      });
+    }
+
+    function runMergeMap() {
+      log('=== interval + mergeMap 条件 throwError ===');
+      interval(300).pipe(
+        take(4),
+        mergeMap(x => x === 2
+          ? throwError(() => 'Twos are bad')
+          : of('a', 'b', 'c')
+        )
+      ).subscribe({
+        next: x => log('next: ' + x),
+        error: e => log('error: ' + e)
+      });
+    }
+
+    log('页面已加载，throwError 创建仅发出错误的 Observable');
+  </script>
+</body>
+</html>

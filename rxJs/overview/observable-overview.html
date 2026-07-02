@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS Observable 可观察对象</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    table {
+      border-collapse: collapse;
+      margin: 20px 0;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    th { background-color: #f5f5f5; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>RxJS Observable 可观察对象</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>可观察对象是多个值的惰性推式集合。它们填补了以下表格中的缺失点：
+  </div>
+
+  <table>
+    <tr>
+      <th></th>
+      <th>单</th>
+      <th>多</th>
+    </tr>
+    <tr>
+      <th><strong>拉 (Pull)</strong></th>
+      <td>Function</td>
+      <td>Iterator</td>
+    </tr>
+    <tr>
+      <th><strong>推 (Push)</strong></th>
+      <td>Promise</td>
+      <td><strong style="color: #e91e63;">Observable</strong></td>
+    </tr>
+  </table>
+
+  <h2>拉与推</h2>
+  <p><strong>拉（Pull）</strong>和<strong>推（Push）</strong>是两种不同的协议，描述了数据<strong>生产者</strong>如何与数据<strong>消费者</strong>通信。</p>
+
+  <h3>什么是拉？</h3>
+  <p>在拉式系统中，<strong>消费者</strong>决定何时从数据生产者接收数据。生产者本身并不知道何时将数据传递给消费者。</p>
+  <ul>
+    <li>每个 JavaScript 函数都是一个拉式系统</li>
+    <li>ES2015 生成器函数和迭代器（<code>function*</code>）也是拉式系统</li>
+  </ul>
+
+  <table>
+    <tr>
+      <th></th>
+      <th>生产者</th>
+      <th>消费者</th>
+    </tr>
+    <tr>
+      <th>拉</th>
+      <td><strong>被动：</strong>在需要时产生数据</td>
+      <td><strong>主动：</strong>决定何时请求数据</td>
+    </tr>
+    <tr>
+      <th>推</th>
+      <td><strong>主动：</strong>按自己的节奏生成数据</td>
+      <td><strong>被动：</strong>对收到的数据做出反应</td>
+    </tr>
+  </table>
+
+  <h3>什么是推？</h3>
+  <p>在推送系统中，<strong>生产者</strong>决定何时将数据发送给消费者。消费者不知道何时接收该数据。</p>
+  <ul>
+    <li><strong>Promise</strong>：将已解析的值传递给已注册的回调，Promise 负责精确确定何时将该值"推送"到回调</li>
+    <li><strong>Observable</strong>：多个值的生产者，将它们"推送"到观察者（消费者）</li>
+  </ul>
+
+  <h2>可观察对象 vs 函数</h2>
+  <div class="highlight">
+    <strong>关键区别：</strong>函数只能返回单个值，而 Observable 可以随时间推移"返回"多个值。
+  </div>
+
+  <h3>对比示例</h3>
+  <div class="code-box">
+<strong>// 函数 - 只能返回一个值</strong>
+
+function foo() {
+
+  console.log('你好');
+
+  return 42;
+
+  return 100; // 死代码，永远不会执行
+
+}
+
+<strong>// Observable - 可以返回多个值</strong>
+
+const foo$ = new Observable(subscriber => {
+
+  console.log('你好');
+
+  subscriber.next(42);
+
+  subscriber.next(100); // 可以返回另一个值
+
+  subscriber.next(200); // 还可以返回更多值
+
+});
+  </div>
+
+  <h2>Observable 剖析</h2>
+  <p>Observable 涉及四个核心方面：</p>
+  <ol>
+    <li><strong>创建</strong>：使用 <code>new Observable</code> 或创建操作符（如 <code>of</code>、<code>from</code>、<code>interval</code> 等）</li>
+    <li><strong>订阅</strong>：使用观察者订阅 Observable</li>
+    <li><strong>执行</strong>：Observable 传递 <code>next</code> / <code>error</code> / <code>complete</code> 通知给观察者</li>
+    <li><strong>清理</strong>：取消 Observable 的执行</li>
+  </ol>
+
+  <h3>Observable 语法约定</h3>
+  <div class="code-box">
+next*(error|complete)?
+
+含义：
+- 可以传递零次到无限次 next 通知
+- 如果传递了 error 或 complete 通知，则此后无法再传递其他内容
+  </div>
+
+  <h2>可观察对象示例</h2>
+  <p>以下是可观察到按压值 <code>1</code>、<code>2</code>、<code>3</code> 立即（同步）时所订阅，并且值 <code>4</code> 在一秒之后完成：</p>
+
+  <div class="code-box">
+const observable = new Observable(subscriber => {
+
+  subscriber.next(1);
+
+  subscriber.next(2);
+
+  subscriber.next(3);
+
+  setTimeout(() => {
+
+    subscriber.next(4);
+
+    subscriber.complete();
+
+  }, 1000);
+
+});
+
+console.log('订阅前');
+
+observable.subscribe({
+
+  next(x) {
+
+    console.log('收到值 ' + x);
+
+  },
+
+  error(err) {
+
+    console.error('发生错误: ' + err);
+
+  },
+
+  complete() {
+
+    console.log('完成');
+
+  }
+
+});
+
+console.log('订阅后');
+  </div>
+
+  <p><strong>控制台输出：</strong></p>
+  <div class="code-box" style="background-color: #263238; color: #00e676;">
+just before subscribe
+got value 1
+got value 2
+got value 3
+just after subscribe
+got value 4
+done
+  </div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮运行 RxJS 示例，观察 Observable 的行为：</p>
+    <button onclick="runExample1()">运行示例 1：基础 of()</button>
+    <button onclick="runExample2()">运行示例 2：Observable 创建</button>
+    <button onclick="runExample3()">运行示例 3：定时器 interval</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <!-- 通过 CDN 引入 RxJS -->
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { Observable, of, interval } = rxjs;
+    const { map, take } = rxjs.operators;
+
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runExample1() {
+
+      log('=== 示例 1：of() 操作符 ===');
+
+      of(1, 2, 3, 4)
+
+        .pipe(map(x => x * 2))
+
+        .subscribe({
+
+          next: value => log(`of 示例输出: ${value}`),
+
+          complete: () => log('of 示例完成')
+
+        });
+
+    }
+
+    function runExample2() {
+
+      log('=== 示例 2：Observable 创建与执行 ===');
+
+      const observable = new Observable(subscriber => {
+
+        log('Observable 执行开始');
+
+        subscriber.next(1);
+
+        subscriber.next(2);
+
+        subscriber.next(3);
+
+        setTimeout(() => {
+
+          subscriber.next(4);
+
+          subscriber.complete();
+
+          log('Observable 执行完成');
+
+        }, 1000);
+
+      });
+
+      log('订阅前');
+
+      observable.subscribe({
+
+        next: x => log(`收到值 ${x}`),
+
+        error: err => log(`error: ${err}`),
+
+        complete: () => log('完成')
+
+      });
+
+      log('订阅后');
+
+    }
+
+    function runExample3() {
+
+      log('=== 示例 3：interval 定时器 ===');
+
+      const subscription = interval(1000)
+
+        .pipe(
+
+          take(5),
+
+          map(i => `第 ${i + 1} 次触发`)
+
+        )
+
+        .subscribe({
+
+          next: text => log(`interval: ${text}`),
+
+          complete: () => log('interval 示例完成')
+
+        });
+
+      // 演示取消订阅
+
+      setTimeout(() => {
+
+        log('演示：可以调用 subscription.unsubscribe() 取消');
+
+      }, 3000);
+
+    }
+
+    // 页面加载时显示欢迎信息
+
+    log('页面已加载，点击上方按钮运行 RxJS 示例');
+
+    log('Observable 特点：');
+
+    log('  1. 惰性执行 - 只有订阅(subscribe)时才执行');
+
+    log('  2. 可以同步或异步传递多个值');
+
+    log('  3. 支持取消订阅(unsubscribe)来停止执行');
+  </script>
+</body>
+</html>

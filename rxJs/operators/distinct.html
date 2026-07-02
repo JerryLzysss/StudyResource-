@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS distinct</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS distinct</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>distinct 返回一个 Observable，只发出与之前所有值都不同的值（全局去重）。
+  </div>
+
+  <h2>签名</h2>
+  <div class="code-box">distinct&lt;T, K&gt;(
+  keySelector?: (value: T) => K,
+  flushes?: Observable&lt;any&gt;
+): MonoTypeOperatorFunction&lt;T&gt;</div>
+
+  <h2>描述</h2>
+  <p>distinct 使用内部 Set 记录已出现过的值。每当源发出一个值，如果该值（或通过 keySelector 投影后的值）之前未出现过，则发出该值；否则忽略。</p>
+  <p>与 distinctUntilChanged 不同，distinct 是全局去重——即使中间隔了其他值，重复的值也不会再次发出。可选的 flushes 参数用于清空内部 Set，缓解长期运行时的内存问题。</p>
+
+  <h2>例子</h2>
+  <div class="code-box">import { of } from 'rxjs';
+import { distinct } from 'rxjs/operators';
+
+of(1, 1, 2, 2, 2, 1, 2, 3, 4, 3, 2, 1).pipe(
+  distinct()
+).subscribe(x => console.log(x));
+// 输出: 1, 2, 3, 4
+
+// 使用 keySelector
+of(
+  { age: 4, name: 'Foo' },
+  { age: 7, name: 'Bar' },
+  { age: 5, name: 'Foo' }
+).pipe(
+  distinct(p => p.name)
+).subscribe(x => console.log(x));
+// 输出: { age: 4, name: 'Foo' }, { age: 7, name: 'Bar' }</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 distinct：</p>
+    <button onclick="runBasic()">基本去重</button>
+    <button onclick="runKeySelector()">按属性去重</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { of } = rxjs;
+    const { distinct } = rxjs.operators;
+    const output = document.getElementById('output');
+
+    function log(msg) {
+      output.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runBasic() {
+      log('=== distinct 全局去重 ===');
+      of(1, 1, 2, 2, 2, 1, 2, 3, 4, 3, 2, 1).pipe(distinct()).subscribe({
+        next: v => log('值: ' + v),
+        complete: () => log('complete')
+      });
+    }
+
+    function runKeySelector() {
+      log('=== distinct 按 name 去重 ===');
+      of(
+        { age: 4, name: 'Foo' },
+        { age: 7, name: 'Bar' },
+        { age: 5, name: 'Foo' }
+      ).pipe(distinct(p => p.name)).subscribe({
+        next: v => log(JSON.stringify(v)),
+        complete: () => log('complete')
+      });
+    }
+
+    log('页面已加载，点击按钮演示 distinct');
+  </script>
+</body>
+</html>

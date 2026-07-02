@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS asap</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS asap</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong><code>asap</code> 是"尽快"调度程序（asapScheduler），以最快的速度执行任务，是执行"延期"（deferred）任务的最佳选择。
+  </div>
+
+  <h2>声明</h2>
+  <div class="code-box">const asapScheduler: SchedulerLike;</div>
+
+  <h2>描述</h2>
+  <p>以最快的速度执行任务。</p>
+  <p><code>asap</code> 调度程序的行为与 <code>async</code> 调度程序相同——当你使用调度程序延迟任务时。但是，如果将 delay 设置为 <code>0</code>，<code>asap</code> 将等待当前同步执行的代码结束，然后它将尝试尽快执行给定的任务。</p>
+  <p><code>asap</code> 调度程序将尽最大努力减少当前正在执行的代码结束与计划任务开始之间的时间。这使其成为执行所谓的"延期"的最佳人选。传统上，这是通过调用 <code>setTimeout(deferredTask, 0)</code> 来实现的，但是该技术会涉及一些（尽管最小）不必要的延迟。</p>
+  <p>请注意，使用 <code>asap</code> 调度程序并不一定意味着您的任务将在当前执行代码后首先处理。特别是，如果某些任务也与 <code>asap</code> 之前安排在一起，则该任务将首先执行。话虽如此，如果您需要异步调度任务，但尽快调度，<code>asap</code> 是您的最佳选择。</p>
+
+  <h2>例子</h2>
+  <h3>比较 async 和 asap 调度程序</h3>
+  <div class="code-box">import { asapScheduler, asyncScheduler } from 'rxjs';
+
+asyncScheduler.schedule(() => console.log('async 调度')); // 先调度 'async'...
+asapScheduler.schedule(() => console.log('asap 调度'));
+
+// 输出:
+// "asap"
+// "async"
+// ... 但 'asap' 先执行！</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮比较 asap 与 async 调度顺序：</p>
+    <button onclick="runCompare()">比较 asap 与 async</button>
+    <button onclick="runDeferred()">延期任务演示</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { asapScheduler, asyncScheduler } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runCompare() {
+      log('=== 比较 async 与 asap ===');
+      log('先 schedule async，再 schedule asap');
+      asyncScheduler.schedule(() => log('async'));
+      asapScheduler.schedule(() => log('asap'));
+      log('（asap 通常先于 async 输出）');
+    }
+
+    function runDeferred() {
+      log('=== 延期任务演示 ===');
+      log('同步代码开始');
+      asapScheduler.schedule(() => log('asap: 延期任务执行'));
+      asyncScheduler.schedule(() => log('async: 延期任务执行'));
+      log('同步代码结束');
+    }
+
+    log('页面已加载，点击按钮演示 asap 调度程序');
+  </script>
+</body>
+</html>

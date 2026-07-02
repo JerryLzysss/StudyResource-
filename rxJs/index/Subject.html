@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS Subject</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; font-family: Consolas, Monaco, monospace; overflow-x: auto; white-space: pre; line-height: 1.5; }
+    .demo-section { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    button { background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background-color: #c2185b; }
+    #output { background-color: #263238; color: #00e676; padding: 15px; border-radius: 4px; margin-top: 15px; font-family: Consolas, Monaco, monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre; line-height: 1.5; }
+    ul { line-height: 1.8; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>RxJS Subject</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong>Subject 是一种特殊的 Observable，允许将值多播到许多 Observer。它既是 Observable 又是 Observer，类似 EventEmitter。
+  </div>
+
+  <h2>类定义</h2>
+  <div class="code-box">class Subject&lt;T&gt; extends Observable implements SubscriptionLike {
+  static create: Function
+  constructor()
+  observers: Observer&lt;T&gt;[]
+  closed: boolean
+  isStopped: boolean
+  hasError: boolean
+  thrownError: any
+  lift&lt;R&gt;(operator: Operator&lt;T, R&gt;): Observable&lt;R&gt;
+  next(value?: T): void
+  error(err: any): void
+  complete(): void
+  unsubscribe(): void
+  asObservable(): Observable&lt;T&gt;
+}</div>
+
+  <h2>描述</h2>
+  <p>每个 Subject 都是 Observable 和 Observer。您可以订阅 Subject，也可以调用 <code>next</code> 来推送值，以及 <code>error</code> 和 <code>complete</code>。</p>
+  <p>普通的 Observable 是单播的（每个订阅的 Observer 拥有独立执行），而 Subject 是多播的，它将值广播给所有已注册的观察者。</p>
+  <p>Subject 的几个特例：<code>BehaviorSubject</code>、<code>ReplaySubject</code> 和 <code>AsyncSubject</code>。</p>
+
+  <h2>方法</h2>
+  <table>
+    <tr><th>方法</th><th>说明</th></tr>
+    <tr><td><code>next(value)</code></td><td>向所有订阅者多播新值</td></tr>
+    <tr><td><code>error(err)</code></td><td>向所有订阅者发送错误通知</td></tr>
+    <tr><td><code>complete()</code></td><td>向所有订阅者发送完成通知</td></tr>
+    <tr><td><code>asObservable()</code></td><td>将此 Subject 作为源创建新 Observable，隐藏 Subject 端逻辑</td></tr>
+    <tr><td><code>unsubscribe()</code></td><td>取消 Subject 本身</td></tr>
+  </table>
+
+  <h2>例子</h2>
+  <h3>多播到多个观察者</h3>
+  <div class="code-box">import { Subject } from 'rxjs';
+
+const subject = new Subject&lt;number&gt;();
+
+subject.subscribe({ next: v => console.log(`observerA: ${v}`) });
+subject.subscribe({ next: v => console.log(`observerB: ${v}`) });
+
+subject.next(1);
+subject.next(2);
+
+// 输出：
+// observerA: 1
+// observerB: 1
+// observerA: 2
+// observerB: 2</div>
+
+  <h3>将单播 Observable 转为多播</h3>
+  <div class="code-box">import { Subject, from } from 'rxjs';
+
+const subject = new Subject&lt;number&gt;();
+subject.subscribe({ next: v => console.log(`observerA: ${v}`) });
+subject.subscribe({ next: v => console.log(`observerB: ${v}`) });
+
+const observable = from([1, 2, 3]);
+observable.subscribe(subject);
+
+// 输出：
+// observerA: 1  observerB: 1
+// observerA: 2  observerB: 2
+// observerA: 3  observerB: 3</div>
+
+  <h2>也可以看看</h2>
+  <ul>
+    <li><code>BehaviorSubject</code></li>
+    <li><code>ReplaySubject</code></li>
+    <li><code>AsyncSubject</code></li>
+    <li><code>ConnectableObservable</code></li>
+  </ul>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 Subject：</p>
+    <button onclick="runMulticast()">多播示例</button>
+    <button onclick="runFrom()">from + Subject</button>
+    <button onclick="runAsObservable()">asObservable()</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { Subject, from } = rxjs;
+    const output = document.getElementById('output');
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() { output.innerHTML = ''; }
+
+    function runMulticast() {
+      log('=== Subject 多播 ===');
+      const subject = new Subject();
+      subject.subscribe(v => log(`observerA: ${v}`));
+      subject.subscribe(v => log(`observerB: ${v}`));
+      subject.next(1);
+      subject.next(2);
+    }
+
+    function runFrom() {
+      log('=== from([1,2,3]).subscribe(subject) ===');
+      const subject = new Subject();
+      subject.subscribe(v => log(`observerA: ${v}`));
+      subject.subscribe(v => log(`observerB: ${v}`));
+      from([1, 2, 3]).subscribe(subject);
+    }
+
+    function runAsObservable() {
+      log('=== subject.asObservable() ===');
+      const subject = new Subject();
+      const observable = subject.asObservable();
+      observable.subscribe(v => log('观察者收到: ' + v));
+      subject.next('通过 asObservable 隐藏 Subject');
+    }
+
+    log('页面已加载，Subject = 可多播的 Observable + Observer');
+  </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>RxJS async</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #e91e63; padding-bottom: 10px; }
+    h2 { color: #e91e63; margin-top: 30px; }
+    h3 { color: #666; }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+    }
+    .code-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Consolas, Monaco, monospace;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .demo-section {
+      background-color: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background-color: #c2185b; }
+    #output {
+      background-color: #263238;
+      color: #00e676;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-family: Consolas, Monaco, monospace;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    ul { line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <h1>RxJS async</h1>
+
+  <div class="highlight">
+    <strong>核心概念：</strong><code>async</code> 是异步调度程序（asyncScheduler），通过将任务放入 JavaScript 事件循环队列来异步调度任务，类似 <code>setTimeout(task, duration)</code>。
+  </div>
+
+  <h2>声明</h2>
+  <div class="code-box">const asyncScheduler: SchedulerLike;</div>
+
+  <h2>描述</h2>
+  <p>像使用 <code>setTimeout(task, duration)</code> 一样调度任务。</p>
+  <p><code>async</code> 调度程序通过将任务放在 JavaScript 事件循环队列中来异步调度任务。最好将其用于延迟时间或安排间隔重复的任务。</p>
+  <p>如果您只是想"推迟"任务，也就是说要在当前执行同步代码结束后立即执行（通常由 <code>setTimeout(deferredTask, 0)</code> 实现），那么最好选择 <code>asap</code> 调度程序。</p>
+
+  <h2>例子</h2>
+  <h3>使用 async 调度程序延迟任务</h3>
+  <div class="code-box">import { asyncScheduler } from 'rxjs';
+
+const task = () => console.log('运行成功！');
+
+asyncScheduler.schedule(task, 2000);
+
+// 2 秒后输出:
+// "运行成功！"</div>
+
+  <h3>使用 async 调度程序定期间隔执行任务</h3>
+  <div class="code-box">import { asyncScheduler } from 'rxjs';
+
+function task(state) {
+  console.log(state);
+  this.schedule(state + 1, 1000);
+  // `this` 引用当前正在执行的 Action，
+  // 我们用新状态和延迟重新调度它
+}
+
+asyncScheduler.schedule(task, 3000, 0);
+
+// 输出:
+// 0 在 3 秒后
+// 1 在 4 秒后
+// 2 在 5 秒后
+// 3 在 6 秒后</div>
+
+  <h2>在线演示</h2>
+  <div class="demo-section">
+    <p>点击下方按钮演示 async 调度程序：</p>
+    <button onclick="runDelay()">延迟 2 秒执行</button>
+    <button onclick="runInterval()">间隔递增任务</button>
+    <button onclick="clearOutput()">清空输出</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
+  <script>
+    const { asyncScheduler } = rxjs;
+    const output = document.getElementById('output');
+    let intervalSub = null;
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString();
+      output.innerHTML += `[${time}] ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    function runDelay() {
+      log('=== 延迟 2 秒执行 ===');
+      log('已调度任务，等待 2 秒...');
+      asyncScheduler.schedule(() => log('运行成功！'), 2000);
+    }
+
+    function runInterval() {
+      log('=== 间隔递增任务（3 秒后开始，每秒 +1）===');
+      function task(state) {
+        log(String(state));
+        if (state < 3) {
+          this.schedule(state + 1, 1000);
+        } else {
+          log('任务完成');
+        }
+      }
+      asyncScheduler.schedule(task, 1000, 0);
+    }
+
+    log('页面已加载，点击按钮演示 async 调度程序');
+  </script>
+</body>
+</html>
