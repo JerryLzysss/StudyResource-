@@ -16,7 +16,11 @@ const app=express();
 app.all('/axios-server',(request,response)=>{
     response.setHeader('Access-Control-Allow-Origin','*');
     response.setHeader('Access-Control-Allow-Headers','*');
-    response.setHeader('Access-Control-Allow-Method','*');
+    response.setHeader('Access-Control-Allow-Methods','*');
+    if(request.method==='OPTIONS'){
+        response.sendStatus(204);
+        return;
+    }
     const data={
         name:"gcads"
     };
