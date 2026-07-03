@@ -1,0 +1,24 @@
+<div class="doc-layout">
+  <aside class="doc-sidebar">
+    @for (section of navItems; track section.path) {
+      <div class="nav-section">
+        <h3 class="nav-section-title">{{ section.title }}</h3>
+        <ul class="nav-list">
+          @for (item of section.children; track item.path) {
+            <li>
+              <a
+                [routerLink]="linkTo(item.path)"
+                routerLinkActive="active"
+                class="nav-link"
+              >{{ item.title }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </aside>
+
+  <main class="doc-content">
+    <router-outlet />
+  </main>
+</div>

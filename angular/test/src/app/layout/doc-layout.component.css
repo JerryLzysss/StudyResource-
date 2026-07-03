@@ -1,0 +1,84 @@
+.doc-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #fafafa;
+}
+
+.doc-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  padding: 1.5rem 0;
+  border-right: 1px solid #e8e8ef;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.nav-section {
+  margin-bottom: 1.25rem;
+  padding: 0 1rem;
+}
+
+.nav-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin: 0 0 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  color: #444;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-link:hover {
+  background: #f4f4f8;
+  color: #dd0031;
+}
+
+.nav-link.active {
+  background: #fef0f2;
+  color: #dd0031;
+  font-weight: 500;
+}
+
+.doc-content {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  min-width: 0;
+  max-width: 960px;
+}
+
+@media (max-width: 768px) {
+  .doc-layout {
+    flex-direction: column;
+  }
+
+  .doc-sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e8e8ef;
+  }
+
+  .doc-content {
+    padding: 1.5rem;
+  }
+}
