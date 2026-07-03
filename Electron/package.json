@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron-forge start",
+    "dev": "electron .",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -20,7 +21,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
     "@electron-forge/plugin-fuses": "^7.5.0",
     "@electron/fuses": "^1.8.0",
-    "electron": "^33.0.2"
+    "electron": "^33.4.11"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"

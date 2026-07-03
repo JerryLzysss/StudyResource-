@@ -1,29 +1,91 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-   
-    <title>Hello from Electron renderer!</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Electron 学习示例</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Hello from Electron renderer!</h1>
-    <p>👋</p>
-    <h1 id="info">1234</h1>
-    <h1 id="info2">1234</h1>
-  <script>
-    const information=document.getElementById('info')
-    const information2 = document.getElementById('info2')
-    const pingF=async()=>{
-      const response = await window.versions.ping()
-      alert(response)
-     information2.innerText=response
-    }
-    pingF()
+    <header class="header">
+      <h1>Electron 学习示例</h1>
+      <p class="subtitle">基于官方教程实现的桌面应用演示</p>
+    </header>
 
-    information.innerText= `This app is using Chrome (v${window.versions.chrome()}), Node.js (v${window.versions.node()}), and Electron (v${window.versions.electron()})`
-  </script>
+    <main class="container">
+      <!-- 教程 02-03：版本信息 -->
+      <section class="card" id="section-versions">
+        <h2>版本信息</h2>
+        <p class="desc">教程 03 - 通过预加载脚本暴露 process.versions</p>
+        <p id="version-info" class="result">加载中...</p>
+      </section>
+
+      <!-- 教程 03：IPC 通信 -->
+      <section class="card" id="section-ipc">
+        <h2>进程通信 (IPC)</h2>
+        <p class="desc">教程 03 - ipcRenderer.invoke / ipcMain.handle</p>
+        <button id="btn-ping" class="btn">发送 ping</button>
+        <p id="ping-result" class="result">等待测试...</p>
+      </section>
+
+      <!-- 教程 04：文件对话框 -->
+      <section class="card" id="section-dialog">
+        <h2>文件对话框</h2>
+        <p class="desc">教程 04 - dialog.showOpenDialog / showSaveDialog</p>
+        <div class="btn-group">
+          <button id="btn-open-file" class="btn">打开文件</button>
+          <button id="btn-save-file" class="btn btn-secondary">保存文件</button>
+        </div>
+        <p id="file-result" class="result">未选择文件</p>
+      </section>
+
+      <!-- 教程 04：窗口标题 -->
+      <section class="card" id="section-title">
+        <h2>窗口标题</h2>
+        <p class="desc">教程 04 - ipcRenderer.send / ipcMain.on</p>
+        <div class="input-group">
+          <input id="title-input" type="text" placeholder="输入新标题" value="Electron 学习示例" />
+          <button id="btn-set-title" class="btn">设置标题</button>
+        </div>
+      </section>
+
+      <!-- 示例：系统通知 -->
+      <section class="card" id="section-notification">
+        <h2>系统通知</h2>
+        <p class="desc">示例 - Notification 模块</p>
+        <button id="btn-notification" class="btn">发送通知</button>
+        <p id="notification-result" class="result">点击按钮测试</p>
+      </section>
+
+      <!-- 示例：深色模式 -->
+      <section class="card" id="section-theme">
+        <h2>深色模式</h2>
+        <p class="desc">示例 - nativeTheme 模块</p>
+        <div class="btn-group">
+          <button id="btn-theme-system" class="btn btn-secondary" data-theme="system">跟随系统</button>
+          <button id="btn-theme-light" class="btn btn-secondary" data-theme="light">浅色</button>
+          <button id="btn-theme-dark" class="btn btn-secondary" data-theme="dark">深色</button>
+        </div>
+        <p id="theme-result" class="result">当前主题：加载中...</p>
+      </section>
+
+      <!-- 示例：在线状态 & 平台信息 -->
+      <section class="card" id="section-status">
+        <h2>系统状态</h2>
+        <p class="desc">示例 - 在线检测 & 平台信息</p>
+        <p id="online-status" class="result">网络：检测中...</p>
+        <p id="platform-info" class="result">平台：检测中...</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>参考文档：<a href="https://www.electronjs.org/zh/docs/latest/" id="doc-link">electronjs.org</a></p>
+    </footer>
+
+    <script src="renderer.js"></script>
   </body>
-  
 </html>
