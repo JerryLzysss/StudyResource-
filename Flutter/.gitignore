@@ -1,30 +1,61 @@
-# Flutter SDK (排除整个SDK目录，因为体积巨大且可以从官网下载)
+# —— 不影响 App 运行 / 可本地再生成的内容 ——
+# 克隆后执行: cd app && flutter pub get && flutter run
+
+# Flutter SDK（体积大，请自行安装）
 SDK/
 
-# IDE配置文件
+# IDE / 编辑器
 .idea/
+**/.idea/
 *.iml
 *.ipr
 *.iws
+.vscode/
+*.swp
+*~
 
-# Flutter构建产物
+# Flutter / Dart 构建与缓存（运行前会自动再生成）
 **/build/
 **/.dart_tool/
 **/.flutter-plugins
 **/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/coverage/
+**/doc/api/
 
-# 依赖锁定文件 (可选，建议保留)
-# **/pubspec.lock
-
-# 平台特定文件
+# 各桌面平台 ephemeral 生成目录
+**/ephemeral/
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/macos/Flutter/ephemeral/
 **/ios/Flutter/.last_build_id
+**/ios/Flutter/Flutter.podspec
+
+# Android 本地/构建相关（密钥与本机路径）
+**/android/.gradle/
+**/android/local.properties
+**/android/**/.cxx/
 **/android/app/debug/
 **/android/app/profile/
 **/android/app/release/
+**/android/**/key.properties
+**/*.keystore
+**/*.jks
 
-# 日志和临时文件
+# 混淆 / 符号化产物
+**/app.*.symbols
+**/app.*.map.json
+
+# 日志与系统垃圾
 *.log
 *.pyc
-*.swp
 .DS_Store
-.history
+Thumbs.db
+.history/
+migrate_working_dir/
+
+# 一次性维护脚本 / 仅本地说明（不参与编译运行）
+**/_check_docs.py
+**/PLEASE_DELETE.txt

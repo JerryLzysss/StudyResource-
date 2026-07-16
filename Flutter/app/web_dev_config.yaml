@@ -1,0 +1,6 @@
+# Web 开发：禁用 CDN，使用本地 CanvasKit（避免 gstatic.com 超时）
+# 用法: flutter run -d chrome --no-web-resources-cdn
+
+server:
+  host: "localhost"
+  port: 8080
