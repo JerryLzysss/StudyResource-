@@ -1,108 +1,128 @@
-# Threads 进程
-进程:在内存中执行的应用程序
-线程:是线程中最小的执行单元
-线程作用:负责当前进程中程序的运行，一个进程中至少有一个线程，可以有多个
-# 并发和并行
-并行:在同一个时刻，有多个执行在多个CPU同时执行
-并发:在同一个时刻，有多个指令在单个CPU上交替执行
-# CPU调度
-分时调度:指的是让所有的线程轮流获取CPU使用权，并且平均分配每个线程占用CPU的时间片
-抢占式调度:多个线程轮流抢占CPU使用权，优先级高的先使用.java使用的就是抢占式
-# 创建线程
-## 第一种方法:
-1. 定义一个类，继承Thread
-2.重写run方法，在run方法中执行线程
-3.创建自定义线程类对象
-4.调用Thread中的start方法
-原理:开启一个多线程，会开启一个栈空间去运行
-## 第二种方法:
-1.创建类实现runnable接口
-2.重写run方法，设置线程任务
-3.利用Thread的构造方法：Thread(target)创建Thread对象，将自定义的类当参数传递到Thread构造
-4.利用Thread的start方法开启线程
-# 常用方法
-start()启用线程
-run()设置线程任务
-getName()获取线程名字
-setName()设置线程名字
-Thread currentThread()获取当前线程对象
-sleep（millis）线程睡眠
-注意:重写的run方法有异常，只能try不能throws,犹豫继承的run方法没有抛出异常，所以重写完后也不能抛异常只能try
+# 线程（Threads）
 
-# 线程优先级
+## 进程与线程
 
-## 方法
-setPriority(priority) 设置线程优先级，优先级越高的线程，概率越高
-getPriority()获取线程优先级
-setDaemon(on) 设置为守护线程，当非守护线程执行完毕，守护线程就要结束
-yield() 礼让线程，当前线程让出CPU使用权
-join() 插入线程或者叫做插队线程
-## 解释
-礼让线程:两个线程是尽可能的平衡，不是绝对的交替进行.
-插入线程:表示把某线程插入到当前线程之前.
+- **进程**：在内存中运行的应用程序
+- **线程**：进程中的最小执行单元
 
-# 线程安全
-概述:多个用户同时访问同一资源的时候产生了不安全的情况
-原因:CPU在多个线程之间高速切换导致的.
+一个进程至少有一个线程，也可以有多个线程。
 
-## 第一种方式-同步代码块
-synchronized(){
-    不安全的代码
+## 并发和并行
+
+- **并行**：同一时刻，多个任务在多个 CPU 上同时执行
+- **并发**：同一时刻，多个任务在单个 CPU 上交替执行
+
+## CPU 调度
+
+- **分时调度**：线程轮流获得 CPU，时间片大致平均
+- **抢占式调度**：线程竞争 CPU，优先级高的更可能先执行；Java 使用抢占式调度
+
+## 创建线程
+
+### 方式一：继承 Thread
+
+1. 定义类继承 `Thread`
+2. 重写 `run`，编写线程任务
+3. 创建对象并调用 `start()`
+
+### 方式二：实现 Runnable
+
+1. 定义类实现 `Runnable`
+2. 重写 `run`
+3. `new Thread(runnable).start()`
+
+### 方式三：Callable + FutureTask
+
+- `call()` 可有返回值，并可声明抛出异常
+- 通过 `FutureTask` / `Future.get()` 获取返回值
+
+## 常用方法
+
+| 方法 | 作用 |
+|------|------|
+| `start()` | 启动线程 |
+| `run()` | 线程任务（由线程调度调用） |
+| `getName()` / `setName()` | 获取/设置线程名 |
+| `Thread.currentThread()` | 当前线程对象 |
+| `sleep(millis)` | 休眠指定毫秒 |
+
+注意：重写 `Thread.run` 时，若有受检异常，通常只能 `try-catch`，不能 `throws`（因为父类 `run` 未声明抛出）。
+
+## 线程优先级与协作
+
+- `setPriority` / `getPriority`：优先级
+- `setDaemon(true)`：守护线程；非守护线程结束后，守护线程会随之结束
+- `yield()`：礼让，尽量让出 CPU（不保证严格交替）
+- `join()`：等待该线程执行结束（常说「插队等待」）
+
+## 线程安全
+
+多个线程同时访问共享资源时可能出现数据不一致，常用同步手段：
+
+### 1. 同步代码块
+
+```java
+synchronized (锁对象) {
+    // 不安全代码
 }
-任意对象:就是我们的锁对象
-一个线程拿到锁之后，会进入到同步代码块中执行，在此期间，其他线程拿不到锁，就进不去同步代码块，需要在代码块外面等待排队。
-## 第二种方式-同步方法
-支持静态static,
-synchronized function(){
-    return ...
-}
-其实就是把上锁的步骤放到了方法里面.
-默认锁:class对象
-## 第三种方式-Callable
-概述:Callable是一个接口，类似于run方法
-方法:call()
-相同点:call和run都是设置线程任务的
-不同点:call有返回值，并且有异常可以throws,run没有返回值，并且有异常不可以throws.
-Callable带有泛型\<v>,不填写则默认是object类型,返回值与该泛型类型一致
-获取:FutureTask<V>
-其中的get()方法获取其返回值
-## 第四种方式-线程池
-创建线程池对象:用具类:Executors
-获取线程池对象:Executors的静态方法
-ExecutorsService newFixedThreadPool(n)Threads 指定线程池最多的线程对象数
-执行线程任务:ExecutorService的方法
-* Future<?>submit(Runnable task)提交runnable任务
-* Future\<T>submit(callable\<T>task)提交callable方法
-submit的返回值时Future接口，但是run没有返回值，call是有返回值的需要用Future接收.
-# 死锁
-概述:两个或两个以上的线程在执行的过程中由于竞争同步锁而产生的阻塞现象。
-也就是两个锁之间互相嵌套
+```
 
-# 线程状态
-线程状态|导致状态发生条件
----|---
-NEW|线程创建未启动
-Runnable|可以在运行的
-Blocked|被堵塞当一个线程试图获取对象锁的时候，而其他线程拥有，如果获取成功则转为Runnable
-Waiting|一个线程在等待另一个线程执行的时候，进入这个状态后需要另一个状态使用notify或者notifyAll唤醒
-Timed Waiting|同样是waiting,但是不同的是有超时参数，这一状态将保持到超时期满或者收到唤醒通知,例如Thread.sleep或者Object.wait.
-Terminated|因为run或者没有捕获的异常而导致的终止.
-## 状态方法的注意点
-sleep(time):线程睡眠，线程是不会释放锁的，其他线程抢不到锁，时间到了自动醒来继续执行.
-wait(time):线程等待，这个过程会释放锁，其他线程可以抢到，如果在等待的过程中被唤醒或者时间超时，其他线程重新抢锁，抢到了继续执行，否则阻塞
-notify():会唤醒正在等待的线程，一次只能唤醒一条，如果有多条等待则随机唤醒
-wait和notify两个方法都需要锁对象调用，所以都需要用到同步代码块，并且必须是同一个锁对象调用.
-# Lock锁
-概述:Lock是一个接口
-实现类:ReentrantLock
-方法:lock() 获取锁
-unlock() 释放锁
-不同点Synchronized不管是同步代码块还是方法都需要在结束后释放锁对象
-Lock:是通过两个办法控制需要被同步的代码.
-# Timer
-概述:定时器.
-构造:Timer()
-方法:void schedule(Timertask task,Date firstTime,long Period)
-task:抽象类,runnable的实现类
-firstTime:从什么时候开始执行
-period:每隔多长时间执行一次
+同一把锁下，同时只能有一个线程进入同步块。
+
+### 2. 同步方法
+
+```java
+synchronized void function() {
+    // ...
+}
+```
+
+实例方法默认锁是 `this`；静态同步方法锁是类的 `Class` 对象。
+
+### 3. Lock
+
+- 接口：`Lock`；常用实现：`ReentrantLock`
+- `lock()` 获取锁，`unlock()` 释放锁（建议放在 `finally` 中）
+
+## 线程池
+
+工具类：`Executors`
+
+示例：
+
+```java
+ExecutorService pool = Executors.newFixedThreadPool(n); // 最多 n 个工作线程
+Future<?> f1 = pool.submit(runnableTask);
+Future<T> f2 = pool.submit(callableTask);
+```
+
+`submit` 返回 `Future`；`Callable` 的结果可通过 `Future.get()` 获取。
+
+## 死锁
+
+两个及以上线程互相等待对方持有的锁，导致永久阻塞。典型原因是多把锁嵌套获取顺序不一致。
+
+## 线程状态
+
+| 状态 | 含义 |
+|------|------|
+| NEW | 已创建未启动 |
+| RUNNABLE | 可运行（含正在运行/等待调度） |
+| BLOCKED | 等待获取监视器锁而阻塞 |
+| WAITING | 无限等待，需被 `notify` / `notifyAll` 等唤醒 |
+| TIMED_WAITING | 限时等待，如 `sleep`、带超时的 `wait` |
+| TERMINATED | 已结束 |
+
+### wait / sleep / notify
+
+- `sleep`：不释放已持有的锁，时间到后继续
+- `wait`：释放锁并等待；被唤醒或超时后需重新竞争锁
+- `notify` / `notifyAll`：唤醒等待线程
+- `wait` / `notify` 必须由同一把锁对象在同步代码中调用
+
+## Timer
+
+定时任务工具（较旧，现代项目更常用 `ScheduledExecutorService`）。
+
+- `schedule(TimerTask task, Date firstTime, long period)`
+- `TimerTask`：抽象类，实现 `Runnable`

@@ -1,10 +1,11 @@
-# 快捷键
-快捷键|功能
----|---
-alt+enter|导入包，自动修正
-ctrl+y|删除光标所在行
-ctrl+d|复制光标所阿紫行的内容，插入下面
-ctrl+alt+l|格式化代码
-ctrl+/|单行注释
-ctrl+shift+/|选中代码注释，多行注释
-alt+shift+↕|移动当前代码行
+# IntelliJ IDEA 快捷键
+
+| 快捷键 | 功能 |
+|--------|------|
+| Alt + Enter | 导入包、自动修正 |
+| Ctrl + Y | 删除光标所在行 |
+| Ctrl + D | 复制光标所在行内容，插入到下一行 |
+| Ctrl + Alt + L | 格式化代码 |
+| Ctrl + / | 单行注释 |
+| Ctrl + Shift + / | 多行注释 |
+| Alt + Shift + ↑/↓ | 移动当前代码行 |

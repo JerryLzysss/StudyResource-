@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML 笔记 · 路由壳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #14212b;
+      --muted: #5a6b78;
+      --line: #d5dde4;
+      --surface: #f7faf8;
+      --panel: #ffffff;
+      --brand: #0d6e6e;
+      --brand-deep: #0a4f4f;
+      --accent: #c45c26;
+      --glow: rgba(13, 110, 110, 0.12);
+      --nav-w: 280px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      color: var(--ink);
+      font-family: "Source Sans 3", sans-serif;
+      background:
+        radial-gradient(1200px 600px at -10% -20%, #c8e8e4 0%, transparent 55%),
+        radial-gradient(900px 500px at 110% 0%, #f3e0d2 0%, transparent 50%),
+        linear-gradient(165deg, #eef4f2 0%, #e4ecea 45%, #f0ebe4 100%);
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: var(--nav-w) 1fr;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
+      backdrop-filter: blur(10px);
+      animation: fade-down 0.55s var(--ease) both;
+    }
+
+    .brand {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: clamp(1.5rem, 2.4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--brand-deep);
+      line-height: 1;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 0.2rem;
+      font-family: "Source Sans 3", sans-serif;
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+    }
+
+    .route-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .route-title {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .route-file {
+      color: var(--muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 42vw;
+    }
+
+    .menu-toggle {
+      display: none;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0.45rem 0.7rem;
+      font: inherit;
+      cursor: pointer;
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+    }
+
+    .menu-toggle:hover {
+      border-color: var(--brand);
+      background: #f0f8f7;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      backdrop-filter: blur(8px);
+      overflow: auto;
+      padding: 1rem 0.85rem 1.5rem;
+      animation: fade-in 0.6s var(--ease) 0.08s both;
+    }
+
+    .group {
+      margin-bottom: 1.25rem;
+    }
+
+    .group h2 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brand);
+      padding: 0 0.55rem 0.45rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .nav-list a {
+      display: block;
+      text-decoration: none;
+      color: var(--ink);
+      padding: 0.48rem 0.65rem;
+      border-left: 3px solid transparent;
+      transition:
+        background 0.2s var(--ease),
+        border-color 0.2s var(--ease),
+        color 0.2s var(--ease),
+        transform 0.2s var(--ease);
+    }
+
+    .nav-list a:hover {
+      background: var(--glow);
+      color: var(--brand-deep);
+      transform: translateX(2px);
+    }
+
+    .nav-list a.active {
+      background: var(--glow);
+      border-left-color: var(--accent);
+      color: var(--brand-deep);
+      font-weight: 600;
+    }
+
+    .stage {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      padding: 0.9rem;
+      animation: fade-in 0.65s var(--ease) 0.14s both;
+    }
+
+    .viewer {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .viewer iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #fff;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+    }
+
+    .viewer iframe.is-ready {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .loading {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--panel) 92%, #c8e8e4);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s var(--ease), visibility 0.2s var(--ease);
+    }
+
+    .viewer.is-loading .loading {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .loading-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      text-align: center;
+      animation: fade-in 0.35s var(--ease) both;
+    }
+
+    .loading-spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 2px solid var(--line);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .loading-text {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--brand-deep);
+    }
+
+    .loading-file {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .empty {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+    }
+
+    .empty strong {
+      display: block;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 1.35rem;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+
+    @keyframes fade-down {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 860px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+      }
+
+      .menu-toggle { display: inline-block; }
+
+      .sidebar {
+        display: none;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        max-height: 42vh;
+      }
+
+      body.nav-open .sidebar { display: block; }
+
+      .route-file { max-width: 55vw; }
+
+      .stage {
+        min-height: 60vh;
+        height: calc(100vh - 7rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      HTML 笔记
+      <span>示例页路由壳 · 不改动原文件</span>
+    </div>
+    <div class="route-meta">
+      <div>
+        <div class="route-title" id="routeTitle">选择一个示例</div>
+        <div class="route-file" id="routeFile">从左侧进入对应页面</div>
+      </div>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false">目录</button>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar" aria-label="示例目录"></aside>
+
+  <main class="stage">
+    <div class="viewer" id="viewer">
+      <div class="empty" id="emptyState">
+        <div>
+          <strong>从目录进入任一示例</strong>
+          内容通过 iframe 加载，原有 HTML 文件保持不变。
+        </div>
+      </div>
+      <div class="loading" id="loading" aria-live="polite" aria-busy="false" hidden>
+        <div class="loading-inner">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <div class="loading-text">页面加载中…</div>
+          <div class="loading-file" id="loadingFile"></div>
+        </div>
+      </div>
+      <iframe id="frame" title="示例预览" hidden></iframe>
+    </div>
+  </main>
+
+  <script>
+    const routes = [
+      {
+        group: "Head 元素",
+        items: [
+          { id: "structure", title: "结构", file: "HTML结构.html" },
+          { id: "lang", title: "设置语言", file: "HTML设置语言.html" },
+          { id: "doctype", title: "文档声明", file: "HTML文档声明.html" },
+          { id: "charset", title: "字符编码", file: "HTML字符编码.html" },
+          { id: "meta", title: "meta 信息", file: "HTMLmeta信息.html" }
+        ]
+      },
+      {
+        group: "Body · 基础标签",
+        items: [
+          { id: "comment", title: "注释", file: "HTML注释.html" },
+          { id: "layout-tags", title: "排版标签", file: "HTML排版标签.html" },
+          { id: "block-inline", title: "块行元素", file: "HTML块行元素.html" },
+          { id: "list", title: "列表", file: "HTML列表.html" },
+          { id: "other-tags", title: "其他常用标签", file: "HTML其他常用标签.html" },
+          { id: "rare-tags", title: "不常用标签", file: "HTML不常用标签.html" },
+          { id: "global-attrs", title: "全局属性", file: "HTML全局属性.html" },
+          { id: "iframe", title: "框架标签", file: "HTML框架标签.html" },
+          { id: "button", title: "普通按钮", file: "HTML普通按钮.html" },
+          { id: "image", title: "图片标签", file: "HTML图片标签.html" }
+        ]
+      },
+      {
+        group: "Body · 链接与跳转",
+        items: [
+          { id: "anchor", title: "设置与跳转瞄点", file: "HTML设置与跳转瞄点.html" },
+          { id: "jump-page", title: "跳转页面", file: "HTML跳转页面.html" },
+          { id: "jump-file", title: "跳转文件", file: "HTML跳转文件.html" },
+          { id: "app-link", title: "跳转标签唤起应用", file: "HTML的跳转标签唤起应用.html" }
+        ]
+      },
+      {
+        group: "Body · 表单",
+        items: [
+          { id: "form", title: "表单", file: "HTML表单.html" },
+          { id: "fieldset", title: "fieldset 与 legend", file: "HTML表单fieldset与legend.html" },
+          { id: "text-password", title: "文本框和密码框", file: "HTML文本框和密码框.html" },
+          { id: "text-select", title: "文本框与下拉框", file: "HTML文本框与下拉框.html" },
+          { id: "radio-checkbox", title: "单选框与多选框", file: "HTML单选框与多选框.html" },
+          { id: "select-reset", title: "选择与重置", file: "HTML选择与重置.html" },
+          { id: "disabled-form", title: "禁用表单", file: "HTML禁用表单.html" },
+          { id: "label", title: "label 标签", file: "HTMLlabel标签.html" }
+        ]
+      },
+      {
+        group: "Body · 表格",
+        items: [
+          { id: "table", title: "表格基本结构", file: "HTML表格基本结构.html" }
+        ]
+      }
+    ];
+
+    const flat = routes.flatMap((g) => g.items);
+    const byId = Object.fromEntries(flat.map((r) => [r.id, r]));
+
+    const sidebar = document.getElementById("sidebar");
+    const viewer = document.getElementById("viewer");
+    const frame = document.getElementById("frame");
+    const emptyState = document.getElementById("emptyState");
+    const loading = document.getElementById("loading");
+    const loadingFile = document.getElementById("loadingFile");
+    const routeTitle = document.getElementById("routeTitle");
+    const routeFile = document.getElementById("routeFile");
+    const menuToggle = document.getElementById("menuToggle");
+    const MIN_LOADING_MS = 380;
+
+    let loadToken = 0;
+    let loadingStartedAt = 0;
+    let hideTimer = 0;
+
+    function buildNav() {
+      const frag = document.createDocumentFragment();
+      routes.forEach((group) => {
+        const section = document.createElement("section");
+        section.className = "group";
+        section.innerHTML = `<h2>${group.group}</h2>`;
+        const ul = document.createElement("ul");
+        ul.className = "nav-list";
+        group.items.forEach((item) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `#${item.id}`;
+          a.dataset.id = item.id;
+          a.textContent = item.title;
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+        section.appendChild(ul);
+        frag.appendChild(section);
+      });
+      sidebar.appendChild(frag);
+    }
+
+    function setActive(id) {
+      sidebar.querySelectorAll("a").forEach((a) => {
+        a.classList.toggle("active", a.dataset.id === id);
+      });
+    }
+
+    function showLoading(fileName) {
+      clearTimeout(hideTimer);
+      loadingStartedAt = performance.now();
+      loadingFile.textContent = fileName || "";
+      loading.hidden = false;
+      loading.setAttribute("aria-busy", "true");
+      viewer.classList.add("is-loading");
+    }
+
+    function hideLoading() {
+      const elapsed = performance.now() - loadingStartedAt;
+      const wait = Math.max(0, MIN_LOADING_MS - elapsed);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        viewer.classList.remove("is-loading");
+        loading.setAttribute("aria-busy", "false");
+        loading.hidden = true;
+        frame.classList.add("is-ready");
+      }, wait);
+    }
+
+    function loadRoute(id) {
+      const route = byId[id];
+      const token = ++loadToken;
+
+      if (!route) {
+        clearTimeout(hideTimer);
+        emptyState.hidden = false;
+        frame.hidden = true;
+        frame.removeAttribute("src");
+        frame.classList.remove("is-ready");
+        routeTitle.textContent = "选择一个示例";
+        routeFile.textContent = "从左侧进入对应页面";
+        setActive(null);
+        viewer.classList.remove("is-loading");
+        loading.hidden = true;
+        loading.setAttribute("aria-busy", "false");
+        return;
+      }
+
+      emptyState.hidden = true;
+      frame.hidden = false;
+      frame.classList.remove("is-ready");
+      showLoading(route.file);
+      routeTitle.textContent = route.title;
+      routeFile.textContent = route.file;
+      setActive(route.id);
+      frame.src = encodeURI(route.file);
+      document.title = `${route.title} · HTML 笔记`;
+      document.body.classList.remove("nav-open");
+      menuToggle.setAttribute("aria-expanded", "false");
+
+      // 同页重复点选时，部分浏览器可能不触发 load，这里做兜底
+      frame.addEventListener(
+        "load",
+        () => {
+          if (token !== loadToken) return;
+          if (!frame.getAttribute("src")) return;
+          hideLoading();
+        },
+        { once: true }
+      );
+    }
+
+    function syncFromHash() {
+      const id = decodeURIComponent(location.hash.replace(/^#/, ""));
+      loadRoute(id);
+    }
+
+    menuToggle.addEventListener("click", () => {
+      const open = document.body.classList.toggle("nav-open");
+      menuToggle.setAttribute("aria-expanded", String(open));
+    });
+
+    buildNav();
+    window.addEventListener("hashchange", syncFromHash);
+    syncFromHash();
+
+    if (!location.hash && flat[0]) {
+      location.replace(`#${flat[0].id}`);
+    }
+  </script>
+</body>
+</html>

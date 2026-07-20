@@ -1,90 +1,79 @@
-# Math
-概述:数学工具类
-作用:用于数学计算
-特点:构造方法私有化，方法都是静态
-# 常用
-abs(a) 求绝对值
-floor(a) 向下取整
-ceil(a)向上取整
-round(a)四舍五入
-max(a,b)取最大值
-min(a,b)取最小值
-# 大整数
-概述:当数值非常大，比long还要大的时候，这时候就涉及到BigInteger了，
-构造:BigInteger(String val)
-方法:BigInteger add(BigInteger val)加法
-BigInteger subtract(BigInteger val)减法
-BigInteger multiply(BigInteger val)乘法
-BigInteger divid(BigInteger val)除法
+# 常用工具类（Math / 大数 / 日期 / System / Arrays）
 
-# 大浮点数
-描述:当float和double做运算的时候会导致精度损失.
-作用:主要是用来解决float和double做运算导致的精度损失
-构造:BigDecimal(String val)-->val必须是数字形式
-方法:与BigInteger相似，但是需要注意的是除不尽则需要进行指定保留位数，否则会报错.
-BigDecimal divide(val)
-BigDecimal divide(divisior,scale,roundingMode)
-divisior:除数
-scale:指定保留几位小数
-roundingMode:取舍方式
-UP->增1
-DOWN->保留整数
-HALF_UP->四舍五入
+## Math
 
-# 日期
-概述:表示特定的瞬间，精准到毫秒
-概述:new Date()获取当前时间
-setTime(time)设置时间
-getTime()获取当前时间
+概述：数学工具类，构造方法私有，方法多为静态。
 
-# 日历
-概述:日历类,抽象类
-获取:getInstance()
-方法:get(field)获取对应日期对应值
-set(field,value)将给定的日历字段设置为指定值
-add(field,count)根据日历时间添加或者减去值得顶的时间量
-getTime()将calendar转成Date对象
-field代表的是年月日星期等等
-## 日历格式化
-概述:日期格式化类
-构造:SimpleDataFormat(String pattern)
-例如y,M,d,H,m,S
-字母|说明
----|---
-y|年
-M|月
-d|日
-H|时
-m|分
-s|秒
+常用方法：
 
-## 本地日期
-LocalDate是一个不可变的日期对象，表示日期，通常被视为年月日
-LocalDate now()创建LocalDate of(year,month,day)创建LocalDate对象，设置年月日
-withYear/Month/Day 设置年月日
-withDayOfMonth 设置月份中的天数
+- `abs(a)`：绝对值
+- `floor(a)`：向下取整
+- `ceil(a)`：向上取整
+- `round(a)`：四舍五入
+- `max(a, b)` / `min(a, b)`：最大/最小值
 
-Period.getYears 获取相差年
-Period.getMonths 获取相差月
-Period.getDays 获取相差日
-Duration.toDays 获取相差天数
-Duration.toHours 获取相差小时
-Duration.toMinutes 获取相差分钟
-Duration.toMillis 获取相差毫秒
+## BigInteger（大整数）
 
-# 系统
-概述:系统相关类，是一个工具类
-特点:构造私有，不能利用new对象建立
-方法都是静态的直接调用即可.
-currentTimeMillis()返回以毫秒的当前时间
-exit(status)终止当前运行的java虚拟机
-arraycopy(src,srcPos,dest,destPos,length)数组复制
-src:原数组
-dest:目标数组
-pos:从哪个索引开始
-length:赋值多少个元素
-# 数组
-toString(a[]) 数组转为字符串
-sort(a[]) 排序
-binarySearch(a[],key) 二分
-copyOf(original[],Length)
+当数值超过 `long` 范围时使用。
+
+- 构造：`BigInteger(String val)`
+- 方法：`add` / `subtract` / `multiply` / `divide`
+
+## BigDecimal（大浮点数）
+
+`float` / `double` 运算可能有精度问题；金额等场景常用 `BigDecimal`。
+
+- 构造：建议用 `BigDecimal(String val)`
+- 除法注意：除不尽时要指定小数位和舍入模式，否则可能抛异常
+  - `divide(divisor, scale, roundingMode)`
+  - 常见舍入：`UP`、`DOWN`、`HALF_UP`（四舍五入）
+
+## Date（日期）
+
+表示特定瞬间，精确到毫秒。
+
+- `new Date()`：当前时间
+- `setTime(time)` / `getTime()`：设置/获取毫秒值
+
+## Calendar（日历）
+
+抽象类，常用 `Calendar.getInstance()` 获取实例。
+
+- `get(field)` / `set(field, value)` / `add(field, count)`
+- `getTime()`：转为 `Date`
+- `field` 表示年、月、日、星期等字段
+
+### 日期格式化 SimpleDateFormat
+
+构造：`SimpleDateFormat(String pattern)`
+
+| 字母 | 说明 |
+|------|------|
+| y | 年 |
+| M | 月 |
+| d | 日 |
+| H | 时（0-23） |
+| m | 分 |
+| s | 秒 |
+
+## 本地日期时间（java.time）
+
+- `LocalDate.now()` / `LocalDate.of(year, month, day)`
+- `withYear` / `withMonth` / `withDayOfMonth` 等调整字段
+- `Period`：日期间隔（年/月/日）
+- `Duration`：时间间隔（天/小时/分钟/毫秒等）
+
+## System
+
+系统相关工具类，构造私有，方法静态调用。
+
+- `currentTimeMillis()`：当前毫秒时间戳
+- `exit(status)`：终止 JVM
+- `arraycopy(src, srcPos, dest, destPos, length)`：数组复制
+
+## Arrays
+
+- `toString(a)`：数组转字符串
+- `sort(a)`：排序
+- `binarySearch(a, key)`：二分查找（需先排序）
+- `copyOf(original, newLength)`：复制并指定新长度

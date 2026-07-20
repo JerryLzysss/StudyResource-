@@ -1,72 +1,92 @@
-[TOC]
 # String
-# 概述
-String 类代表字符串
-# 特点
-* 凡是带双引号""的都表示string的对象
-* 字符串是常量，创建之后不能更改
-# 实现原理
-jdk8之前是final修饰的char数组
-jdk9之后是final修饰的byte数组
-作用:节省空间
-# 方法
-通过使用String的方法API可以快速完成对字符串的增删改查
-## 创建
-* String():利用无参构造
-* String(String original)：根据字符串构建String
-* String(char []value)根据char数组构建
-* String(byte []value)根据byte数组构建
-* String(char[]value,int offset,int count)将char数组的一部分转为string
-* String(char[]bytes int offset,int length)
-    * offset:开始的索引
-    * length/count:长度
-## 拼接
-字符串拼接，如果等号右边是字符串字面值拼接不会产生新对象。
-例如:s1="abc",s1=="abc",比较值
-字符串拼接，如果等号右边带有字符串变量，那么会产生新对象。
-例如:s1="abcdef",s2="abc",s3=s2+"def",s1!=s3,比较地址
 
-## 比较
-String== 比较字符串地址
-String.equals() 比较字符串内容
-String.equalsIgnoreCase() 比较字符串内容无视大小写
+## 概述
 
-## 获取
-length() 获取字符串长度
-concat(String) 字符串拼接
-charAt(int) 获取索引对应对的卫子夫
-indexOf(string )获取第一次出现的位置
-substring(int,int?)只有一个参数表示到末尾，两个参数则是从前面到尾部
+`String` 类代表字符串。
 
-## 转换
-toCharArray()转为char数组
-getBytes()转为byte数组
-replace(c1,c2)替换字符
-getBytes("utf-8")将字符串改为对应的编码形式
+## 特点
 
-## 分割
-split(regex) 根据规则分割字符串
-contains() 判断是否包含指定字符串
-endsWith() 判断是否以指定字符串结尾
-toLowerCase() 将字母转换为小写
-toUpperCase() 将字母转为大写
-trim() 去掉两边空格
+- 双引号 `"..."` 形式的字面量都是 `String` 对象
+- 字符串内容不可变，创建之后不能更改
+
+## 实现原理
+
+- JDK 8 及之前：底层多为 `final char[]`
+- JDK 9 及之后：底层多为 `final byte[]`（节省空间）
+
+## 常用方法
+
+### 创建
+
+- `String()`：无参构造
+- `String(String original)`：根据已有字符串构建
+- `String(char[] value)`：根据 char 数组构建
+- `String(byte[] value)`：根据 byte 数组构建
+- `String(char[] value, int offset, int count)`：将 char 数组一部分转为字符串
+- `String(byte[] bytes, int offset, int length)`：将 byte 数组一部分转为字符串
+  - `offset`：起始索引
+  - `length` / `count`：长度
+
+### 拼接与常量池
+
+- 等号右边若是纯字面量拼接，编译期可能优化进常量池
+- 若涉及变量拼接，通常会产生新对象
+
+### 比较
+
+| 方式 | 含义 |
+|------|------|
+| `==` | 比较引用是否指向同一对象 |
+| `equals()` | 比较字符串内容 |
+| `equalsIgnoreCase()` | 忽略大小写比较内容 |
+
+### 获取
+
+- `length()`：长度
+- `concat(String)`：拼接
+- `charAt(int)`：获取指定索引处的字符
+- `indexOf(String)`：第一次出现的位置
+- `substring(int)` / `substring(int, int)`：截取子串
+
+### 转换
+
+- `toCharArray()`：转为 char 数组
+- `getBytes()` / `getBytes("UTF-8")`：转为字节
+- `replace(c1, c2)`：替换
+
+### 其他
+
+- `split(regex)`：按规则分割
+- `contains()`：是否包含
+- `endsWith()` / `startsWith()`：判断结尾/开头
+- `toLowerCase()` / `toUpperCase()`：大小写转换
+- `trim()`：去掉两端空白
+
+---
 
 # StringBuilder
-概述:一个可变的字符序列，提供一个与StringBuffer兼容的API,不保证同步，线程不安全，效率高
+
+概述：可变字符序列，API 与 `StringBuffer` 类似；**非线程安全**，单线程下效率更高。
+
 ## 作用
-主要是字符串拼接,在String拼接的时候就会产生新的字符串对象.而使用StringBuilder每次拼接后都会在缓冲区中保存，不会随意产生对象
+
+频繁拼接时，`String` 每次拼接可能产生新对象；`StringBuilder` 在可变缓冲区中追加，减少临时对象。
+
 ## 特点
-* 底层自带缓冲区，没有被final修饰的byte,默认长度为16.
-* 如果超出了数组长度，数组会扩容，创建了一个新长度的新数组，将老数组的元素赋值到新数组中
-* 默认每次扩容老数组的2倍+2
-## 方法
-StringBuilder()
-StringBuilder(str)
-StringBuilder append(str) 字符串最后拼接str
-StringBuilder reverse() 字符串翻转
-StringBuilder toString() 将stringbuilder转为string
+
+- 底层有可变缓冲区，默认容量通常为 16
+- 容量不足时会扩容（常见策略约为原容量的 2 倍再加 2）
+
+## 常用方法
+
+- `StringBuilder()` / `StringBuilder(String str)`
+- `append(str)`：末尾追加
+- `reverse()`：反转
+- `toString()`：转为 `String`
+
 ## StringBuffer
-StringBuffer与StringBuilder在用法和作用一致
-效率:Builder比Buffer高
-但是Buffer比Builder线程更安全
+
+用法与 `StringBuilder` 基本一致。
+
+- 效率：通常 `StringBuilder` 更高
+- 线程安全：`StringBuffer` 的方法带同步，更适合多线程场景

@@ -8,10 +8,11 @@ public class ObjtoString{
         System.out.println(p.toString());
         System.out.println(p==q);//对于引用数据类型，比较的是地址值
         System.out.println(p.equals(q));
-        String s1=new String("123");//对于基本数据类型，比较的是值
+        // String 是引用类型：== 比较引用，equals 比较内容
+        String s1=new String("123");
         String s2=new String("123");
-        System.out.println(s1==s2);//比较的是地址值.
-        System.out.println(s1.equals(s2));//重写完的equals,比较的是内容0而不是地址值
+        System.out.println(s1==s2);//比较引用是否同一对象
+        System.out.println(s1.equals(s2));//比较字符串内容
         p2 pp=new p2("1","4");
         p2 qq=new p2("1","4");
         System.out.println(pp.equals(qq));
