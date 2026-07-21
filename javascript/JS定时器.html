@@ -30,13 +30,13 @@
     /*关闭对应标识器*/
     clearInterval(timer);
 
-    /* 延时调用，不马上执行二是隔一段时间以后再执行setTimeOut
+    /* 延时调用，不马上执行二是隔一段时间以后再执行setTimeout
     不同于定时调用其只会执行一次 */
-    var timer2=setTimeOut(function()
+    var timer2=setTimeout(function()
     {
         alert("Stop");
     },5000);
-    clearTimeout(timer);
+    clearTimeout(timer2);
 </script>
 </head>
 

@@ -48,11 +48,12 @@
     box1.style.left=left+"px";
     box1.style.top=top+"px";
     }
-   }
-    box1.onmouseup=function()
+    document.onmouseup=function()
     {
         document.onmousemove=null;
+        document.onmouseup=null;
     }
+   }
 </script>
 </head>
 

@@ -6,9 +6,9 @@
 <body>
     <button id="btn01">btn01</button>
     <ul id="u1">
-        <li><a href="javasript:;">超链接1</a></li>
-        <li><a href="javasript:;">超链接2</a></li>
-        <li><a href="javasript:;">超链接3</a></li>
+        <li><a href="javascript:;">超链接1</a></li>
+        <li><a href="javascript:;">超链接2</a></li>
+        <li><a href="javascript:;">超链接3</a></li>
     </ul>
 
 </body>
@@ -22,9 +22,9 @@
      将事件统一帮顶给元素的共同祖先元素
    */
   var btn01=document.getElementById("btn01");
+  var u1=document.getElementById("u1");
   btn01.onclick=function()
   {
-    var u1=document.getElementById("u1");
     var li=document.createElement("li");
     li.innerHTML="<a href='javascript:;'>新建超链接</a>";
     u1.appendChild(li);

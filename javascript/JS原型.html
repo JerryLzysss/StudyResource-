@@ -12,11 +12,11 @@
  </style>
 <script>
 /*JS原型prototype
-我们创建的每个函数解析器回向函数中添加一个属性prototype
+我们创建的每个函数解析器会向函数中添加一个属性prototype
 这个属性对应着一个对象，这个对象就是原型对象
 
-当函数以构造函数的形式调用时，创建的对象有一个隐函数型指向该
-构造函数的原型对象，通过_proto_访问
+当函数以构造函数的形式调用时，创建的对象有一个隐式原型指向该
+构造函数的原型对象，通过__proto__访问
 
 原型对象相当于公共区域，所有同一类的实例都能访问
 
@@ -30,7 +30,7 @@ function Myclass()
 /*原型中增加a*/
 Myclass.prototype.a=123;
 Myclass.prototype.hello=function(){
-    alert(a);
+    alert(this.a);
 };
 var mc=new Myclass();
 var mc2=new Myclass();
@@ -38,7 +38,7 @@ mc.a="1";
 mc.b="2";/*
 console.log(mc==mc2);
 console.log(mc.hello==mc2.hello);
-console.log(mc2._proto_==Myclass.prototype);
+console.log(mc2.__proto__==Myclass.prototype);
 */
 Myclass.prototype.name="name";
 var mc3=new Myclass();

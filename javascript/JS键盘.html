@@ -4,7 +4,7 @@
     <head>
    
 <body>
-   
+   <input type="text" id="txt">
    
 </body>
  <style>
@@ -20,7 +20,7 @@
     /*除了keyCode还有altKey,shiftKey,ctrlKey来判断是否这几个按键被按下*/
    console.log(event.keyCode);
    }
-   var input=document.getElementsByTagName("input");
+   var input=document.getElementById("txt");
    input.onkeydown=function(event)
    {
     /*促使文本框不能输入数字

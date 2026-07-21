@@ -16,7 +16,7 @@
    arr[0]=10;
    arr[1]=12;
    arr[2]=14;
-   /*长度为最大值，但是长度过长也不会报错，其余值为NULL*/
+   /*长度为最大值，但是长度过长也不会报错，其余值为undefined*/
    //arr[5]=25;
    //arr[7]=14;
    console.log(arr);
@@ -70,7 +70,7 @@
 var result=arr.slice(0,2);
 result=arr.slice(0);
 console.log(result);
-/*spice从数组删除元素
+/*splice从数组删除元素
 并将指定元素从数组返回
 会影响原数组
 第一个参数表示开始的索引
