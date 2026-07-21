@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`对象快照 1`] = `
+{
+  "age": 20,
+  "createdAt": Any<Date>,
+  "id": Any<Number>,
+  "name": "Alice",
+}
+`;
+
+exports[`链接结构快照 1`] = `
+{
+  "props": {
+    "children": "Facebook",
+    "href": "http://www.facebook.com",
+  },
+  "type": "a",
+}
+`;

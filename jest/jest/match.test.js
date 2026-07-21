@@ -30,3 +30,9 @@ test(`array`,()=>{
     expect(arr).toContain("1");
     expect(arr).not.toContain("5");
 })
+test(`throw`,()=>{
+    function boom(){
+        throw new Error('fail');
+    }
+    expect(boom).toThrow('fail');
+})
