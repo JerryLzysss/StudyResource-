@@ -1,6 +1,32 @@
 [TOC]
 # Less
 Less （Leaner Style Sheets 的缩写） 是一门向后兼容的 CSS 扩展语言。这里呈现的是 Less 的官方文档（中文版），包含了 Less 语言以及利用 JavaScript 开发的用于将 Less 样式转换成 CSS 样式的 Less.js 工具。
+
+## 当前目录结构
+
+本目录是一套按主题拆分的 Less 学习示例：每个 `*.less` 对应一个知识点，配套 HTML 用浏览器引入 Less.js 即时编译预览。
+
+| 序号 | Less 文件 | 演示页 | 主题 |
+| --- | --- | --- | --- |
+| 1 | `1.less` | `less引入&变量.html` | 变量 |
+| 2 | `2.less` | `less混合.html` | 混合（Mixin） |
+| 3 | `3.less` | `less嵌套.html` | 嵌套与 `&` |
+| 4 | `4.less` | `less@规则.html` | `@media` 等 @ 规则冒泡 |
+| 5 | `5.less` | `less运算.html` | 运算（含易错写法对比） |
+| 6 | `6.less` | `less函数.html` | 内置函数（`if` / `iscolor` 等） |
+| 7 | `7.less` | `less命名空间与访问符.html` | 命名空间与访问符 |
+| 8 | `8.less` | `less映射.html` | 映射（Map） |
+| 9 | `9.less` | `less作用域.html` | 作用域 |
+| 10 | `10.less` | `less导入.html` | `@import` 导入 |
+| 11 | `11.less` | `less继承.html` | `:extend` 继承 |
+
+其他说明文档：
+
+- `readme.md`：本文件，语言特性总览
+- `less函数.md`：内置函数补充说明（逻辑 / 字符串 / 颜色等）
+
+用法：用浏览器直接打开对应 HTML，或通过 `lessc n.less` 将样式编译为 CSS。
+
 ## 安装
 
 在 Node.js 环境中使用 Less ：
