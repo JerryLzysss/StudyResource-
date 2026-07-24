@@ -1,0 +1,17 @@
+-- ============================================================
+-- 第 26 章 INFORMATION_SCHEMA 表 · 本地可执行演示
+-- ============================================================
+
+SELECT TABLE_NAME, ENGINE, TABLE_ROWS, CREATE_TIME
+FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = 'W3CSCHOOL';
+
+SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_KEY, COLUMN_DEFAULT
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA='W3CSCHOOL' AND TABLE_NAME='w3cschool_tbl'
+ORDER BY ORDINAL_POSITION;
+
+SELECT INDEX_NAME, COLUMN_NAME, SEQ_IN_INDEX, NON_UNIQUE
+FROM information_schema.STATISTICS
+WHERE TABLE_SCHEMA='W3CSCHOOL' AND TABLE_NAME='w3cschool_tbl'
+ORDER BY INDEX_NAME, SEQ_IN_INDEX;

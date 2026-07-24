@@ -1,0 +1,1157 @@
+# 第 9 章 语言结构 · 关键字和保留字
+
+> 对应 SQL：[`sql/refman/ch09-language-structure/04-keywords.sql`](../../../sql/refman/ch09-language-structure/04-keywords.sql)
+
+---
+
+## 9.3 关键字和保留字
+
+      关键字是在 SQL 中具有重要意义的词。某些关键字（如`SELECT`、
+      `DELETE`或
+      `BIGINT`）是保留关键字，需要特殊处理才能用作表名和列名等标识符。这也可能适用于内置函数的名称。
+
+      允许非保留关键字作为标识符而不用引号。如果您按照第 9.2 节，“模式对象名称”中的描述引用保留字，则允许它们作为标识符：
+
+```sql
+mysql> CREATE TABLE interval (begin INT, end INT);
+ERROR 1064 (42000): You have an error in your SQL syntax ...
+near 'interval (begin INT, end INT)'
+```
+
+      `BEGIN`并且`END`是关键字但不是保留的，因此它们用作标识符不需要引用。`INTERVAL`是保留关键字，必须用引号引起来用作标识符：
+
+```sql
+mysql> CREATE TABLE `interval` (begin INT, end INT);
+Query OK, 0 rows affected (0.01 sec)
+```
+
+      例外：限定名称中句点后面的单词必须是标识符，因此即使保留也不需要引用：
+
+```sql
+mysql> CREATE TABLE mydb.interval (begin INT, end INT);
+Query OK, 0 rows affected (0.01 sec)
+```
+
+      允许将内置函数的名称用作标识符，但可能需要谨慎使用。例如，
+      `COUNT`可以作为列名。`(`
+      但是，默认情况下，函数调用中函数名称和后续字符之间不允许有空格。此要求使解析器能够区分该名称是在函数调用中还是在非函数上下文中使用。有关函数名称识别的更多详细信息，请参阅
+      第 9.2.5 节，“函数名称解析和解析”。
+
+      该`INFORMATION_SCHEMA.KEYWORDS`表列出了被 MySQL 认为是关键字的词，并指出它们是否被保留。请参阅第 26.3.17 节，“INFORMATION_SCHEMA KEYWORDS 表”。
+
+- MySQL 8.0 关键字和保留字
+- MySQL 8.0 新关键字和保留字
+- MySQL 8.0 移除关键字和保留字
+
+### MySQL 8.0 关键字和保留字
+
+        以下列表显示了 MySQL 8.0 中的关键字和保留字，以及各个版本对各个字的更改。保留关键字标有 (R)。此外，`_FILENAME`保留。
+
+        在某些时候，您可能会升级到更高版本，因此最好也看看未来的保留字。您可以在涵盖更高版本 MySQL 的手册中找到它们。标准 SQL 禁止列表中的大多数保留字作为列名或表名（例如，
+         `GROUP`）。一些是保留的，因为 MySQL 需要它们并使用**yacc**解析器。
+
+一个
+ | 乙
+ | 丙
+ | D
+ | 乙
+ | 女
+ | 格
+ | H
+ | 我
+ | 杰
+ | K
+ | 大号
+ | 男
+ | 否
+ | 欧
+ | 磷
+ | 问
+ | 右
+ | 年代
+ | 吨
+ | ü
+ | 五
+ | 瓦
+ | ×
+ | 是
+ | Z
+
+一个
+
+- ACCESSIBLE(右)
+- ACCOUNT
+- ACTION
+- ACTIVE; 在 8.0.14 中添加（非保留）
+- ADD(右)
+- ADMIN; 在 8.0.12 中成为非保留的
+- AFTER
+- AGAINST
+- AGGREGATE
+- ALGORITHM
+- ALL(右)
+- ALTER(右)
+- ALWAYS
+- ANALYSE; 在 8.0.1 中删除
+- ANALYZE(右)
+- AND(右)
+- ANY
+- ARRAY; 8.0.17新增（预留）；在 8.0.19 中成为非保留的
+- AS(右)
+- ASC(右)
+- ASCII
+- ASENSITIVE(右)
+- AT
+- ATTRIBUTE; 在 8.0.21 中添加（非保留）
+- AUTHENTICATION; 在 8.0.27 中添加（非保留）
+- AUTOEXTEND_SIZE
+- AUTO_INCREMENT
+- AVG
+- AVG_ROW_LENGTH
+
+乙
+
+- BACKUP
+- BEFORE(右)
+- BEGIN
+- BETWEEN(右)
+- BIGINT(右)
+- BINARY(右)
+- BINLOG
+- BIT
+- BLOB(右)
+- BLOCK
+- BOOL
+- BOOLEAN
+- BOTH(右)
+- BTREE
+- BUCKETS; 在 8.0.2 中添加（非保留）
+- BULK; 在 8.0.32 中添加（非保留）
+- BY(右)
+- BYTE
+
+C
+
+- CACHE
+- CALL(右)
+- CASCADE(右)
+- CASCADED
+- CASE(右)
+- CATALOG_NAME
+- CHAIN
+- CHALLENGE_RESPONSE; 在 8.0.27 中添加（非保留）
+- CHANGE(右)
+- CHANGED
+- CHANNEL
+- CHAR(右)
+- CHARACTER(右)
+- CHARSET
+- CHECK(右)
+- CHECKSUM
+- CIPHER
+- CLASS_ORIGIN
+- CLIENT
+- CLONE; 在 8.0.3 中添加（非保留）
+- CLOSE
+- COALESCE
+- CODE
+- COLLATE(右)
+- COLLATION
+- COLUMN(右)
+- COLUMNS
+- COLUMN_FORMAT
+- COLUMN_NAME
+- COMMENT
+- COMMIT
+- COMMITTED
+- COMPACT
+- COMPLETION
+- COMPONENT
+- COMPRESSED
+- COMPRESSION
+- CONCURRENT
+- CONDITION(右)
+- CONNECTION
+- CONSISTENT
+- CONSTRAINT(右)
+- CONSTRAINT_CATALOG
+- CONSTRAINT_NAME
+- CONSTRAINT_SCHEMA
+- CONTAINS
+- CONTEXT
+- CONTINUE(右)
+- CONVERT(右)
+- CPU
+- CREATE(右)
+- CROSS(右)
+- CUBE(R); 在 8.0.1 中保留
+- CUME_DIST(R); 8.0.2新增（保留）
+- CURRENT
+- CURRENT_DATE(右)
+- CURRENT_TIME(右)
+- CURRENT_TIMESTAMP(右)
+- CURRENT_USER(右)
+- CURSOR(右)
+- CURSOR_NAME
+
+丁
+
+- DATA
+- DATABASE(右)
+- DATABASES(右)
+- DATAFILE
+- DATE
+- DATETIME
+- DAY
+- DAY_HOUR(右)
+- DAY_MICROSECOND(右)
+- DAY_MINUTE(右)
+- DAY_SECOND(右)
+- DEALLOCATE
+- DEC(右)
+- DECIMAL(右)
+- DECLARE(右)
+- DEFAULT(右)
+- DEFAULT_AUTH
+- DEFINER
+- DEFINITION; 在 8.0.4 中添加（非保留）
+- DELAYED(右)
+- DELAY_KEY_WRITE
+- DELETE(右)
+- DENSE_RANK(R); 8.0.2新增（保留）
+- DESC(右)
+- DESCRIBE(右)
+- DESCRIPTION; 在 8.0.4 中添加（非保留）
+- DES_KEY_FILE; 在 8.0.3 中删除
+- DETERMINISTIC(右)
+- DIAGNOSTICS
+- DIRECTORY
+- DISABLE
+- DISCARD
+- DISK
+- DISTINCT(右)
+- DISTINCTROW(右)
+- DIV(右)
+- DO
+- DOUBLE(右)
+- DROP(右)
+- DUAL(右)
+- DUMPFILE
+- DUPLICATE
+- DYNAMIC
+
+乙
+
+- EACH(右)
+- ELSE(右)
+- ELSEIF(右)
+- EMPTY(R); 8.0.4 新增（保留）
+- ENABLE
+- ENCLOSED(右)
+- ENCRYPTION
+- END
+- ENDS
+- ENFORCED; 在 8.0.16 中添加（非保留）
+- ENGINE
+- ENGINES
+- ENGINE_ATTRIBUTE; 在 8.0.21 中添加（非保留）
+- ENUM
+- ERROR
+- ERRORS
+- ESCAPE
+- ESCAPED(右)
+- EVENT
+- EVENTS
+- EVERY
+- EXCEPT(右)
+- EXCHANGE
+- EXCLUDE; 在 8.0.2 中添加（非保留）
+- EXECUTE
+- EXISTS(右)
+- EXIT(右)
+- EXPANSION
+- EXPIRE
+- EXPLAIN(右)
+- EXPORT
+- EXTENDED
+- EXTENT_SIZE
+
+F
+
+- FACTOR; 在 8.0.27 中添加（非保留）
+- FAILED_LOGIN_ATTEMPTS; 8.0.19 添加（非保留）
+- FALSE(右)
+- FAST
+- FAULTS
+- FETCH(右)
+- FIELDS
+- FILE
+- FILE_BLOCK_SIZE
+- FILTER
+- FINISH; 在 8.0.27 中添加（非保留）
+- FIRST
+- FIRST_VALUE(R); 8.0.2新增（保留）
+- FIXED
+- FLOAT(右)
+- FLOAT4(右)
+- FLOAT8(右)
+- FLUSH
+- FOLLOWING; 在 8.0.2 中添加（非保留）
+- FOLLOWS
+- FOR(右)
+- FORCE(右)
+- FOREIGN(右)
+- FORMAT
+- FOUND
+- FROM(右)
+- FULL
+- FULLTEXT(右)
+- FUNCTION(R); 在 8.0.1 中保留
+
+G
+
+- GENERAL
+- GENERATE; 在 8.0.32 中添加（非保留）
+- GENERATED(右)
+- GEOMCOLLECTION; 在 8.0.11 中添加（非保留）
+- GEOMETRY
+- GEOMETRYCOLLECTION
+- GET(右)
+- GET_FORMAT
+- GET_MASTER_PUBLIC_KEY; 8.0.4新增（保留）；在 8.0.11 中成为非保留的
+- GET_SOURCE_PUBLIC_KEY; 在 8.0.23 中添加（非保留）
+- GLOBAL
+- GRANT(右)
+- GRANTS
+- GROUP(右)
+- GROUPING(R); 在 8.0.1 中添加（保留）
+- GROUPS(R); 8.0.2新增（保留）
+- GROUP_REPLICATION
+- GTID_ONLY; 在 8.0.27 中添加（非保留）
+
+H
+
+- HANDLER
+- HASH
+- HAVING(右)
+- HELP
+- HIGH_PRIORITY(右)
+- HISTOGRAM; 在 8.0.2 中添加（非保留）
+- HISTORY; 在 8.0.3 中添加（非保留）
+- HOST
+- HOSTS
+- HOUR
+- HOUR_MICROSECOND(右)
+- HOUR_MINUTE(右)
+- HOUR_SECOND(右)
+
+我
+
+- IDENTIFIED
+- IF(右)
+- IGNORE(右)
+- IGNORE_SERVER_IDS
+- IMPORT
+- IN(右)
+- INACTIVE; 在 8.0.14 中添加（非保留）
+- INDEX(右)
+- INDEXES
+- INFILE(右)
+- INITIAL; 在 8.0.27 中添加（非保留）
+- INITIAL_SIZE
+- INITIATE; 在 8.0.27 中添加（非保留）
+- INNER(右)
+- INOUT(右)
+- INSENSITIVE(右)
+- INSERT(右)
+- INSERT_METHOD
+- INSTALL
+- INSTANCE
+- INT(右)
+- INT1(右)
+- INT2(右)
+- INT3(右)
+- INT4(右)
+- INT8(右)
+- INTEGER(右)
+- INTERSECT(R); 在 8.0.31 中添加（保留）
+- INTERVAL(右)
+- INTO(右)
+- INVISIBLE
+- INVOKER
+- IO
+- IO_AFTER_GTIDS(右)
+- IO_BEFORE_GTIDS(右)
+- IO_THREAD
+- IPC
+- IS(右)
+- ISOLATION
+- ISSUER
+- ITERATE(右)
+
+杰
+
+- JOIN(右)
+- JSON
+- JSON_TABLE(R); 8.0.4 新增（保留）
+- JSON_VALUE; 在 8.0.21 中添加（非保留）
+
+钾
+
+- KEY(右)
+- KEYRING; 在 8.0.24 中添加（非保留）
+- KEYS(右)
+- KEY_BLOCK_SIZE
+- KILL(右)
+
+大号
+
+- LAG(R); 8.0.2新增（保留）
+- LANGUAGE
+- LAST
+- LAST_VALUE(R); 8.0.2新增（保留）
+- LATERAL(R); 在 8.0.14 中添加（保留）
+- LEAD(R); 8.0.2新增（保留）
+- LEADING(右)
+- LEAVE(右)
+- LEAVES
+- LEFT(右)
+- LESS
+- LEVEL
+- LIKE(右)
+- LIMIT(右)
+- LINEAR(右)
+- LINES(右)
+- LINESTRING
+- LIST
+- LOAD(右)
+- LOCAL
+- LOCALTIME(右)
+- LOCALTIMESTAMP(右)
+- LOCK(右)
+- LOCKED; 在 8.0.1 中添加（非保留）
+- LOCKS
+- LOGFILE
+- LOGS
+- LONG(右)
+- LONGBLOB(右)
+- LONGTEXT(右)
+- LOOP(右)
+- LOW_PRIORITY(右)
+
+米
+
+- MASTER
+- MASTER_AUTO_POSITION
+- MASTER_BIND(右)
+- MASTER_COMPRESSION_ALGORITHMS; 在 8.0.18 中添加（非保留）
+- MASTER_CONNECT_RETRY
+- MASTER_DELAY
+- MASTER_HEARTBEAT_PERIOD
+- MASTER_HOST
+- MASTER_LOG_FILE
+- MASTER_LOG_POS
+- MASTER_PASSWORD
+- MASTER_PORT
+- MASTER_PUBLIC_KEY_PATH; 在 8.0.4 中添加（非保留）
+- MASTER_RETRY_COUNT
+- MASTER_SERVER_ID; 在 8.0.23 中删除
+- MASTER_SSL
+- MASTER_SSL_CA
+- MASTER_SSL_CAPATH
+- MASTER_SSL_CERT
+- MASTER_SSL_CIPHER
+- MASTER_SSL_CRL
+- MASTER_SSL_CRLPATH
+- MASTER_SSL_KEY
+- MASTER_SSL_VERIFY_SERVER_CERT(右)
+- MASTER_TLS_CIPHERSUITES; 8.0.19 添加（非保留）
+- MASTER_TLS_VERSION
+- MASTER_USER
+- MASTER_ZSTD_COMPRESSION_LEVEL; 在 8.0.18 中添加（非保留）
+- MATCH(右)
+- MAXVALUE(右)
+- MAX_CONNECTIONS_PER_HOUR
+- MAX_QUERIES_PER_HOUR
+- MAX_ROWS
+- MAX_SIZE
+- MAX_UPDATES_PER_HOUR
+- MAX_USER_CONNECTIONS
+- MEDIUM
+- MEDIUMBLOB(右)
+- MEDIUMINT(右)
+- MEDIUMTEXT(右)
+- MEMBER; 8.0.17新增（预留）；在 8.0.19 中成为非保留的
+- MEMORY
+- MERGE
+- MESSAGE_TEXT
+- MICROSECOND
+- MIDDLEINT(右)
+- MIGRATE
+- MINUTE
+- MINUTE_MICROSECOND(右)
+- MINUTE_SECOND(右)
+- MIN_ROWS
+- MOD(右)
+- MODE
+- MODIFIES(右)
+- MODIFY
+- MONTH
+- MULTILINESTRING
+- MULTIPOINT
+- MULTIPOLYGON
+- MUTEX
+- MYSQL_ERRNO
+
+否
+
+- NAME
+- NAMES
+- NATIONAL
+- NATURAL(右)
+- NCHAR
+- NDB
+- NDBCLUSTER
+- NESTED; 在 8.0.4 中添加（非保留）
+- NETWORK_NAMESPACE; 在 8.0.16 中添加（非保留）
+- NEVER
+- NEW
+- NEXT
+- NO
+- NODEGROUP
+- NONE
+- NOT(右)
+- NOWAIT; 在 8.0.1 中添加（非保留）
+- NO_WAIT
+- NO_WRITE_TO_BINLOG(右)
+- NTH_VALUE(R); 8.0.2新增（保留）
+- NTILE(R); 8.0.2新增（保留）
+- NULL(右)
+- NULLS; 在 8.0.2 中添加（非保留）
+- NUMBER
+- NUMERIC(右)
+- NVARCHAR
+
+欧
+
+- OF(R); 在 8.0.1 中添加（保留）
+- OFF; 在 8.0.20 中添加（非保留）
+- OFFSET
+- OJ; 在 8.0.16 中添加（非保留）
+- OLD; 在 8.0.14 中添加（非保留）
+- ON(右)
+- ONE
+- ONLY
+- OPEN
+- OPTIMIZE(右)
+- OPTIMIZER_COSTS(右)
+- OPTION(右)
+- OPTIONAL; 在 8.0.13 中添加（非保留）
+- OPTIONALLY(右)
+- OPTIONS
+- OR(右)
+- ORDER(右)
+- ORDINALITY; 在 8.0.4 中添加（非保留）
+- ORGANIZATION; 在 8.0.4 中添加（非保留）
+- OTHERS; 在 8.0.2 中添加（非保留）
+- OUT(右)
+- OUTER(右)
+- OUTFILE(右)
+- OVER(R); 8.0.2新增（保留）
+- OWNER
+
+P
+
+- PACK_KEYS
+- PAGE
+- PARSER
+- PARTIAL
+- PARTITION(右)
+- PARTITIONING
+- PARTITIONS
+- PASSWORD
+- PASSWORD_LOCK_TIME; 8.0.19 添加（非保留）
+- PATH; 在 8.0.4 中添加（非保留）
+- PERCENT_RANK(R); 8.0.2新增（保留）
+- PERSIST; 在 8.0.16 中成为非保留的
+- PERSIST_ONLY; 8.0.2新增（保留）；在 8.0.16 中成为非保留的
+- PHASE
+- PLUGIN
+- PLUGINS
+- PLUGIN_DIR
+- POINT
+- POLYGON
+- PORT
+- PRECEDES
+- PRECEDING; 在 8.0.2 中添加（非保留）
+- PRECISION(右)
+- PREPARE
+- PRESERVE
+- PREV
+- PRIMARY(右)
+- PRIVILEGES
+- PRIVILEGE_CHECKS_USER; 在 8.0.18 中添加（非保留）
+- PROCEDURE(右)
+- PROCESS; 在 8.0.11 中添加（非保留）
+- PROCESSLIST
+- PROFILE
+- PROFILES
+- PROXY
+- PURGE(右)
+
+问
+
+- QUARTER
+- QUERY
+- QUICK
+
+R
+
+- RANDOM; 在 8.0.18 中添加（非保留）
+- RANGE(右)
+- RANK(R); 8.0.2新增（保留）
+- READ(右)
+- READS(右)
+- READ_ONLY
+- READ_WRITE(右)
+- REAL(右)
+- REBUILD
+- RECOVER
+- RECURSIVE(R); 在 8.0.1 中添加（保留）
+- REDOFILE; 在 8.0.3 中删除
+- REDO_BUFFER_SIZE
+- REDUNDANT
+- REFERENCE; 在 8.0.4 中添加（非保留）
+- REFERENCES(右)
+- REGEXP(右)
+- REGISTRATION; 在 8.0.27 中添加（非保留）
+- RELAY
+- RELAYLOG
+- RELAY_LOG_FILE
+- RELAY_LOG_POS
+- RELAY_THREAD
+- RELEASE(右)
+- RELOAD
+- REMOTE; 8.0.3 新增（非保留）；在 8.0.14 中删除
+- REMOVE
+- RENAME(右)
+- REORGANIZE
+- REPAIR
+- REPEAT(右)
+- REPEATABLE
+- REPLACE(右)
+- REPLICA; 在 8.0.22 中添加（非保留）
+- REPLICAS; 在 8.0.22 中添加（非保留）
+- REPLICATE_DO_DB
+- REPLICATE_DO_TABLE
+- REPLICATE_IGNORE_DB
+- REPLICATE_IGNORE_TABLE
+- REPLICATE_REWRITE_DB
+- REPLICATE_WILD_DO_TABLE
+- REPLICATE_WILD_IGNORE_TABLE
+- REPLICATION
+- REQUIRE(右)
+- REQUIRE_ROW_FORMAT; 8.0.19 添加（非保留）
+- RESET
+- RESIGNAL(右)
+- RESOURCE; 在 8.0.3 中添加（非保留）
+- RESPECT; 在 8.0.2 中添加（非保留）
+- RESTART; 在 8.0.4 中添加（非保留）
+- RESTORE
+- RESTRICT(右)
+- RESUME
+- RETAIN; 在 8.0.14 中添加（非保留）
+- RETURN(右)
+- RETURNED_SQLSTATE
+- RETURNING; 在 8.0.21 中添加（非保留）
+- RETURNS
+- REUSE; 在 8.0.3 中添加（非保留）
+- REVERSE
+- REVOKE(右)
+- RIGHT(右)
+- RLIKE(右)
+- ROLE; 在 8.0.1 中成为非保留的
+- ROLLBACK
+- ROLLUP
+- ROTATE
+- ROUTINE
+- ROW(R); 在 8.0.2 中保留
+- ROWS(R); 在 8.0.2 中保留
+- ROW_COUNT
+- ROW_FORMAT
+- ROW_NUMBER(R); 8.0.2新增（保留）
+- RTREE
+
+小号
+
+- SAVEPOINT
+- SCHEDULE
+- SCHEMA(右)
+- SCHEMAS(右)
+- SCHEMA_NAME
+- SECOND
+- SECONDARY; 在 8.0.16 中添加（非保留）
+- SECONDARY_ENGINE; 在 8.0.13 中添加（非保留）
+- SECONDARY_ENGINE_ATTRIBUTE; 在 8.0.21 中添加（非保留）
+- SECONDARY_LOAD; 在 8.0.13 中添加（非保留）
+- SECONDARY_UNLOAD; 在 8.0.13 中添加（非保留）
+- SECOND_MICROSECOND(右)
+- SECURITY
+- SELECT(右)
+- SENSITIVE(右)
+- SEPARATOR(右)
+- SERIAL
+- SERIALIZABLE
+- SERVER
+- SESSION
+- SET(右)
+- SHARE
+- SHOW(右)
+- SHUTDOWN
+- SIGNAL(右)
+- SIGNED
+- SIMPLE
+- SKIP; 在 8.0.1 中添加（非保留）
+- SLAVE
+- SLOW
+- SMALLINT(右)
+- SNAPSHOT
+- SOCKET
+- SOME
+- SONAME
+- SOUNDS
+- SOURCE
+- SOURCE_AUTO_POSITION; 在 8.0.23 中添加（非保留）
+- SOURCE_BIND; 在 8.0.23 中添加（非保留）
+- SOURCE_COMPRESSION_ALGORITHMS; 在 8.0.23 中添加（非保留）
+- SOURCE_CONNECT_RETRY; 在 8.0.23 中添加（非保留）
+- SOURCE_DELAY; 在 8.0.23 中添加（非保留）
+- SOURCE_HEARTBEAT_PERIOD; 在 8.0.23 中添加（非保留）
+- SOURCE_HOST; 在 8.0.23 中添加（非保留）
+- SOURCE_LOG_FILE; 在 8.0.23 中添加（非保留）
+- SOURCE_LOG_POS; 在 8.0.23 中添加（非保留）
+- SOURCE_PASSWORD; 在 8.0.23 中添加（非保留）
+- SOURCE_PORT; 在 8.0.23 中添加（非保留）
+- SOURCE_PUBLIC_KEY_PATH; 在 8.0.23 中添加（非保留）
+- SOURCE_RETRY_COUNT; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_CA; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_CAPATH; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_CERT; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_CIPHER; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_CRL; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_CRLPATH; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_KEY; 在 8.0.23 中添加（非保留）
+- SOURCE_SSL_VERIFY_SERVER_CERT; 在 8.0.23 中添加（非保留）
+- SOURCE_TLS_CIPHERSUITES; 在 8.0.23 中添加（非保留）
+- SOURCE_TLS_VERSION; 在 8.0.23 中添加（非保留）
+- SOURCE_USER; 在 8.0.23 中添加（非保留）
+- SOURCE_ZSTD_COMPRESSION_LEVEL; 在 8.0.23 中添加（非保留）
+- SPATIAL(右)
+- SPECIFIC(右)
+- SQL(右)
+- SQLEXCEPTION(右)
+- SQLSTATE(右)
+- SQLWARNING(右)
+- SQL_AFTER_GTIDS
+- SQL_AFTER_MTS_GAPS
+- SQL_BEFORE_GTIDS
+- SQL_BIG_RESULT(右)
+- SQL_BUFFER_RESULT
+- SQL_CACHE; 在 8.0.3 中删除
+- SQL_CALC_FOUND_ROWS(右)
+- SQL_NO_CACHE
+- SQL_SMALL_RESULT(右)
+- SQL_THREAD
+- SQL_TSI_DAY
+- SQL_TSI_HOUR
+- SQL_TSI_MINUTE
+- SQL_TSI_MONTH
+- SQL_TSI_QUARTER
+- SQL_TSI_SECOND
+- SQL_TSI_WEEK
+- SQL_TSI_YEAR
+- SRID; 在 8.0.3 中添加（非保留）
+- SSL(右)
+- STACKED
+- START
+- STARTING(右)
+- STARTS
+- STATS_AUTO_RECALC
+- STATS_PERSISTENT
+- STATS_SAMPLE_PAGES
+- STATUS
+- STOP
+- STORAGE
+- STORED(右)
+- STRAIGHT_JOIN(右)
+- STREAM; 在 8.0.20 中添加（非保留）
+- STRING
+- SUBCLASS_ORIGIN
+- SUBJECT
+- SUBPARTITION
+- SUBPARTITIONS
+- SUPER
+- SUSPEND
+- SWAPS
+- SWITCHES
+- SYSTEM(R); 8.0.3 新增（保留）
+
+吨
+
+- TABLE(右)
+- TABLES
+- TABLESPACE
+- TABLE_CHECKSUM
+- TABLE_NAME
+- TEMPORARY
+- TEMPTABLE
+- TERMINATED(右)
+- TEXT
+- THAN
+- THEN(右)
+- THREAD_PRIORITY; 在 8.0.3 中添加（非保留）
+- TIES; 在 8.0.2 中添加（非保留）
+- TIME
+- TIMESTAMP
+- TIMESTAMPADD
+- TIMESTAMPDIFF
+- TINYBLOB(右)
+- TINYINT(右)
+- TINYTEXT(右)
+- TLS; 在 8.0.21 中添加（非保留）
+- TO(右)
+- TRAILING(右)
+- TRANSACTION
+- TRIGGER(右)
+- TRIGGERS
+- TRUE(右)
+- TRUNCATE
+- TYPE
+- TYPES
+
+ü
+
+- UNBOUNDED; 在 8.0.2 中添加（非保留）
+- UNCOMMITTED
+- UNDEFINED
+- UNDO(右)
+- UNDOFILE
+- UNDO_BUFFER_SIZE
+- UNICODE
+- UNINSTALL
+- UNION(右)
+- UNIQUE(右)
+- UNKNOWN
+- UNLOCK(右)
+- UNREGISTER; 在 8.0.27 中添加（非保留）
+- UNSIGNED(右)
+- UNTIL
+- UPDATE(右)
+- UPGRADE
+- URL; 在 8.0.32 中添加（非保留）
+- USAGE(右)
+- USE(右)
+- USER
+- USER_RESOURCES
+- USE_FRM
+- USING(右)
+- UTC_DATE(右)
+- UTC_TIME(右)
+- UTC_TIMESTAMP(右)
+
+V
+
+- VALIDATION
+- VALUE
+- VALUES(右)
+- VARBINARY(右)
+- VARCHAR(右)
+- VARCHARACTER(右)
+- VARIABLES
+- VARYING(右)
+- VCPU; 在 8.0.3 中添加（非保留）
+- VIEW
+- VIRTUAL(右)
+- VISIBLE
+
+W
+
+- WAIT
+- WARNINGS
+- WEEK
+- WEIGHT_STRING
+- WHEN(右)
+- WHERE(右)
+- WHILE(右)
+- WINDOW(R); 8.0.2新增（保留）
+- WITH(右)
+- WITHOUT
+- WORK
+- WRAPPER
+- WRITE(右)
+
+X
+
+- X509
+- XA
+- XID
+- XML
+- XOR(右)
+
+是
+
+- YEAR
+- YEAR_MONTH(右)
+
+Z
+
+- ZEROFILL(右)
+- ZONE; 在 8.0.22 中添加（非保留）
+
+### MySQL 8.0 新关键字和保留字
+
+        以下列表显示了 MySQL 8.0 中添加的关键字和保留字，与 MySQL 5.7 相比。保留关键字标有 (R)。
+
+一个
+ | 乙
+ | 丙
+ | D
+ | 乙
+ | 女
+ | 格
+ | H
+ | 我
+ | 杰
+ | K
+ | 大号
+ | 男
+ | 否
+ | 欧
+ | 磷
+ | 右
+ | 年代
+ | 吨
+ | ü
+ | 五
+ | 瓦
+ | Z
+
+一个
+
+- ACTIVE
+- ADMIN
+- ARRAY
+- ATTRIBUTE
+- AUTHENTICATION
+
+乙
+
+- BUCKETS
+- BULK
+
+C
+
+- CHALLENGE_RESPONSE
+- CLONE
+- COMPONENT
+- CUME_DIST(右)
+
+丁
+
+- DEFINITION
+- DENSE_RANK(右)
+- DESCRIPTION
+
+乙
+
+- EMPTY(右)
+- ENFORCED
+- ENGINE_ATTRIBUTE
+- EXCEPT(右)
+- EXCLUDE
+
+F
+
+- FACTOR
+- FAILED_LOGIN_ATTEMPTS
+- FINISH
+- FIRST_VALUE(右)
+- FOLLOWING
+
+G
+
+- GENERATE
+- GEOMCOLLECTION
+- GET_MASTER_PUBLIC_KEY
+- GET_SOURCE_PUBLIC_KEY
+- GROUPING(右)
+- GROUPS(右)
+- GTID_ONLY
+
+H
+
+- HISTOGRAM
+- HISTORY
+
+我
+
+- INACTIVE
+- INITIAL
+- INITIATE
+- INTERSECT(右)
+- INVISIBLE
+
+杰
+
+- JSON_TABLE(右)
+- JSON_VALUE
+
+钾
+
+- KEYRING
+
+大号
+
+- LAG(右)
+- LAST_VALUE(右)
+- LATERAL(右)
+- LEAD(右)
+- LOCKED
+
+米
+
+- MASTER_COMPRESSION_ALGORITHMS
+- MASTER_PUBLIC_KEY_PATH
+- MASTER_TLS_CIPHERSUITES
+- MASTER_ZSTD_COMPRESSION_LEVEL
+- MEMBER
+
+否
+
+- NESTED
+- NETWORK_NAMESPACE
+- NOWAIT
+- NTH_VALUE(右)
+- NTILE(右)
+- NULLS
+
+欧
+
+- OF(右)
+- OFF
+- OJ
+- OLD
+- OPTIONAL
+- ORDINALITY
+- ORGANIZATION
+- OTHERS
+- OVER(右)
+
+P
+
+- PASSWORD_LOCK_TIME
+- PATH
+- PERCENT_RANK(右)
+- PERSIST
+- PERSIST_ONLY
+- PRECEDING
+- PRIVILEGE_CHECKS_USER
+- PROCESS
+
+R
+
+- RANDOM
+- RANK(右)
+- RECURSIVE(右)
+- REFERENCE
+- REGISTRATION
+- REPLICA
+- REPLICAS
+- REQUIRE_ROW_FORMAT
+- RESOURCE
+- RESPECT
+- RESTART
+- RETAIN
+- RETURNING
+- REUSE
+- ROLE
+- ROW_NUMBER(右)
+
+小号
+
+- SECONDARY
+- SECONDARY_ENGINE
+- SECONDARY_ENGINE_ATTRIBUTE
+- SECONDARY_LOAD
+- SECONDARY_UNLOAD
+- SKIP
+- SOURCE_AUTO_POSITION
+- SOURCE_BIND
+- SOURCE_COMPRESSION_ALGORITHMS
+- SOURCE_CONNECT_RETRY
+- SOURCE_DELAY
+- SOURCE_HEARTBEAT_PERIOD
+- SOURCE_HOST
+- SOURCE_LOG_FILE
+- SOURCE_LOG_POS
+- SOURCE_PASSWORD
+- SOURCE_PORT
+- SOURCE_PUBLIC_KEY_PATH
+- SOURCE_RETRY_COUNT
+- SOURCE_SSL
+- SOURCE_SSL_CA
+- SOURCE_SSL_CAPATH
+- SOURCE_SSL_CERT
+- SOURCE_SSL_CIPHER
+- SOURCE_SSL_CRL
+- SOURCE_SSL_CRLPATH
+- SOURCE_SSL_KEY
+- SOURCE_SSL_VERIFY_SERVER_CERT
+- SOURCE_TLS_CIPHERSUITES
+- SOURCE_TLS_VERSION
+- SOURCE_USER
+- SOURCE_ZSTD_COMPRESSION_LEVEL
+- SRID
+- STREAM
+- SYSTEM(右)
+
+吨
+
+- THREAD_PRIORITY
+- TIES
+- TLS
+
+ü
+
+- UNBOUNDED
+- UNREGISTER
+- URL
+
+V
+
+- VCPU
+- VISIBLE
+
+W
+
+- WINDOW(右)
+
+Z
+
+- ZONE
+
+### MySQL 8.0 移除关键字和保留字
+
+        以下列表显示了与 MySQL 5.7 相比，MySQL 8.0 中删除的关键字和保留字。保留关键字标有 (R)。
+
+- ANALYSE
+- DES_KEY_FILE
+- MASTER_SERVER_ID
+- PARSE_GCOL_EXPR
+- REDOFILE
+- SQL_CACHE
+
+---
+
+[← 返回 第 9 章 语言结构 索引](00-index.md) · [← 返回总索引](../00-index.md)
