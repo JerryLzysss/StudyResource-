@@ -5,11 +5,11 @@ REST即表述性状态传递（英文：Representational State Transfer，简称
 URL路径表示资源
 ## Restful使用
 操作资源要与HTTP请求方法对应
-操作结果要与HTTP相应状态码对应
+操作结果要与HTTP响应状态码对应
 
-json-Server 用来搭建Restful api
+json-server 用来搭建Restful api
 全局安装
-npm i -g json-Server
+npm i -g json-server
 创建JSON文件
 {
     "song":[
@@ -19,4 +19,4 @@ npm i -g json-Server
     ]
 }
 以JSON文件所在文件夹执行命令
-json-server --watch db.json
+json-server --watch json-server.json

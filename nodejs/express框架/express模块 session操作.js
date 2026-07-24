@@ -3,10 +3,10 @@ const express=require('express');
 const session=require('express-session');
 const MongoStore=require('connect-mongo');
 const app=express();
-// 1.安装 npm i express-session connect-mango
-//2.引入express-session  connect-mango
+// 1.安装 npm i express-session connect-mongo
+//2.引入express-session  connect-mongo
 app.use(session({
-    name:'sid',//设置cookie的name 默认值是sid
+    name:'sid',//设置cookie的name；express-session 默认是 connect.sid，此处自定义为 sid
     secret:'a',//参与加密的字符串（签名）
     saveUninitialized:false,//是否为每次请求设置一个cookie用来存储session
     resave:true ,//是否在每次请求重新保存session 20分钟

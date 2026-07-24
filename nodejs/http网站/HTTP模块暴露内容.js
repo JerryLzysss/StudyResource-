@@ -12,4 +12,4 @@ module.exports={
     str
 }
 ;
-/* 不能以exports=value暴露数据 */
+/* 不能用 exports = value 覆盖导出；应使用 module.exports = … */

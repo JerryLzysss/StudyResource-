@@ -1,4 +1,4 @@
-const fs=require('fs');
+﻿const fs=require('fs');
 const http=require('http');
 const path=require('path');
 
@@ -21,9 +21,10 @@ TAR 文件	.tar application/x-tar
 let mimes={
     html:'text/html',
     css:'text/css',
-    js:'text/javascript',
+    js:'application/javascript',
     png:'image/png',
-    jpg:'image/jpg',
+    jpg:'image/jpeg',
+    jpeg:'image/jpeg',
     gif:'image/gif',
     mp3:'audio/mpeg',
     mp4:'video/mp4',
@@ -36,8 +37,6 @@ const server=http.createServer((request,response)=>{
    let root=__dirname;
    let filePath=root+pathname;
     fs.readFile(filePath,(err,data)=>{
-        response.setHeader("content-type", "text/js; charset=UTF-8");
-
         if(err)
         {
             
@@ -49,13 +48,21 @@ const server=http.createServer((request,response)=>{
         let type=mimes[ext];
         if(type)
         {
-            response.setHeader('content-type',type);
+            // 文本类型补充 charset，避免中文乱码
+            if(type.startsWith('text/') || type === 'application/javascript' || type === 'application/json')
+            {
+                response.setHeader('content-type', type + '; charset=UTF-8');
+            }
+            else
+            {
+                response.setHeader('content-type', type);
+            }
         }
         else
         {
             response.setHeader('content-type','application/octet-stream');
         }
-        response.end(type);
+        response.end(data);
     })
 });
 

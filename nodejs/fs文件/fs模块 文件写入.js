@@ -1,4 +1,4 @@
-const fs=require('fs');
+﻿const fs=require('fs');
 /* 异步写入 */
 fs.writeFile('./test.txt','gggg',err=>{
     if(err)
@@ -25,8 +25,7 @@ fs.appendFileSync */
 
 
 /* 流式写入 */
-const fs=require('fs');
 let fss=fs.createWriteStream('./test2.txt');
 fss.write('gggg');
 fss.write('\r\nhhhh');
-fss.close();
+fss.end();

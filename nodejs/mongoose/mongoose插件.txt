@@ -1,2 +1,2 @@
-Mongoose是对象文档数据库
-官网http://www.mongoosejs.net
+Mongoose是MongoDB的对象文档映射（ODM）库
+官网https://mongoosejs.com

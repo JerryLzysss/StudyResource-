@@ -1,6 +1,6 @@
 const express=require('express');
 const app=express();
-/* 直接建立起文件静态资源可以供网页进行搜索 */
+/* 直接建立起文件静态资源可以供网页进行访问 */
 app.use(express.static(__dirname));
 app.get('/home',(req,res)=>{
 

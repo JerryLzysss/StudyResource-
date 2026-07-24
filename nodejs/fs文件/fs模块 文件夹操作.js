@@ -1,4 +1,4 @@
-const fs=require('fs');
+﻿const fs=require('fs');
 
 /* 创建 */
 fs.mkdir('./html',err=>{
@@ -20,7 +20,6 @@ fs.mkdir('./html/ABC',{recursive : true},err=>{
 })
 
 /* 读取文件夹 */
-const fs=require('fs');
 fs.readdir('./',(err,data)=>{
     if(err)
     {
@@ -30,7 +29,7 @@ fs.readdir('./',(err,data)=>{
     console.log(data);
 })
 
-/* 递归创建 */
+/* 删除文件夹 */
 fs.rmdir('./htmlC',err=>{
     if(err)
     {
@@ -40,8 +39,8 @@ fs.rmdir('./htmlC',err=>{
     console.log("ok");
 })
 
-/* 递归删除 */
-fs.rmdir('./html',{recursive : true},err=>{
+/* 递归删除（推荐使用 fs.rm） */
+fs.rm('./html',{recursive : true},err=>{
     if(err)
     {
         console.log("err");

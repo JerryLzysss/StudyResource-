@@ -7,10 +7,10 @@ const mongoose= require('mongoose');
 //数据库不存在自动创建
 mongoose.connect('mongodb://127.0.0.1:27017/admin');
 
-/* mongoose.set('strictQuery',true)避免MONGODB7的警告 */
+/* mongoose.set('strictQuery',true)避免 Mongoose 7 关于 strictQuery 默认值变更的警告 */
 
 //4.设置回调
-//mongoose.connection.once(事件回调只执行一次)
+//mongoose.connection.once(事件回调只执行一次)；此处用 on 监听 open
 mongoose.connection.on('open',()=>{
     console.log('连接成功');
     /* 设置集合中文档属性及其属性值 */
@@ -54,7 +54,7 @@ mongoose.connection.on('open',()=>{
     数据截取
     skip 跳过
     limit 限定
-     BookModel.find().sort({Price:1}).exec(function(err,data)){
+     BookModel.find().sort({Price:1}).skip(0).limit(3).exec(function(err,data){
         if(err) throw err;
         console.log(data);
         mongoose.connection.close();

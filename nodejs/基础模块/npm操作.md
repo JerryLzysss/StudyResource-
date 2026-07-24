@@ -3,7 +3,7 @@ NPM的全称是Node Package Manager，是一个NodeJS包管理和分发工具，
 ## npm 初始化及指令
 npm -v查看版本
 npm init -y 或者npm init --yes 创建package.json
-package json是包的配置文件
+package.json是包的配置文件
 npm install或者npm i 命令安装包
 node_modules 存放下载包
 package-lock.json锁定包
@@ -19,21 +19,21 @@ npm remove -g nodemon 全局删除
 npm run 自动向上级查找
 npm start 启动项目
 npm login填写用户信息
-npm publish更新包
+npm publish 发布包（更新需先修改版本号再 publish）
 npm unpublish 删除包
 ## require导入
 在当前文件夹下node_modules找同名文件夹
 上级目录寻找直至找到磁盘
 
 ## 生产依赖与开发依赖
-npm i -S uniq -S等效于-save
+npm i -S uniq -S等效于--save
 包信息保存于package.json的dependencies属性
 npm i -D less -D等效于--save-dev
-报信息保存于package.json中devdependencies属性
+包信息保存于package.json中devDependencies属性
 
 ## 部分常用npm的拓展 
-### cnpm是淘宝构建npmjs.com的完整影像
-npm install -g cnpm --registry==https://registry.npmmirror.co
+### cnpm是淘宝构建npmjs.com的完整镜像
+npm install -g cnpm --registry=https://registry.npmmirror.com
 ### yarn 是javascript包管理工具
 npm i -g yarn 安装yarn
 ### nvm nodejs管理工具

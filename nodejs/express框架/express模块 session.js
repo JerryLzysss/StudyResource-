@@ -1,6 +1,6 @@
 /* session保存服务端数据，保存当前用户的相关信息
-session创建session信息，通过seesion_id的值响应头返回给浏览器
-cookie在下次发送请求会自动感谢爱cookie,通过其中的session_id确定用户信息 */
+session创建session信息，通过session_id的值在响应头返回给浏览器
+cookie在下次发送请求会自动携带cookie,通过其中的session_id确定用户信息 */
 
 
 
@@ -12,5 +12,5 @@ cookie在下次发送请求会自动感谢爱cookie,通过其中的session_id确
  session存放服务器
  cookie设置过多会增大报文体积，影响传输
  session存储在服务器，通过cookie传递id不影响传输效率
- ccookie保存数据不能超过4K，单个域名存储数量有限制
+ cookie保存数据不能超过4K，单个域名存储数量有限制
  session存储在服务器没有限制 */
