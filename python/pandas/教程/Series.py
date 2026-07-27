@@ -24,15 +24,16 @@ copy：是否复制数据。默认为 False，表示不复制数据。如果设�
 fastpath：是否启用快速路径。默认为 False。启用快速路径可能会在某些情况下提高性能。
 """
 series=pd.Series([1,2,3,4],name='A')
-cutom_series=pd.Series([1,2,3,4],index=[3,4,5,6],name='B')
+custom_series=pd.Series([1,2,3,4],index=[3,4,5,6],name='B')
 print(series)
-# 允许通过字典取值
+print(custom_series)
+# 允许通过字典创建
 sites={1:"Google",2:"Running"}
 dict_trans=pd.Series(sites,name='C')
-transcute_dict=pd.Series(sites,index=[1])
-print(sites)
+truncated_dict=pd.Series(sites,index=[1])
+print(dict_trans)
 print(sites[1])
-print(transcute_dict)
+print(truncated_dict)
 
 # 方法
 series=pd.Series([1,2,3,4,5,6,7,8,9,10])

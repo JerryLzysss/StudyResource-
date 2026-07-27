@@ -2,7 +2,7 @@
 # Anaconda 自带有pandas库
 # 验证方式
 # Anaconda Prompt(控制台)
-# python -c "import pandas; print(pandas._version__)"
+# python -c "import pandas; print(pandas.__version__)"
 
 # pip安装
 # pip install pandas

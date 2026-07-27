@@ -12,7 +12,7 @@ import pandas as pd
 # read_csv 读取csv文件
 df = pd.read_csv('demo.csv',header=0)
 
-'''pd.read
+'''pd.read_csv 常用参数说明
 filepath_or_buffer	CSV 文件的路径或文件对象（支持 URL、文件路径、文件对象等）	必需参数
 sep	定义字段分隔符，默认是逗号（,），可以改为其他字符，如制表符（\t）	','
 header	指定行号作为列标题，默认为 0（表示第一行），或者设置为 None 没有标题	0
@@ -26,11 +26,11 @@ na_values	指定哪些值应视为缺失值（NaN）	None
 skipfooter	跳过文件结尾的指定行数	0
 encoding	文件的编码格式（如 utf-8，latin1 等）	None
 '''
-# 全部输出,不带to_string()那么只输出前面5行和末尾5行
+# 大数据集默认会省略中间行；用 to_string() 可输出全部内容
 print(df)
-# to_csv 转化csv文件
+# to_csv 写出 csv 文件（header 应为 True/False 或列名列表，不能传普通字符串）
 dict_2=pd.DataFrame({'Title1':['a','b','c'],'Title2':['d','e','f'],'Title3':['g','h','i']})
-csv=dict_2.to_csv('demoTransform.csv',header="Demo")
+dict_2.to_csv('demoTransform.csv', header=True)
 print(dict_2)
 print(pd.read_csv('demoTransform.csv'))
 '''

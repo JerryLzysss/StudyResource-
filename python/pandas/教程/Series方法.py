@@ -10,13 +10,14 @@ lists = pd.Series([1,2,3,4],index=[1,2,3,4],name='Test')
 lists_2 = pd.Series(['1','hello','gg'])
 # index 获取索引
 print(lists.index)
-# values 获取方法
+# values 获取值
 print(lists.values)
-# head(n) 头部N行
+# head(n) 头部 N 行
 print(lists.head(5))
-# tail(n) 尾部N行
+# tail(n) 尾部 N 行
 print(lists.tail(1))
 # dtype 查看数据类型
 print("dtype",lists.dtype,lists_2.dtype)
-# shape 返回行数
+# shape 返回形状（元素个数）
+print(lists.shape)
 

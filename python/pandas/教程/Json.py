@@ -17,7 +17,7 @@ df = pd.read_json(
     keep_default_na=True # 是否保留默认的缺失值标记
 )
 '''
-# to_string返回DataFrame类型数据，也可以用来直接处理JSON
+# to_string 返回 DataFrame 的字符串表示（完整内容，不会被省略）
 print(df.to_string())
 
 # DataFrame转换为JSON
